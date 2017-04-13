@@ -1,0 +1,13 @@
+﻿{
+  "Name": "SendLetters",
+  "Author": "Luke Wale",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": ""
+  },
+  "Description": "Send letters to your friends within Stardew",
+  "UniqueID": "denifia.stardew.sendletters",
+  "EntryDll": "denifia.stardew.sendletters.dll"
+}
