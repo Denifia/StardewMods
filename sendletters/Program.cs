@@ -33,8 +33,15 @@ namespace denifia.stardew.sendletters
             ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
             ModEvents.PlayerCreated += PlayerCreated;
             ModEvents.MessageSent += MessageSent;
+            ModEvents.CheckMailbox += CheckMailbox;
             SaveEvents.AfterLoad += AfterSavedGameLoad;
             ControlEvents.KeyPressed += ControlEvents_KeyPressed;
+        }
+
+        private void CheckMailbox(object sender, EventArgs e)
+        {
+            if (!Repo.CurrentPlayer.Messages.Any()) return;
+            MailboxService.ShowLetter(Repo.CurrentPlayer.Messages.First());
         }
 
         private void MessageSent(object sender, EventArgs e)
@@ -86,7 +93,7 @@ namespace denifia.stardew.sendletters
             var messages = Repo.CurrentPlayer.Messages;
             if (messages != null && messages.Any())
             {
-                MailboxService.ShowLetter(messages.First());
+                MailboxService.PostLetters(messages.Count);
             }
         }
 
@@ -95,24 +102,33 @@ namespace denifia.stardew.sendletters
             // Find out if we need to set a new player as current
             PlayerService.CreatePlayer();
 
-            ControlEvents.MouseChanged += ControlEvents_MouseChanged;
+            LocationEvents.CurrentLocationChanged += LocationEvents_CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
+
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
+        }
+
+        private void LocationEvents_CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
+        {
+            if (e.NewLocation.name == "Farm")
+            {
+                ControlEvents.MouseChanged += ControlEvents_MouseChanged;
+            } else
+            {
+                ControlEvents.MouseChanged -= ControlEvents_MouseChanged;
+            }
         }
 
         private void ControlEvents_MouseChanged(object sender, EventArgsMouseStateChanged e)
         {
-            if (Game1.currentLocation.name == "Farm")
+            if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
-                {
-                    Location tileLocation = new Location() { X = (int)Game1.currentCursorTile.X, Y = (int)Game1.currentCursorTile.Y };
-                    Vector2 key = new Vector2((float)tileLocation.X, (float)tileLocation.Y);
+                Location tileLocation = new Location() { X = (int)Game1.currentCursorTile.X, Y = (int)Game1.currentCursorTile.Y };
+                Vector2 key = new Vector2((float)tileLocation.X, (float)tileLocation.Y);
 
-                    if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
-                    {
-                        Game1.activeClickableMenu = new ComposeLetterMenu("It worked!");
-                    }
+                if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
+                {
+                    ModEvents.RaiseCheckMailboxEvent();
                 }
             }
         }
