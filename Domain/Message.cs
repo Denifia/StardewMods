@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters
+namespace denifia.stardew.sendletters.Domain
 {
     public class Message
     {

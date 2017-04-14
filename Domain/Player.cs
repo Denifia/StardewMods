@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters
+namespace denifia.stardew.sendletters.Domain
 {
     public class Player
     {
@@ -14,9 +14,12 @@ namespace denifia.stardew.sendletters
 
         public List<Message> Messages { get; set; }
 
+        public List<Player> Friends { get; set; }
+
         public Player()
         {
             Messages = new List<Message>();
+            Friends = new List<Player>();
         }
     }
 }

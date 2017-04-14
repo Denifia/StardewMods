@@ -1,0 +1,6 @@
+﻿{
+  "ApiUrl": "http://localhost:53983/api/",
+  "YourUniqueId": "SuperGuy",
+  "YourDisplayName": "HeMan!",
+  "YourFriendsUniqueIds": ["Bruce", "Telle"]
+}
