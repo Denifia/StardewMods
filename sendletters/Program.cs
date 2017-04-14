@@ -1,5 +1,7 @@
 ﻿using denifia.stardew.sendletters.Domain;
+using denifia.stardew.sendletters.Menus;
 using denifia.stardew.sendletters.Services;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
@@ -7,6 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using xTile.Dimensions;
+using xTile.ObjectModel;
+using xTile.Tiles;
 
 namespace denifia.stardew.sendletters
 {
@@ -51,6 +56,10 @@ namespace denifia.stardew.sendletters
                 case Microsoft.Xna.Framework.Input.Keys.NumPad3:
                     index = 2;
                     break;
+                case Microsoft.Xna.Framework.Input.Keys.L:
+                    //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
+                    Game1.mailbox.Enqueue("test");
+                    break;
                 default:
                     break;
             }
@@ -86,8 +95,26 @@ namespace denifia.stardew.sendletters
             // Find out if we need to set a new player as current
             PlayerService.CreatePlayer();
 
+            ControlEvents.MouseChanged += ControlEvents_MouseChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
+        }
+
+        private void ControlEvents_MouseChanged(object sender, EventArgsMouseStateChanged e)
+        {
+            if (Game1.currentLocation.name == "Farm")
+            {
+                if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+                {
+                    Location tileLocation = new Location() { X = (int)Game1.currentCursorTile.X, Y = (int)Game1.currentCursorTile.Y };
+                    Vector2 key = new Vector2((float)tileLocation.X, (float)tileLocation.Y);
+
+                    if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
+                    {
+                        Game1.activeClickableMenu = new ComposeLetterMenu("It worked!");
+                    }
+                }
+            }
         }
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
