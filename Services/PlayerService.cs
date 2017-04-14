@@ -18,7 +18,7 @@ namespace denifia.stardew.sendletters.Services
         {
             var player = Repo.Players[0];
 
-            var createrPlayerModel = new CreaterPlayerModel
+            var createrPlayerModel = new PlayerCreaterModel
             {
                 Name = player.Name
             };

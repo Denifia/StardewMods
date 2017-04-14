@@ -48,7 +48,8 @@
   <ItemGroup>
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="ModConfig.cs" />
-    <Compile Include="Models\CreaterPlayerModel.cs" />
+    <Compile Include="Models\MessageCreateModel.cs" />
+    <Compile Include="Models\PlayerCreaterModel.cs" />
     <Compile Include="Domain\Message.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Domain\Player.cs" />

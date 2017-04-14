@@ -14,6 +14,7 @@ namespace denifia.stardew.sendletters.Services
         public void ShowLetter(Message message)
         {
             Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, "Player Mail");
+            ModEvents.RaiseMessageReadEvent(message);
         }
     }
 }

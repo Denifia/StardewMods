@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using denifia.stardew.sendletters.Domain;
 
 namespace denifia.stardew.sendletters
 {
     public class ModEvents
     {
+        public delegate void MessageReadEventHandler(Message message);
+
         public static event EventHandler PlayerMessagesUpdated;
         public static event EventHandler PlayerCreated;
+        public static event EventHandler MessageSent;
+        public static event MessageReadEventHandler MessageRead;
 
         internal static void RaisePlayerMessagesUpdatedEvent()
         {
@@ -20,5 +25,17 @@ namespace denifia.stardew.sendletters
         {
             PlayerCreated(null, null);
         }
+
+        internal static void RaiseMessageSentEvent()
+        {
+            MessageSent(null, null);
+        }
+
+        internal static void RaiseMessageReadEvent(Message message)
+        {
+            MessageRead(message);
+        }
     }
+
+    
 }

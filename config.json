@@ -1,6 +1,6 @@
 ﻿{
-  "ApiUrl": "http://localhost:53983/api/",
-  "YourUniqueId": "SuperGuy",
-  "YourDisplayName": "HeMan!",
-  "YourFriendsUniqueIds": ["Bruce", "Telle"]
+  "ApiUrl": "http://DESKTOP-FT7HPTL:5000/api/",
+  "YourUniqueId": "2",
+  "YourDisplayName": "Luke",
+  "YourFriendsUniqueIds": [ "1", "2", "3" ]
 }

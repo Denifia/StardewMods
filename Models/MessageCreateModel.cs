@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Models
 {
-    public class CreaterPlayerModel
+    public class MessageCreateModel
     {
-        public string Name { get; set; }
+        public string ToPlayerId { get; set; }
+
+        public string Message { get; set; }
     }
 }
