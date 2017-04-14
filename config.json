@@ -1,6 +1,6 @@
 ﻿{
-  "ApiUrl": "http://DESKTOP-FT7HPTL:5000/api/",
+  "ApiUrl": "http://http://denifiastardewsendletters.azurewebsites.net/api/",
   "YourUniqueId": "2",
   "YourDisplayName": "Luke",
-  "YourFriendsUniqueIds": [ "1", "2", "3" ]
+  "YourFriendsUniqueIds": [ "1", "3" ]
 }
