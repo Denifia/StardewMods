@@ -43,9 +43,9 @@ namespace denifia.stardew.sendletters.Domain
             Players.AddRange(players);
         }
 
-        internal void SetCurrentPlayer()
+        internal void SetCurrentPlayer(Player player)
         {
-            CurrentPlayer = Players[0];
+            CurrentPlayer = player;
         }
     }
 }

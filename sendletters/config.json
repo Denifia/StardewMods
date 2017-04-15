@@ -15,7 +15,12 @@
           "Name": "Me"
         }
       ],
-      "Games": []
+      "Games": [
+        {
+          "PlayerName": "Luke",
+          "FarmName": "Earthlock"
+        }
+      ]
     }
   ]
 }

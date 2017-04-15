@@ -10,9 +10,10 @@ namespace denifia.stardew.sendletters
     public class ModEvents
     {
         public delegate void MessageReadEventHandler(Message message);
+        public delegate void PlayerCreatedHandler(Player player);
 
         public static event EventHandler PlayerMessagesUpdated;
-        public static event EventHandler PlayerCreated;
+        public static event PlayerCreatedHandler PlayerCreated;
         public static event EventHandler MessageSent;
         public static event MessageReadEventHandler MessageRead;
         public static event EventHandler CheckMailbox;
@@ -22,9 +23,9 @@ namespace denifia.stardew.sendletters
             PlayerMessagesUpdated(null, null);
         }
 
-        internal static void RaisePlayerCreatedEvent()
+        internal static void RaisePlayerCreatedEvent(Player player)
         {
-            PlayerCreated(null, null);
+            PlayerCreated(player);
         }
 
         internal static void RaiseMessageSentEvent()

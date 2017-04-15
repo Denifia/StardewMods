@@ -18,13 +18,13 @@ namespace denifia.stardew.sendletters.Services
             RestClient = new RestClient(api);
         }
 
-        internal void PutRequest(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action callback)
+        internal void PutRequest<T>(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action<T> callback, T obj)
         {
             var request = FormStandardRequest(resource, urlSegments, Method.PUT);
             request.AddJsonBody(jsonBody);
 
             RestClient.ExecuteAsync(request, response => {
-                callback();
+                callback(obj);
             });
         }
 
