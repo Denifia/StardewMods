@@ -22,42 +22,42 @@ namespace denifia.stardew.sendletters.Services
 
         public void RequestOverridePlayerMessages()
         {
-            if (Repo.CurrentPlayer == null) return;
+            //if (Repo.CurrentPlayer == null) return;
 
-            var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("id", Repo.CurrentPlayer.Id);
-            GetRequest<List<Message>>("messages/{id}", urlSegments, OverridePlayerMessages);
+            //var urlSegments = new Dictionary<string, string>();
+            //urlSegments.Add("id", Repo.CurrentPlayer.Id);
+            //GetRequest<List<Message>>("messages/{id}", urlSegments, OverridePlayerMessages);
         }
 
         internal void OverridePlayerMessages(List<Message> messages)
         {
-            Repo.CurrentPlayer.Messages = messages;
-            ModEvents.RaisePlayerMessagesUpdatedEvent();
+            //Repo.CurrentPlayer.Messages = messages;
+            //ModEvents.RaisePlayerMessagesUpdatedEvent();
         }
 
         public void RequestSendMessage(Player friend, string message)
         {
-            if (Repo.CurrentPlayer == null) return;
+            //if (Repo.CurrentPlayer == null) return;
 
-            var messageCreateModel = new MessageCreateModel
-            {
-                ToPlayerId = friend.Id,
-                Message = message
-            };
+            //var messageCreateModel = new MessageCreateModel
+            //{
+            //    ToPlayerId = friend.Id,
+            //    Message = message
+            //};
 
-            var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("id", Repo.CurrentPlayer.Id);
-            PostRequest("messages/{id}", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
+            //var urlSegments = new Dictionary<string, string>();
+            //urlSegments.Add("id", Repo.CurrentPlayer.Id);
+            //PostRequest("messages/{id}", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
         }
 
         public void RequestDeleteMessage(Message message)
         {
-            if (Repo.CurrentPlayer == null || message == null) return;
+            //if (Repo.CurrentPlayer == null || message == null) return;
 
-            var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("playerId", Repo.CurrentPlayer.Id);
-            urlSegments.Add("id", message.Id);
-            DeleteRequest("messages/{playerId}/{id}", urlSegments);
+            //var urlSegments = new Dictionary<string, string>();
+            //urlSegments.Add("playerId", Repo.CurrentPlayer.Id);
+            //urlSegments.Add("id", message.Id);
+            //DeleteRequest("messages/{playerId}/{id}", urlSegments);
         }
     }
 }

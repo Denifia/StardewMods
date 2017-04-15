@@ -10,7 +10,7 @@ namespace denifia.stardew.sendletters.Services
 {
     public class RestBaseService
     {
-        internal Repository Repo = Repository.Instance;
+        internal Repository Repo;// = Repository.Instance;
         private RestClient RestClient { get; set; }
 
         public RestBaseService(Uri api)

@@ -12,17 +12,22 @@ namespace denifia.stardew.sendletters.Domain
 
         public string Name { get; set; }
 
+        public string FarmName { get; set; }
+
         public List<Message> Messages { get; set; }
 
         public List<Player> Friends { get; set; }
 
         public List<Game> Games { get; set; }
 
-        public Player()
+        public Player(string name, string farmName, string random)
         {
+            Name = name;
+            FarmName = farmName;
+            Id = string.Join(".", name, farmName, random).ToUpper();
+
             Messages = new List<Message>();
             Friends = new List<Player>();
-            Games = new List<Game>();
         }
     }
 }

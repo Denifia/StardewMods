@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.5.0\lib\net45\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
     </Reference>
@@ -47,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Game.cs" />
+    <Compile Include="Domain\IRepository.cs" />
+    <Compile Include="Domain\LocalRepository.cs" />
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="Menus\ComposeLetterMenu.cs" />
     <Compile Include="ModConfig.cs" />
@@ -58,6 +63,9 @@
     <Compile Include="ModEvents.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ConfigurationService.cs" />
+    <Compile Include="Services\IConfigurationService.cs" />
+    <Compile Include="Services\IPlayerService.cs" />
     <Compile Include="Services\MailboxService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\PlayerService.cs" />
@@ -80,6 +88,7 @@
     </PropertyGroup>
     <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\RestSharp.dll" DestinationFolder="$(ModPath)" />
+    <Copy SourceFiles="$(TargetDir)\Autofac.dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\config.json" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />
