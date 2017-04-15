@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Services
 {
-    public class MailboxService
+    public class MailboxService : IMailboxService
     {
-        internal void ShowLetter(Message message)
+        public void ShowLetter(Message message)
         {
             Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, "Player Mail");
             if (Game1.mailbox.Any())
@@ -21,7 +21,7 @@ namespace denifia.stardew.sendletters.Services
             ModEvents.RaiseMessageReadEvent(message);
         }
 
-        internal void PostLetters(int count)
+        public void PostLetters(int count)
         {
             while (Game1.mailbox.Any() && Game1.mailbox.Peek() == "playerMail")
             {

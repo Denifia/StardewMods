@@ -17,6 +17,7 @@ namespace denifia.stardew.sendletters.Services
         {
             _repository = repository;
             _playerService = playerService;
+            ModEvents.MessageRead += MessageRead;
         }
 
         public void CreateMessage(MessageCreateModel model)
@@ -28,12 +29,29 @@ namespace denifia.stardew.sendletters.Services
                 FromPlayerId = model.FromPlayerId
             };
 
-            var player = _playerService.GetPlayerById(model.ToPlayerId);
+            _repository.CreateMessageForPlayer(model.ToPlayerId, message);
+        }
 
-            if (player != null)
-            {
-                _repository.CreateMessageForPlayer(player, message);
-            }
+        public int UnreadMessageCount(string playerId)
+        {
+            return _repository.FindMessagesForPlayer(playerId, x => true).Count();
+        }
+
+        public Message GetFirstMessage(string playerId)
+        {
+            return _repository.FindMessagesForPlayer(playerId, x => true).FirstOrDefault();
+        }
+
+        public void CheckForMessages(string playerId)
+        {
+            ModEvents.RaisePlayerMessagesUpdatedEvent();
+            //var player = _playerService.GetPlayerById(playerId);
+
+            //if (player != null)
+            //{
+            //    var messages = _repository.FindMessagesForPlayer(player, x => true);
+                
+            //}
         }
 
 
@@ -44,6 +62,7 @@ namespace denifia.stardew.sendletters.Services
 
         private void MessageRead(Message message)
         {
+            _repository.Delete(message);
             //RequestDeleteMessage(message);
         }
 

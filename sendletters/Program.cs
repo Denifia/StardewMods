@@ -28,18 +28,21 @@ namespace denifia.stardew.sendletters
         private IRepository _repository;
         private IPlayerService _playerService;
         private readonly IMessageService _messageService;
+        private readonly IMailboxService _mailboxService;
 
         public Program(IModHelper modHelper, 
             IRepository repository, 
             IConfigurationService configService,
             IPlayerService playerService,
-            IMessageService messageService)
+            IMessageService messageService,
+            IMailboxService mailboxService)
         {
             _modHelper = modHelper;
             _repository = repository;
             _configService = configService;
             _playerService = playerService;
             _messageService = messageService;
+            _mailboxService = mailboxService;
 
             //Repo.LoadConfig(config);
 
@@ -47,12 +50,12 @@ namespace denifia.stardew.sendletters
             //MessageService = new MessageService(config.ApiUrl);
             //MailboxService = new MailboxService();
 
-            //ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
+            ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
             //ModEvents.PlayerCreated += PlayerCreated;
             //ModEvents.MessageSent += MessageSent;
-            //ModEvents.CheckMailbox += CheckMailbox;
+            ModEvents.CheckMailbox += CheckMailbox;
             //SaveEvents.AfterLoad += AfterSavedGameLoad;
-            //ControlEvents.KeyPressed += ControlEvents_KeyPressed;
+            ControlEvents.KeyPressed += ControlEvents_KeyPressed;
         }
 
         internal void Init()
@@ -63,7 +66,12 @@ namespace denifia.stardew.sendletters
         private void CheckMailbox(object sender, EventArgs e)
         {
             //if (!Repo.CurrentPlayer.Messages.Any()) return;
-            //MailboxService.ShowLetter(Repo.CurrentPlayer.Messages.First());
+            var message = _messageService.GetFirstMessage(_playerService.GetCurrentPlayer().Id);
+            if (message != null)
+            {
+                _mailboxService.ShowLetter(message);
+            }
+            
         }
 
         private void MessageSent(object sender, EventArgs e)
@@ -73,36 +81,47 @@ namespace denifia.stardew.sendletters
 
         private void ControlEvents_KeyPressed(object sender, EventArgsKeyPressed e)
         {
-            //int index = -1;
-            //switch (e.KeyPressed)
-            //{
-            //    case Microsoft.Xna.Framework.Input.Keys.NumPad1:
-            //        index = 0;
-            //        break;
-            //    case Microsoft.Xna.Framework.Input.Keys.NumPad2:
-            //        index = 1;
-            //        break;
-            //    case Microsoft.Xna.Framework.Input.Keys.NumPad3:
-            //        index = 2;
-            //        break;
-            //    case Microsoft.Xna.Framework.Input.Keys.L:
-            //        //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
-            //        Game1.mailbox.Enqueue("test");
-            //        break;
-            //    default:
-            //        break;
-            //}
+            int index = -1;
+            switch (e.KeyPressed)
+            {
+                case Microsoft.Xna.Framework.Input.Keys.NumPad1:
+                    index = 0;
+                    break;
+                case Microsoft.Xna.Framework.Input.Keys.NumPad2:
+                    index = 1;
+                    break;
+                case Microsoft.Xna.Framework.Input.Keys.NumPad3:
+                    index = 2;
+                    break;
+                case Microsoft.Xna.Framework.Input.Keys.L:
+                    //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
+                    Game1.mailbox.Enqueue("test");
+                    break;
+                default:
+                    break;
+            }
 
-            //if (index > -1)
-            //{
-            //    var item = Game1.player.CurrentItem;
-            //    if (item.canBeGivenAsGift())
-            //    {
-            //        var message = "Hey there!^I thought you might like this... Take care!  ^   -{0} %item object {1} {2} %%";
-            //        MessageService.RequestSendMessage(Repo.CurrentPlayer.Friends[index], string.Format(message, Repo.CurrentPlayer.Name, item.parentSheetIndex, item.getStack()));
-            //        Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
-            //    }
-            //}
+            if (index > -1)
+            {
+                var item = Game1.player.CurrentItem;
+                if (item.canBeGivenAsGift())
+                {
+                    var currentPlayer = _playerService.GetCurrentPlayer();
+                    var messageFormat = "Hey there!^I thought you might like this... Take care!  ^   -{0} %item object {1} {2} %%";
+                    var messageText = string.Format(messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
+                    var newMessage = new Models.MessageCreateModel
+                    {
+                        FromPlayerId = currentPlayer.Id,
+                        ToPlayerId = currentPlayer.Id,
+                        Text = messageText
+                    };
+
+                    _messageService.CreateMessage(newMessage);
+                    Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
+
+                    //MessageService.RequestSendMessage(Repo.CurrentPlayer.Friends[index], string.Format(message, Repo.CurrentPlayer.Name, item.parentSheetIndex, item.getStack()));
+                }
+            }
         }
 
         private void PlayerCreated(Player player)
@@ -112,11 +131,11 @@ namespace denifia.stardew.sendletters
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)
         {
-            //var messages = Repo.CurrentPlayer.Messages;
-            //if (messages != null && messages.Any())
-            //{
-            //    MailboxService.PostLetters(messages.Count);
-            //}
+            var messageCount = _messageService.UnreadMessageCount(_playerService.GetCurrentPlayer().Id);
+            if (messageCount > 0)
+            {
+                _mailboxService.PostLetters(messageCount);
+            }
         }
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
@@ -155,14 +174,14 @@ namespace denifia.stardew.sendletters
                 }
             }
 
-            _messageService.CreateMessage(new Models.MessageCreateModel
-            {
-                FromPlayerId = "LUKE.DENMARK.DNITN",
-                ToPlayerId = "LUKE.DENMARK.DNITN",
-                Text = "hi"
-            });
+            //_messageService.CreateMessage(new Models.MessageCreateModel
+            //{
+            //    FromPlayerId = _playerService.GetCurrentPlayer().Id,
+            //    ToPlayerId = _playerService.GetCurrentPlayer().Id,
+            //    Text = "hi"
+            //});
 
-            //MessageService.RequestOverridePlayerMessages();
+            _messageService.CheckForMessages(_playerService.GetCurrentPlayer().Id);
         }
 
         private void ControlEvents_MouseChanged(object sender, EventArgsMouseStateChanged e)

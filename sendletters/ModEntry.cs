@@ -35,7 +35,8 @@ namespace denifia.stardew.sendletters
                 container.Resolve<IRepository>(), 
                 container.Resolve<IConfigurationService>(),
                 container.Resolve<IPlayerService>(),
-                container.Resolve<IMessageService>());
+                container.Resolve<IMessageService>(),
+                container.Resolve<IMailboxService>());
 
             program.Init();
         }

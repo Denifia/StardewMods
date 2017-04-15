@@ -37,14 +37,19 @@ namespace denifia.stardew.sendletters.Domain
             return _players.AsQueryable().Where(predicate);
         }
 
-        public IQueryable<Message> FindMessagesForPlayer(Player player, Expression<Func<Message, bool>> predicate)
+        public IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
         {
-            return player.Messages.AsQueryable().Where(predicate);
+            var p = _players.FirstOrDefault(x => x.Id == playerId);
+            if (p != null)
+            {
+                return p.Messages.AsQueryable().Where(predicate);
+            }
+            return new List<Message>().AsQueryable();
         }
 
-        public void CreateMessageForPlayer(Player player, Message message)
+        public void CreateMessageForPlayer(string playerId, Message message)
         {
-            var p = _players.FirstOrDefault(x => x.Id == player.Id);
+            var p = _players.FirstOrDefault(x => x.Id == playerId);
             if (p != null)
             {
                 p.Messages.Add(message);
@@ -55,6 +60,15 @@ namespace denifia.stardew.sendletters.Domain
         public void Create(Player player)
         {
             _players.Add(player);
+            SaveDatabase();
+        }
+
+        public void Delete(Message message)
+        {
+            foreach (var player in _players)
+            {
+                player.Messages.RemoveAll(x => x.Id == message.Id);
+            }
             SaveDatabase();
         }
 

@@ -1,4 +1,5 @@
-﻿using denifia.stardew.sendletters.Models;
+﻿using denifia.stardew.sendletters.Domain;
+using denifia.stardew.sendletters.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,9 @@ namespace denifia.stardew.sendletters.Services
 {
     public interface IMessageService
     {
-
         void CreateMessage(MessageCreateModel model);
-
+        void CheckForMessages(string playerId);
+        int UnreadMessageCount(string playerId);
+        Message GetFirstMessage(string playerId);
     }
 }
