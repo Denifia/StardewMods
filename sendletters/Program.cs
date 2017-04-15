@@ -112,7 +112,7 @@ namespace denifia.stardew.sendletters
                     var newMessage = new Models.MessageCreateModel
                     {
                         FromPlayerId = currentPlayer.Id,
-                        ToPlayerId = currentPlayer.Id,
+                        ToPlayerId = currentPlayer.Friends[index].Id,
                         Text = messageText
                     };
 
