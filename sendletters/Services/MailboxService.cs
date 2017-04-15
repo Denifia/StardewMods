@@ -13,12 +13,15 @@ namespace denifia.stardew.sendletters.Services
     {
         public void ShowLetter(Message message)
         {
-            Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, "Player Mail");
-            if (Game1.mailbox.Any())
+            if (Game1.mailbox.Peek() == "playerMail")
             {
-                Game1.mailbox.Dequeue();
+                Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, "Player Mail");
+                if (Game1.mailbox.Any())
+                {
+                    Game1.mailbox.Dequeue();
+                }
+                ModEvents.RaiseMessageReadEvent(message);
             }
-            ModEvents.RaiseMessageReadEvent(message);
         }
 
         public void PostLetters(int count)

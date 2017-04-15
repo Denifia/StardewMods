@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +57,23 @@ namespace denifia.stardew.sendletters
             ModEvents.CheckMailbox += CheckMailbox;
             //SaveEvents.AfterLoad += AfterSavedGameLoad;
             ControlEvents.KeyPressed += ControlEvents_KeyPressed;
+            ModEvents.MessageCrafted += ModEvents_MessageCrafted;
+        }
+
+        private void ModEvents_MessageCrafted(Item item)
+        {
+            var currentPlayer = _playerService.GetCurrentPlayer();
+            var messageFormat = "Hey there!^I thought you might like this... Take care!  ^   -{0} %item object {1} {2} %%";
+            var messageText = string.Format(messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
+            var newMessage = new Models.MessageCreateModel
+            {
+                FromPlayerId = currentPlayer.Id,
+                ToPlayerId = currentPlayer.Friends[0].Id,
+                Text = messageText
+            };
+
+            _messageService.CreateMessage(newMessage);
+            Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
         }
 
         internal void Init()
@@ -70,8 +88,11 @@ namespace denifia.stardew.sendletters
             if (message != null)
             {
                 _mailboxService.ShowLetter(message);
+            }            
+            else
+            {
+                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
             }
-            
         }
 
         private void MessageSent(object sender, EventArgs e)
@@ -95,7 +116,8 @@ namespace denifia.stardew.sendletters
                     break;
                 case Microsoft.Xna.Framework.Input.Keys.L:
                     //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
-                    Game1.mailbox.Enqueue("test");
+                    //Game1.mailbox.Enqueue("test");
+                    Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
                     break;
                 default:
                     break;
