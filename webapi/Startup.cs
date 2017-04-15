@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using denifia.stardew.webapi.Domain;
 
 namespace denifia.stardew.webapi
 {
@@ -37,6 +38,8 @@ namespace denifia.stardew.webapi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            Repository.Instance.LoadDatabase(env.ContentRootPath);
+            
             app.UseMvc();
         }
     }

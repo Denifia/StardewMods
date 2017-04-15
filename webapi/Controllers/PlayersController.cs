@@ -27,6 +27,9 @@ namespace denifia.stardew.webapi.Controllers
                     Id = id,
                     Name = player.Name
                 });
+
+                repo.SaveDatabase();
+
                 response.StatusCode = HttpStatusCode.Created;
             }
             else
