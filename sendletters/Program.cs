@@ -102,6 +102,11 @@ namespace denifia.stardew.sendletters
             // Find out if we need to set a new player as current
             PlayerService.CreatePlayer();
 
+//            Game1.player.Name
+//"Luke"
+//Game1.player.farmName
+//"Denmark"
+
             LocationEvents.CurrentLocationChanged += LocationEvents_CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
 

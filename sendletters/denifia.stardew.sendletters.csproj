@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Game.cs" />
     <Compile Include="Domain\Repository.cs" />
     <Compile Include="Menus\ComposeLetterMenu.cs" />
     <Compile Include="ModConfig.cs" />

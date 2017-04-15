@@ -1,6 +1,21 @@
 ﻿{
   "ApiUrl": "http://denifiastardewsendletters.azurewebsites.net/api/",
-  "YourUniqueId": "2",
-  "YourDisplayName": "Luke",
-  "YourFriendsUniqueIds": [ "1", "2", "3" ]
+  "Debug": true,
+  "Players": [
+    {
+      "Id": "denifia",
+      "Name": "Luke",
+      "Friends": [
+        {
+          "Id": "1",
+          "Name": "Telle"
+        },
+        {
+          "Id": "denifia",
+          "Name": "Me"
+        }
+      ],
+      "Games": []
+    }
+  ]
 }

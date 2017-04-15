@@ -16,10 +16,13 @@ namespace denifia.stardew.sendletters.Domain
 
         public List<Player> Friends { get; set; }
 
+        public List<Game> Games { get; set; }
+
         public Player()
         {
             Messages = new List<Message>();
             Friends = new List<Player>();
+            Games = new List<Game>();
         }
     }
 }
