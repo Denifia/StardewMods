@@ -15,6 +15,7 @@ namespace denifia.stardew.sendletters
         public static event EventHandler PlayerCreated;
         public static event EventHandler MessageSent;
         public static event MessageReadEventHandler MessageRead;
+        public static event EventHandler CheckMailbox;
 
         internal static void RaisePlayerMessagesUpdatedEvent()
         {
@@ -34,6 +35,11 @@ namespace denifia.stardew.sendletters
         internal static void RaiseMessageReadEvent(Message message)
         {
             MessageRead(message);
+        }
+
+        internal static void RaiseCheckMailboxEvent()
+        {
+            CheckMailbox(null, null);
         }
     }
 

@@ -46,6 +46,9 @@ namespace denifia.stardew.webapi.Controllers
                     Text = message.Message
                 };
                 player.Messages.Add(newMessage);
+
+                repo.SaveDatabase();
+
                 return newMessage.Id;
             }
 
@@ -76,6 +79,7 @@ namespace denifia.stardew.webapi.Controllers
             if (player != null)
             {
                 player.Messages.RemoveAll(x => x.Id == Id);
+                repo.SaveDatabase();
             }
         }
     }
