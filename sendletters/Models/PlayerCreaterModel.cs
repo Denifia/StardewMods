@@ -9,5 +9,6 @@ namespace denifia.stardew.sendletters.Models
     public class PlayerCreaterModel
     {
         public string Name { get; set; }
+        public string FarmName { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using denifia.stardew.sendletters.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,5 +10,7 @@ namespace denifia.stardew.sendletters.Services
     public interface IPlayerService
     {
         void LoadOrCreatePlayer();
+        Player GetCurrentPlayer();
+        Player GetPlayerById(string id);
     }
 }

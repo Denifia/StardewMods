@@ -42,6 +42,16 @@ namespace denifia.stardew.sendletters.Domain
             return player.Messages.AsQueryable().Where(predicate);
         }
 
+        public void CreateMessageForPlayer(Player player, Message message)
+        {
+            var p = _players.FirstOrDefault(x => x.Id == player.Id);
+            if (p != null)
+            {
+                p.Messages.Add(message);
+                SaveDatabase();
+            }
+        }
+
         public void Create(Player player)
         {
             _players.Add(player);

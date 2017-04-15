@@ -34,7 +34,8 @@ namespace denifia.stardew.sendletters
             var program = new Program(helper, 
                 container.Resolve<IRepository>(), 
                 container.Resolve<IConfigurationService>(),
-                container.Resolve<IPlayerService>());
+                container.Resolve<IPlayerService>(),
+                container.Resolve<IMessageService>());
 
             program.Init();
         }

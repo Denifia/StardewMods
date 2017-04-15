@@ -17,19 +17,23 @@ namespace denifia.stardew.sendletters.Services
         //}
 
         private const int _randonStringLength = 5;
-
         private Player _currentPlayer;
-        public Player CurrentPlayer
-        {
-            get { return _currentPlayer; }
-            private set { _currentPlayer = value; }
-        }
 
         private readonly IRepository _repository;
 
         public PlayerService(IRepository repository)
         {
             _repository = repository;
+        }
+
+        public Player GetCurrentPlayer()
+        {
+            return _currentPlayer;
+        }
+
+        public Player GetPlayerById(string id)
+        {
+            return _repository.FindPlayers(x => x.Id == id).FirstOrDefault();
         }
 
         public void LoadOrCreatePlayer()
@@ -69,6 +73,8 @@ namespace denifia.stardew.sendletters.Services
 
             return new string(chars, 0, length);
         }
+
+        
 
         //public void CreatePlayer()
         //{

@@ -27,16 +27,19 @@ namespace denifia.stardew.sendletters
         private IConfigurationService _configService;
         private IRepository _repository;
         private IPlayerService _playerService;
+        private readonly IMessageService _messageService;
 
         public Program(IModHelper modHelper, 
             IRepository repository, 
             IConfigurationService configService,
-            IPlayerService playerService)
+            IPlayerService playerService,
+            IMessageService messageService)
         {
             _modHelper = modHelper;
             _repository = repository;
             _configService = configService;
             _playerService = playerService;
+            _messageService = messageService;
 
             //Repo.LoadConfig(config);
 
@@ -122,12 +125,12 @@ namespace denifia.stardew.sendletters
             // Find out if we need to set a new player as current
             //PlayerService.CreatePlayer();
 
-            //LocationEvents.CurrentLocationChanged += LocationEvents_CurrentLocationChanged;
-            //TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
+            LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
+            TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
             //SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
 
-        private void LocationEvents_CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
+        private void CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
         {
             if (e.NewLocation.name == "Farm")
             {
@@ -136,6 +139,30 @@ namespace denifia.stardew.sendletters
             {
                 ControlEvents.MouseChanged -= ControlEvents_MouseChanged;
             }
+        }
+
+        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
+        {
+            if (_configService.InDebugMode())
+            {
+                
+            }
+            else
+            {
+                if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1600))
+                {
+                    // Check mail on every hour in game between 8am and 6pm
+                }
+            }
+
+            _messageService.CreateMessage(new Models.MessageCreateModel
+            {
+                FromPlayerId = "LUKE.DENMARK.DNITN",
+                ToPlayerId = "LUKE.DENMARK.DNITN",
+                Text = "hi"
+            });
+
+            //MessageService.RequestOverridePlayerMessages();
         }
 
         private void ControlEvents_MouseChanged(object sender, EventArgsMouseStateChanged e)
@@ -152,9 +179,6 @@ namespace denifia.stardew.sendletters
             }
         }
 
-        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
-        {
-            //MessageService.RequestOverridePlayerMessages();
-        }
+        
     }
 }

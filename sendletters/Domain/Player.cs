@@ -18,8 +18,6 @@ namespace denifia.stardew.sendletters.Domain
 
         public List<Player> Friends { get; set; }
 
-        public List<Game> Games { get; set; }
-
         public Player(string name, string farmName, string random)
         {
             Name = name;
@@ -28,6 +26,11 @@ namespace denifia.stardew.sendletters.Domain
 
             Messages = new List<Message>();
             Friends = new List<Player>();
+        }
+
+        public Player()
+        {
+
         }
     }
 }

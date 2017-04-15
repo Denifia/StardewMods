@@ -8,16 +8,43 @@ using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Services
 {
-    public class MessageService : RestBaseService
+    public class MessageService : IMessageService
     {
-        public MessageService(Uri api) : base(api)
+        private readonly IRepository _repository;
+        private readonly IPlayerService _playerService;
+
+        public MessageService(IRepository repository, IPlayerService playerService)
         {
-            ModEvents.MessageRead += MessageRead;
+            _repository = repository;
+            _playerService = playerService;
         }
+
+        public void CreateMessage(MessageCreateModel model)
+        {
+            var message = new Message
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = model.Text,
+                FromPlayerId = model.FromPlayerId
+            };
+
+            var player = _playerService.GetPlayerById(model.ToPlayerId);
+
+            if (player != null)
+            {
+                _repository.CreateMessageForPlayer(player, message);
+            }
+        }
+
+
+        //public MessageService(Uri api) : base(api)
+        //{
+        //    ModEvents.MessageRead += MessageRead;
+        //}
 
         private void MessageRead(Message message)
         {
-            RequestDeleteMessage(message);
+            //RequestDeleteMessage(message);
         }
 
         public void RequestOverridePlayerMessages()
@@ -59,5 +86,7 @@ namespace denifia.stardew.sendletters.Services
             //urlSegments.Add("id", message.Id);
             //DeleteRequest("messages/{playerId}/{id}", urlSegments);
         }
+
+        
     }
 }

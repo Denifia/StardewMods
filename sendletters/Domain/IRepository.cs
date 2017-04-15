@@ -14,7 +14,7 @@ namespace denifia.stardew.sendletters.Domain
         void Create(Player player);
 
         IQueryable<Message> FindMessagesForPlayer(Player player, Expression<Func<Message, bool>> predicate);
-
+        void CreateMessageForPlayer(Player player, Message message);
 
         //void Update(TEntity entity);
         //void Delete(TEntity entity);

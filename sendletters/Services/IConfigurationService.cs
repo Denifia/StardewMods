@@ -3,5 +3,6 @@
     public interface IConfigurationService
     {
         string GetLocalPath();
+        bool InDebugMode();
     }
 }

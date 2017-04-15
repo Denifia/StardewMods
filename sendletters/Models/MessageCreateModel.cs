@@ -8,8 +8,10 @@ namespace denifia.stardew.sendletters.Models
 {
     public class MessageCreateModel
     {
+        public string FromPlayerId { get; set; }
+
         public string ToPlayerId { get; set; }
 
-        public string Message { get; set; }
+        public string Text { get; set; }
     }
 }
