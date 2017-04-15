@@ -13,12 +13,40 @@
         {
           "Id": "denifia",
           "Name": "Me"
+        },
+        {
+          "Id": "son",
+          "Name": "Son"
         }
       ],
       "Games": [
         {
           "PlayerName": "Luke",
+          "FarmName": "Denmark"
+        },
+        {
+          "PlayerName": "Luke",
           "FarmName": "Earthlock"
+        }
+      ]
+    },
+    {
+      "Id": "son",
+      "Name": "Fred",
+      "Friends": [
+        {
+          "Id": "1",
+          "Name": "Mummy"
+        },
+        {
+          "Id": "denifia",
+          "Name": "Daddy"
+        }
+      ],
+      "Games": [
+        {
+          "PlayerName": "Winston",
+          "FarmName": "Oasis"
         }
       ]
     }
