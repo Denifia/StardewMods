@@ -83,9 +83,9 @@ namespace denifia.stardew.sendletters
             }
         }
 
-        private void PlayerCreated(object sender, EventArgs e)
+        private void PlayerCreated(Player player)
         {
-            Repo.SetCurrentPlayer();
+            Repo.SetCurrentPlayer(player);
         }
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)
@@ -104,7 +104,6 @@ namespace denifia.stardew.sendletters
 
             LocationEvents.CurrentLocationChanged += LocationEvents_CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
-
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
 

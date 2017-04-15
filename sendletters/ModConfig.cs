@@ -1,4 +1,5 @@
-﻿using System;
+﻿using denifia.stardew.sendletters.Domain;
+using System;
 using System.Collections.Generic;
 
 namespace denifia.stardew.sendletters
@@ -6,8 +7,7 @@ namespace denifia.stardew.sendletters
     public class ModConfig
     {
         public Uri ApiUrl { get; set; }
-        public string YourUniqueId { get; set; }
-        public string YourDisplayName { get; set; }
-        public List<string> YourFriendsUniqueIds { get; set; }
+        public List<Player> Players { get; set; }
+        public bool Debug { get; set; }
     }
 }

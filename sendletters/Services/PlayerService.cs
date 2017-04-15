@@ -1,5 +1,7 @@
-﻿using denifia.stardew.sendletters.Models;
+﻿using denifia.stardew.sendletters.Domain;
+using denifia.stardew.sendletters.Models;
 using RestSharp;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,14 @@ namespace denifia.stardew.sendletters.Services
 
         public void CreatePlayer()
         {
-            var player = Repo.Players[0];
+            if (!Repo.Players.Any()) return;
+
+            var playerName = Game1.player.Name;
+            var farmName = Game1.player.farmName;
+
+            var possiblePlayers = Repo.Players.Where(x => !x.Games.Any() || x.Games.Any(g => g.PlayerName == playerName && g.FarmName == farmName)).ToList();
+            if (!possiblePlayers.Any()) return;
+            var player = possiblePlayers[0];
 
             var createrPlayerModel = new PlayerCreaterModel
             {
@@ -25,7 +34,7 @@ namespace denifia.stardew.sendletters.Services
 
             var urlSegments = new Dictionary<string, string>();
             urlSegments.Add("id", player.Id);
-            PutRequest("players/{id}", urlSegments, createrPlayerModel, ModEvents.RaisePlayerCreatedEvent);
+            PutRequest<Player>("players/{id}", urlSegments, createrPlayerModel, ModEvents.RaisePlayerCreatedEvent, player);
         }
     }
 }
