@@ -16,10 +16,12 @@ namespace denifia.stardew.sendletters.Menus
         public InventoryMenu ItemsToGrabMenu;
         private TemporaryAnimatedSprite poof;
         private ComposeLetter.behaviorOnItemChange itemChangeBehavior;
+        private string ToPlayerId;
 
-        public ComposeLetter(List<Item> inventory, int capacity, int rows = 3, ComposeLetter.behaviorOnItemChange itemChangeBehavior = null, InventoryMenu.highlightThisItem highlightMethod = null)
+        public ComposeLetter(string toPlayerId, List<Item> inventory, int capacity, int rows = 3, ComposeLetter.behaviorOnItemChange itemChangeBehavior = null, InventoryMenu.highlightThisItem highlightMethod = null)
           : base(highlightMethod, true, true, 0, 0)
         {
+            this.ToPlayerId = toPlayerId;
             this.itemChangeBehavior = itemChangeBehavior;
             int num1 = Game1.tileSize * (capacity / rows);
             int tileSize = Game1.tileSize;
@@ -105,7 +107,7 @@ namespace denifia.stardew.sendletters.Menus
                 Game1.exitActiveMenu();
                 if (this.ItemsToGrabMenu.actualInventory.Any())
                 {
-                    ModEvents.RaiseMessageCraftedEvent(this.ItemsToGrabMenu.actualInventory[0]);
+                    ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
                 }
             }
             if (!this.trashCan.containsPoint(x, y) || this.heldItem == null || !this.heldItem.canBeTrashed())

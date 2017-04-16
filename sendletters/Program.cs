@@ -60,7 +60,7 @@ namespace denifia.stardew.sendletters
             ModEvents.MessageCrafted += ModEvents_MessageCrafted;
         }
 
-        private void ModEvents_MessageCrafted(Item item)
+        private void ModEvents_MessageCrafted(string toPlayerId, Item item)
         {
             var currentPlayer = _playerService.GetCurrentPlayer();
             var messageFormat = "Hey there!^I thought you might like this... Take care!  ^   -{0} %item object {1} {2} %%";
@@ -68,7 +68,7 @@ namespace denifia.stardew.sendletters
             var newMessage = new Models.MessageCreateModel
             {
                 FromPlayerId = currentPlayer.Id,
-                ToPlayerId = currentPlayer.Friends[0].Id,
+                ToPlayerId = toPlayerId,
                 Text = messageText
             };
 
@@ -91,13 +91,34 @@ namespace denifia.stardew.sendletters
             }            
             else
             {
-                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
+                ShowSendLetterFriendSelectMenu();
+                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
             }
         }
 
         private void MessageSent(object sender, EventArgs e)
         {
             
+        }
+
+        public void selectChannel(Farmer who, string answer)
+        {
+            if (!answer.Equals("(Leave)"))
+            {
+                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
+            }
+        }
+
+        public void ShowSendLetterFriendSelectMenu()
+        {
+            List<Response> responseList = new List<Response>();
+            foreach (var friend in _playerService.GetCurrentPlayer().Friends)
+            {
+                responseList.Add(new Response(friend.Id, friend.Id));//string.Format("{0} ({1})", friend.Name, friend.FarmName)));
+            }
+            responseList.Add(new Response("(Leave)", "(Leave)"));
+            Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), new GameLocation.afterQuestionBehavior(this.selectChannel), (NPC)null);
+            Game1.player.Halt();
         }
 
         private void ControlEvents_KeyPressed(object sender, EventArgsKeyPressed e)
@@ -117,7 +138,8 @@ namespace denifia.stardew.sendletters
                 case Microsoft.Xna.Framework.Input.Keys.L:
                     //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
                     //Game1.mailbox.Enqueue("test");
-                    Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
+                    //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
+                    ShowSendLetterFriendSelectMenu();
                     break;
                 default:
                     break;

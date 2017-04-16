@@ -12,7 +12,7 @@ namespace denifia.stardew.sendletters
     {
         public delegate void MessageReadEventHandler(Message message);
         public delegate void PlayerCreatedHandler(Player player);
-        public delegate void MessageCraftedHandler(Item item);
+        public delegate void MessageCraftedHandler(string toPlayerId, Item item);
 
         public static event EventHandler PlayerMessagesUpdated;
         public static event PlayerCreatedHandler PlayerCreated;
@@ -46,9 +46,9 @@ namespace denifia.stardew.sendletters
             CheckMailbox(null, null);
         }
         
-        internal static void RaiseMessageCraftedEvent(Item item)
+        internal static void RaiseMessageCraftedEvent(string toPlayerId, Item item)
         {
-            MessageCrafted(item);
+            MessageCrafted(toPlayerId, item);
         }
 
     }
