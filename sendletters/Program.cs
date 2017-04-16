@@ -1,9 +1,12 @@
-﻿using denifia.stardew.sendletters.Domain;
+﻿using Autofac;
+using denifia.stardew.sendletters.Domain;
 using denifia.stardew.sendletters.Menus;
 using denifia.stardew.sendletters.Services;
 using Microsoft.Xna.Framework;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,112 +19,113 @@ using xTile.Tiles;
 namespace denifia.stardew.sendletters
 {
     public class Program
-    {
-        private PlayerService PlayerService { get; set; }
-        private MessageService MessageService { get; set; }
-        private MailboxService MailboxService { get; set; }
-        private Repository Repo = Repository.Instance;
+    { 
+        private readonly IModHelper _modHelper;
+        private readonly IConfigurationService _configService;
+        private readonly IRepository _repository;
+        private readonly IPlayerService _playerService;
+        private readonly IMessageService _messageService;
+        private readonly IMailboxService _mailboxService;
 
-        public Program(ModConfig config)
+        private string _currentPlayerId
         {
-            Repo.LoadConfig(config);
+            get
+            {
+                return _playerService.GetCurrentPlayer().Id;
+            }
+        }
 
-            PlayerService = new PlayerService(config.ApiUrl);
-            MessageService = new MessageService(config.ApiUrl);
-            MailboxService = new MailboxService();
+        public Program(IModHelper modHelper, 
+            IRepository repository, 
+            IConfigurationService configService,
+            IPlayerService playerService,
+            IMessageService messageService,
+            IMailboxService mailboxService)
+        {
+            _modHelper = modHelper;
+            _repository = repository;
+            _configService = configService;
+            _playerService = playerService;
+            _messageService = messageService;
+            _mailboxService = mailboxService;
 
             ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
             ModEvents.PlayerCreated += PlayerCreated;
             ModEvents.MessageSent += MessageSent;
-            ModEvents.CheckMailbox += CheckMailbox;
+        }
+        
+        internal void Init()
+        {
             SaveEvents.AfterLoad += AfterSavedGameLoad;
-            ControlEvents.KeyPressed += ControlEvents_KeyPressed;
-        }
-
-        private void CheckMailbox(object sender, EventArgs e)
-        {
-            if (!Repo.CurrentPlayer.Messages.Any()) return;
-            MailboxService.ShowLetter(Repo.CurrentPlayer.Messages.First());
-        }
-
-        private void MessageSent(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void ControlEvents_KeyPressed(object sender, EventArgsKeyPressed e)
-        {
-            int index = -1;
-            switch (e.KeyPressed)
-            {
-                case Microsoft.Xna.Framework.Input.Keys.NumPad1:
-                    index = 0;
-                    break;
-                case Microsoft.Xna.Framework.Input.Keys.NumPad2:
-                    index = 1;
-                    break;
-                case Microsoft.Xna.Framework.Input.Keys.NumPad3:
-                    index = 2;
-                    break;
-                case Microsoft.Xna.Framework.Input.Keys.L:
-                    //Game1.activeClickableMenu = new ComposeLetterMenu("ni");
-                    Game1.mailbox.Enqueue("test");
-                    break;
-                default:
-                    break;
-            }
-
-            if (index > -1)
-            {
-                var item = Game1.player.CurrentItem;
-                if (item.canBeGivenAsGift())
-                {
-                    var message = "Hey there!^I thought you might like this... Take care!  ^   -{0} %item object {1} {2} %%";
-                    MessageService.RequestSendMessage(Repo.CurrentPlayer.Friends[index], string.Format(message, Repo.CurrentPlayer.Name, item.parentSheetIndex, item.getStack()));
-                    Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
-                }
-            }
         }
 
         private void PlayerCreated(Player player)
         {
-            Repo.SetCurrentPlayer(player);
+            //throw new NotImplementedException();
+        }
+
+        private void MessageSent(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)
         {
-            var messages = Repo.CurrentPlayer.Messages;
-            if (messages != null && messages.Any())
+            var messageCount = _messageService.UnreadMessageCount(_playerService.GetCurrentPlayer().Id);
+            if (messageCount > 0)
             {
-                MailboxService.PostLetters(messages.Count);
+                _mailboxService.PostLetters(messageCount);
             }
         }
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
-            // Find out if we need to set a new player as current
-            PlayerService.CreatePlayer();
+            _playerService.LoadCurrentPlayer();
 
-            LocationEvents.CurrentLocationChanged += LocationEvents_CurrentLocationChanged;
+            LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
 
-        private void LocationEvents_CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
+        private void CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
         {
             if (e.NewLocation.name == "Farm")
             {
-                ControlEvents.MouseChanged += ControlEvents_MouseChanged;
-            } else
+                // Only watch for mouse events while at the farm, for performance
+                ControlEvents.MouseChanged += MouseChanged;
+            }
+            else
             {
-                ControlEvents.MouseChanged -= ControlEvents_MouseChanged;
+                ControlEvents.MouseChanged -= MouseChanged;
             }
         }
 
-        private void ControlEvents_MouseChanged(object sender, EventArgsMouseStateChanged e)
+        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
+        {
+            var timeToCheck = false;
+            if (_configService.InDebugMode())
+            {
+                timeToCheck = true;
+            }
+            else
+            {
+                if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1600))
+                {
+                    // Check mail on every hour in game between 8am and 6pm
+                    timeToCheck = true;
+                }
+            }          
+            if (timeToCheck)
+            {
+                _messageService.CheckForMessages(_currentPlayerId);
+            }
+        }
+
+        private void MouseChanged(object sender, EventArgsMouseStateChanged e)
         {
             if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
+                // Check if the click is on the mailbox tile or the one above it
                 Location tileLocation = new Location() { X = (int)Game1.currentCursorTile.X, Y = (int)Game1.currentCursorTile.Y };
                 Vector2 key = new Vector2((float)tileLocation.X, (float)tileLocation.Y);
 
@@ -130,11 +134,6 @@ namespace denifia.stardew.sendletters
                     ModEvents.RaiseCheckMailboxEvent();
                 }
             }
-        }
-
-        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
-        {
-            MessageService.RequestOverridePlayerMessages();
         }
     }
 }

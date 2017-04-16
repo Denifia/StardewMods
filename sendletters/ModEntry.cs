@@ -1,5 +1,7 @@
-﻿using denifia.stardew.sendletters.Domain;
+﻿using Autofac;
+using denifia.stardew.sendletters.Domain;
 using denifia.stardew.sendletters.Models;
+using denifia.stardew.sendletters.Services;
 using RestSharp;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -17,7 +19,35 @@ namespace denifia.stardew.sendletters
         public override void Entry(IModHelper helper)
         {
             var config = helper.ReadConfig<ModConfig>();
-            var program = new Program(config);           
+
+            var builder = new ContainerBuilder();
+            builder.RegisterInstance(helper).As<IModHelper>();
+            // ToDo: switch repos based on config
+            if (config.LocalOnly)
+            {
+                builder.RegisterType<LocalRepository>().As<IRepository>();
+            }
+            else
+            {
+                builder.RegisterType<LocalAndRemoteRepository>().As<IRepository>();
+            }
+            
+            builder.RegisterAssemblyTypes(typeof(ModEntry).Assembly)
+                .Where(t => t.Name.EndsWith("Service"))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
+            //builder.RegisterType<ConfigurationService>().As<IConfigurationService>();
+            var container = builder.Build();
+
+            var program = new Program(helper, 
+                container.Resolve<IRepository>(), 
+                container.Resolve<IConfigurationService>(),
+                container.Resolve<IPlayerService>(),
+                container.Resolve<IMessageService>(),
+                container.Resolve<IMailboxService>());
+
+            program.Init();
         }
     }
 }

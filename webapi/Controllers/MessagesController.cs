@@ -38,21 +38,25 @@ namespace denifia.stardew.webapi.Controllers
             var response = "";
             var player = repo.Players.FirstOrDefault(x => x.Id == message.ToPlayerId);
 
-            if (player != null)
+            if (player == null)
             {
-                var newMessage = new Message()
+                player = new Player
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    Text = message.Message
+                    Id = message.ToPlayerId
                 };
-                player.Messages.Add(newMessage);
-
-                repo.SaveDatabase();
-
-                return newMessage.Id;
+                repo.Players.Add(player);
             }
 
-            return response;
+            var newMessage = new Message()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = message.Message
+            };
+            player.Messages.Add(newMessage);
+
+            repo.SaveDatabase();
+
+            return newMessage.Id;
         }
 
         // GET api/Messages/1
