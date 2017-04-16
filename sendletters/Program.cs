@@ -91,7 +91,10 @@ namespace denifia.stardew.sendletters
             }            
             else
             {
-                ShowSendLetterFriendSelectMenu();
+                if (!Game1.mailbox.Any())
+                {
+                    ShowSendLetterFriendSelectMenu();
+                }
                 //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(new List<Item>(), 1, 1);
             }
         }
