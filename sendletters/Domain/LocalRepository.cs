@@ -103,10 +103,17 @@ namespace denifia.stardew.sendletters.Domain
                 {
                     if (!player.Friends.Any(x => x.Id == p.Id))
                     {
-                        player.Friends.Add(p);
+                        player.Friends.Add(new Player()
+                        {
+                            Name = p.Name,
+                            FarmName = p.FarmName,
+                            Id = p.Id
+                        });
                     }
                 }
             }
+
+            SaveDatabase();
         }
 
         private void SaveDatabase()
