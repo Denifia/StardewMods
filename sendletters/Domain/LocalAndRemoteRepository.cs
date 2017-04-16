@@ -36,6 +36,7 @@ namespace denifia.stardew.sendletters.Domain
         private void RemoteMessagesRetreived(List<Message> remoteMessages)
         {
             // Add remote messages to local db
+            if (remoteMessages == null) return;
             foreach (var message in remoteMessages)
             {
                 base.CreateMessageForPlayer(_configService.CurrentPlayerId, message);
@@ -52,7 +53,7 @@ namespace denifia.stardew.sendletters.Domain
                 var messageCreateModel = new MessageCreateModel
                 {
                     ToPlayerId = playerId,
-                    Message = message
+                    Message = message.Text
                 };
 
                 // Not a local player

@@ -34,9 +34,16 @@ namespace denifia.stardew.webapi.Domain
         public void LoadDatabase(string path)
         {
             FilePath = path;
+            var databaseFile = new FileInfo(Path.Combine(FilePath, DatabaseFile));
+
+            if (!databaseFile.Exists)
+            {
+                File.WriteAllText(databaseFile.FullName, "[]");
+            }
+
             if (Players == null)
             {
-                Players = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText(Path.Combine(FilePath, DatabaseFile)));
+                Players = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText(databaseFile.FullName));
             }
         }
 

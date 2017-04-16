@@ -10,7 +10,7 @@ namespace denifia.stardew.sendletters.Services
 {
     public interface IMessageService
     {
-        void CreateMessage(MessageCreateModel model);
+        void CreateMessage(MessageCreateMessage model);
         void CheckForMessages(string playerId);
         int UnreadMessageCount(string playerId);
         Message GetFirstMessage(string playerId);

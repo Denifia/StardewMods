@@ -1,5 +1,6 @@
 ﻿using denifia.stardew.sendletters.Domain;
 using denifia.stardew.sendletters.Menus;
+using denifia.stardew.sendletters.Models;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -96,7 +97,7 @@ namespace denifia.stardew.sendletters.Services
         {
             var currentPlayer = _playerService.GetCurrentPlayer();
             var messageText = string.Format(_messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
-            var newMessage = new Models.MessageCreateModel
+            var newMessage = new MessageCreateMessage
             {
                 FromPlayerId = currentPlayer.Id,
                 ToPlayerId = toPlayerId,

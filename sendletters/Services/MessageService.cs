@@ -20,7 +20,7 @@ namespace denifia.stardew.sendletters.Services
             ModEvents.MessageRead += MessageRead;
         }
 
-        public void CreateMessage(MessageCreateModel model)
+        public void CreateMessage(MessageCreateMessage model)
         {
             var message = new Message
             {
