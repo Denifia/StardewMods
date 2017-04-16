@@ -56,7 +56,7 @@ namespace denifia.stardew.sendletters
             //ModEvents.MessageSent += MessageSent;
             ModEvents.CheckMailbox += CheckMailbox;
             //SaveEvents.AfterLoad += AfterSavedGameLoad;
-            ControlEvents.KeyPressed += ControlEvents_KeyPressed;
+            //ControlEvents.KeyPressed += ControlEvents_KeyPressed;
             ModEvents.MessageCrafted += ModEvents_MessageCrafted;
         }
 
