@@ -1,19 +1,16 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace denifia.stardew.webapi.Domain
 {
     public class Repository
     {
         private static Repository instance;
-        private string FilePath;
-        private readonly string DatabaseFile = "data.json";
+        private readonly string _databaseFileName = "data.json";
+        private FileInfo _database;
 
-        public List<Player> Players { get; set; }
+        public List<Message> Messages { get; set; }
 
         private Repository()
         {
@@ -31,25 +28,28 @@ namespace denifia.stardew.webapi.Domain
             }
         }
 
-        public void LoadDatabase(string path)
+        public void Init(string filePath)
         {
-            FilePath = path;
-            var databaseFile = new FileInfo(Path.Combine(FilePath, DatabaseFile));
+            _database = new FileInfo(Path.Combine(filePath, _databaseFileName));
+            LoadDatabase();
+        }
 
-            if (!databaseFile.Exists)
+        public void LoadDatabase()
+        {
+            if (!_database.Exists)
             {
-                File.WriteAllText(databaseFile.FullName, "[]");
+                File.WriteAllText(_database.FullName, "[]");
             }
 
-            if (Players == null)
+            if (Messages == null)
             {
-                Players = JsonConvert.DeserializeObject<List<Player>>(File.ReadAllText(databaseFile.FullName));
+                Messages = JsonConvert.DeserializeObject<List<Message>>(File.ReadAllText(_database.FullName));
             }
         }
 
         public void SaveDatabase()
         {
-            File.WriteAllText(Path.Combine(FilePath, DatabaseFile), JsonConvert.SerializeObject(Players));
+            File.WriteAllText(_database.FullName, JsonConvert.SerializeObject(Messages));
         }
     }
 }

@@ -38,8 +38,7 @@ namespace denifia.stardew.webapi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            Repository.Instance.LoadDatabase(env.ContentRootPath);
-            
+            Repository.Instance.Init(env.ContentRootPath);
             app.UseMvc();
         }
     }

@@ -5,86 +5,66 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net;
 using denifia.stardew.webapi.Domain;
-using denifia.stardew.webapi.Models;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using System.Text;
+using denifia.stardew.common.Models;
 
 namespace denifia.stardew.webapi.Controllers
 {
-    public class JsonContent : StringContent
-    {
-        public JsonContent(string content)
-            : this(content, Encoding.UTF8)
-        {
-        }
-
-        public JsonContent(string content, Encoding encoding)
-            : base(content, encoding, "application/json")
-        {
-        }
-    }
-
     [Route("api/[controller]")]
     public class MessagesController : Controller
     {
-
         Repository repo = Repository.Instance;
 
-        // POST api/Messages/1
-        [HttpPost("{playerId}")]
-        public string Post(string playerId, [FromBody]MessageCreateModel message)
+        // GET api/Messages/{playerid}
+        [HttpGet("{messageId}")]
+        public Message Get(string messageId)
         {
-            var response = "";
-            var player = repo.Players.FirstOrDefault(x => x.Id == message.ToPlayerId);
+            var message = repo.Messages.Where(x => x.Id == messageId).FirstOrDefault();
+            return message;
+        }
 
-            if (player == null)
-            {
-                player = new Player
-                {
-                    Id = message.ToPlayerId
-                };
-                repo.Players.Add(player);
-            }
+        // GET api/Messages/toplayer/{playerid}
+        [Route("~/api/Messages/ToPlayer/{playerId}")]
+        [HttpGet("{playerId}")]
+        public List<Message> ToPlayer(string playerId)
+        {
+            var messages = repo.Messages.Where(x => x.ToPlayerId == playerId).ToList();
+            return messages;
+        }
 
-            var newMessage = new Message()
+        // GET api/Messages/fromplayer/{playerid}
+        [Route("~/api/Messages/FromPlayer/{playerId}")]
+        [HttpGet("{playerId}")]
+        public List<Message> FromPlayer(string playerId)
+        {
+            var messages = repo.Messages.Where(x => x.FromPlayerId == playerId).ToList();
+            return messages;
+        }
+
+        // POST api/Messages
+        [HttpPost]
+        public string Post([FromBody]MessageCreateModel model)
+        {
+            var message = new Message()
             {
                 Id = Guid.NewGuid().ToString(),
-                Text = message.Message
+                Text = model.Text,
+                ToPlayerId = model.ToPlayerId,
+                FromPlayerId = model.FromPlayerId,
+                CreatedDate = DateTime.Now
             };
-            player.Messages.Add(newMessage);
 
+            repo.Messages.Add(message);
             repo.SaveDatabase();
-
-            return newMessage.Id;
+            return message.Id;
         }
 
-        // GET api/Messages/1
-        [HttpGet("{playerId}")]
-        public List<Message> Get(string playerId)
+        // DELETE api/Messages/{messageId}
+        [HttpDelete("{messageId}")]
+        public void Delete(string messageId)
         {
-            var response = new HttpResponseMessage();
-            var player = repo.Players.FirstOrDefault(x => x.Id == playerId);
-
-            if (player != null)
-            {
-                return player.Messages;
-            }
-
-            return null;
-        }
-
-        // DELETE api/Messages/1
-        [HttpDelete("{playerId}/{Id}")]
-        public void Delete(string playerId, string Id)
-        {
-            var player = repo.Players.FirstOrDefault(x => x.Id == playerId);
-
-            if (player != null)
-            {
-                player.Messages.RemoveAll(x => x.Id == Id);
-                repo.SaveDatabase();
-            }
+            repo.Messages.RemoveAll(x => x.Id == messageId);
+            repo.SaveDatabase();
         }
     }
 }
