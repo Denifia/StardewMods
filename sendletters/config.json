@@ -1,5 +1,5 @@
 ﻿{
-  "ApiUrl": "http://localhost:5000/api/",
-  "Debug": true,
+  "ApiUrl": "http://denifiastardewsendletters.azurewebsites.net/api/",
+  "Debug": false,
   "LocalOnly": false
 }
