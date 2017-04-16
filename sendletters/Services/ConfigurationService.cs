@@ -11,11 +11,17 @@ namespace denifia.stardew.sendletters.Services
     {
         private IModHelper _modHelper;
         private ModConfig _modConfig;
+        public string CurrentPlayerId { get; set; }
 
         public ConfigurationService(IModHelper modHelper)
         {
             _modHelper = modHelper;
             _modConfig = _modHelper.ReadConfig<ModConfig>();
+        }
+
+        public Uri GetApiUri()
+        {
+            return _modConfig.ApiUrl;
         }
 
         public string GetLocalPath()

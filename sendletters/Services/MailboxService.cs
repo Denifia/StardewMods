@@ -30,6 +30,8 @@ namespace denifia.stardew.sendletters.Services
 
         public void ShowLetter(Message message)
         {
+            if (Game1.mailbox == null || !Game1.mailbox.Any()) return;
+
             if (Game1.mailbox.Peek() == _playerMailKey)
             {
                 Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, _playerMailTitle);

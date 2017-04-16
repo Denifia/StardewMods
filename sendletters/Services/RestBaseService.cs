@@ -8,17 +8,19 @@ using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Services
 {
-    public class RestBaseService
+    public class RestService : IRestService
     {
-        internal Repository Repo;// = Repository.Instance;
-        private RestClient RestClient { get; set; }
 
-        public RestBaseService(Uri api)
+        private RestClient RestClient { get; set; }
+        internal IConfigurationService _configService;
+
+        public RestService(IConfigurationService configService)
         {
-            RestClient = new RestClient(api);
+            _configService = configService;
+            RestClient = new RestClient(_configService.GetApiUri());
         }
 
-        internal void PutRequest<T>(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action<T> callback, T obj)
+        public void PutRequest<T>(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action<T> callback, T obj)
         {
             var request = FormStandardRequest(resource, urlSegments, Method.PUT);
             request.AddJsonBody(jsonBody);
@@ -28,7 +30,7 @@ namespace denifia.stardew.sendletters.Services
             });
         }
 
-        internal void PostRequest(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action callback)
+        public void PostRequest(string resource, Dictionary<string, string> urlSegments, object jsonBody, Action callback)
         {
             var request = FormStandardRequest(resource, urlSegments, Method.POST);
             request.AddJsonBody(jsonBody);
@@ -38,7 +40,7 @@ namespace denifia.stardew.sendletters.Services
             });
         }
 
-        internal void DeleteRequest(string resource, Dictionary<string, string> urlSegments)
+        public void DeleteRequest(string resource, Dictionary<string, string> urlSegments)
         {
             var request = FormStandardRequest(resource, urlSegments, Method.DELETE);
             RestClient.ExecuteAsync(request, response => {
@@ -46,7 +48,7 @@ namespace denifia.stardew.sendletters.Services
             });
         }
 
-        internal void GetRequest<T>(string resource, Dictionary<string, string> urlSegments, Action<T> callback)
+        public void GetRequest<T>(string resource, Dictionary<string, string> urlSegments, Action<T> callback)
             where T : new()
         {
             var request = FormStandardRequest(resource, urlSegments, Method.GET);
@@ -55,7 +57,7 @@ namespace denifia.stardew.sendletters.Services
             });
         }
 
-        internal RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
+        public RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
         {
             var request = new RestRequest(resource, method);
             request.AddHeader("Content-type", "application/json; charset=utf-8");

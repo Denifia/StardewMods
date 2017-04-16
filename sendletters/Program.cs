@@ -49,13 +49,24 @@ namespace denifia.stardew.sendletters
             _messageService = messageService;
             _mailboxService = mailboxService;
 
-
             ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
+            ModEvents.PlayerCreated += PlayerCreated;
+            ModEvents.MessageSent += MessageSent;
         }
-
+        
         internal void Init()
         {
             SaveEvents.AfterLoad += AfterSavedGameLoad;
+        }
+
+        private void PlayerCreated(Player player)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void MessageSent(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)

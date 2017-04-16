@@ -47,6 +47,7 @@ namespace denifia.stardew.sendletters.Services
             if (matchingPlayers.Any())
             {
                 _currentPlayer = matchingPlayers.First();
+                _configService.CurrentPlayerId = _currentPlayer.Id;
                 if (!_configService.InLocalOnlyMode())
                 {
                     _repository.Create(_currentPlayer);

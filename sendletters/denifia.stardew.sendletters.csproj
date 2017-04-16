@@ -69,6 +69,7 @@
     <Compile Include="Services\IMailboxService.cs" />
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\IPlayerService.cs" />
+    <Compile Include="Services\IRestService.cs" />
     <Compile Include="Services\MailboxService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\PlayerService.cs" />
