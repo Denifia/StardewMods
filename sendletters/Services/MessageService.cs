@@ -28,7 +28,8 @@ namespace denifia.stardew.sendletters.Services
                 Id = Guid.NewGuid().ToString(),
                 ToPlayerId = model.ToPlayerId,
                 FromPlayerId = model.FromPlayerId,
-                Text = model.Text
+                Text = model.Text,
+                CreatedDate = DateTime.Now
             };
 
             _repository.CreateMessage(message);

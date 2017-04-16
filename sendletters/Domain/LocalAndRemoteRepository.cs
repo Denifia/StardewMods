@@ -43,7 +43,7 @@ namespace denifia.stardew.sendletters.Domain
         {
             base.CreateMessage(message);
             
-            if (!_players.Any(x => x.Id == message.ToPlayerId))
+            if (!_database.Players.Any(x => x.Id == message.ToPlayerId))
             {
                 // Message destined for remote player
                 var messageCreateModel = new MessageCreateModel

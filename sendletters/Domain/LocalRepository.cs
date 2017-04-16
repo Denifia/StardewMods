@@ -14,40 +14,39 @@ namespace denifia.stardew.sendletters.Domain
 {
     public class LocalRepository : IRepository
     {
-        internal List<Player> _players;
-        internal List<Message> _messages;
+        internal Database _database;       
         internal IConfigurationService _configService;
         private readonly string _databaseFileName = "data.json";
-        private FileInfo _database;
+        private FileInfo _databaseFile;
 
         public LocalRepository(IConfigurationService configService)
         {
             _configService = configService;
 
             var filePath = _configService.GetLocalPath();
-            _database = new FileInfo(Path.Combine(filePath, _databaseFileName));
+            _databaseFile = new FileInfo(Path.Combine(filePath, _databaseFileName));
 
             LoadDatabase();
         }
 
         public virtual IQueryable<Player> GetAllPlayers()
         {
-            return _players.AsQueryable();
+            return _database.Players.AsQueryable();
         }
 
         public virtual IQueryable<Player> FindPlayers(Expression<Func<Player, bool>> predicate)
         {
-            return _players.AsQueryable().Where(predicate);
+            return _database.Players.AsQueryable().Where(predicate);
         }
 
         public virtual IQueryable<Message> FindMessages(string playerId, Expression<Func<Message, bool>> predicate)
         {
-            return _messages.AsQueryable().Where(predicate);
+            return _database.Messages.AsQueryable().Where(predicate);
         }
 
         public virtual void CreateMessage(Message message)
         {
-            _messages.Add(message);
+            _database.Messages.Add(message);
             SaveDatabase();
         }
 
@@ -58,37 +57,45 @@ namespace denifia.stardew.sendletters.Domain
 
         public virtual void Delete(Message message)
         {
-            _messages.RemoveAll(x => x.Id == message.Id);
+            _database.Messages.RemoveAll(x => x.Id == message.Id);
             SaveDatabase();
         }
 
         internal void LoadDatabase()
         {
-            if (!File.Exists(_database.FullName))
+            if (!File.Exists(_databaseFile.FullName))
             {
-                File.WriteAllText(_database.FullName, "[]");
+                File.WriteAllText(_databaseFile.FullName, "{}");
             }
 
-            var text = File.ReadAllText(_database.FullName);
-            _players = SimpleJson.DeserializeObject<List<Player>>(text);
+            var text = File.ReadAllText(_databaseFile.FullName);
+            _database = SimpleJson.DeserializeObject<Database>(text);
 
-            if (_players == null)
+            if (_database == null)
             {
-                _players = new List<Player>();
+                _database = new Database();
+            }
+            if (_database.Players == null)
+            {
+                _database.Players = new List<Player>();
+            }
+            if (_database.Messages == null)
+            {
+                _database.Messages = new List<Message>();
             }
 
             GetSavedGames();
             foreach (var save in saveGames)
             {
-                if (!_players.Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
+                if (!_database.Players.Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
                 {
-                    _players.Add(save);
+                    _database.Players.Add(save);
                 }
             }
 
-            foreach (var player in _players)
+            foreach (var player in _database.Players)
             {
-                foreach (var p in _players)
+                foreach (var p in _database.Players)
                 {
                     if (!player.Friends.Any(x => x.Id == p.Id))
                     {
@@ -107,8 +114,7 @@ namespace denifia.stardew.sendletters.Domain
 
         internal void SaveDatabase()
         {
-            var strat = new PocoJsonSerializerStrategy();
-            File.WriteAllText(_database.FullName, SimpleJson.SerializeObject(_players, strat));
+            File.WriteAllText(_databaseFile.FullName, SimpleJson.SerializeObject(_database));
         }
 
         private List<Player> saveGames = new List<Player>();
@@ -150,7 +156,6 @@ namespace denifia.stardew.sendletters.Domain
                     }
                 }
             }
-            //this.saveGames.Sort();
         }
     }
 }

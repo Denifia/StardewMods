@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Database.cs" />
     <Compile Include="Domain\Friend.cs" />
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
