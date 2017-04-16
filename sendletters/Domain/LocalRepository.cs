@@ -13,8 +13,8 @@ namespace denifia.stardew.sendletters.Domain
 {
     public class LocalRepository : IRepository
     {
-        private List<Player> _players;
-        private IConfigurationService _configService;
+        internal List<Player> _players;
+        internal IConfigurationService _configService;
         private readonly string _databaseFileName = "data.json";
         private FileInfo _database;
 
@@ -28,17 +28,17 @@ namespace denifia.stardew.sendletters.Domain
             LoadDatabase();
         }
 
-        public IQueryable<Player> GetAllPlayers()
+        public virtual IQueryable<Player> GetAllPlayers()
         {
             return _players.AsQueryable();
         }
 
-        public IQueryable<Player> FindPlayers(Expression<Func<Player, bool>> predicate)
+        public virtual IQueryable<Player> FindPlayers(Expression<Func<Player, bool>> predicate)
         {
             return _players.AsQueryable().Where(predicate);
         }
 
-        public IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
+        public virtual IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
         {
             var p = _players.FirstOrDefault(x => x.Id == playerId);
             if (p != null)
@@ -48,23 +48,23 @@ namespace denifia.stardew.sendletters.Domain
             return new List<Message>().AsQueryable();
         }
 
-        public void CreateMessageForPlayer(string playerId, Message message)
+        public virtual void CreateMessageForPlayer(string playerId, Message message)
         {
             var p = _players.FirstOrDefault(x => x.Id == playerId);
             if (p != null)
             {
+                // Player is local
                 p.Messages.Add(message);
                 SaveDatabase();
             }
         }
 
-        public void Create(Player player)
+        public virtual void Create(Player player)
         {
-            _players.Add(player);
-            SaveDatabase();
+            // Do nothing if local only
         }
 
-        public void Delete(Message message)
+        public virtual void Delete(Message message)
         {
             foreach (var player in _players)
             {
@@ -73,7 +73,7 @@ namespace denifia.stardew.sendletters.Domain
             SaveDatabase();
         }
 
-        private void LoadDatabase()
+        internal void LoadDatabase()
         {
             if (!File.Exists(_database.FullName))
             {
@@ -103,11 +103,11 @@ namespace denifia.stardew.sendletters.Domain
                 {
                     if (!player.Friends.Any(x => x.Id == p.Id))
                     {
-                        player.Friends.Add(new Player()
+                        player.Friends.Add(new Friend()
                         {
+                            Id = p.Id,
                             Name = p.Name,
-                            FarmName = p.FarmName,
-                            Id = p.Id
+                            FarmName = p.FarmName                            
                         });
                     }
                 }
@@ -116,9 +116,10 @@ namespace denifia.stardew.sendletters.Domain
             SaveDatabase();
         }
 
-        private void SaveDatabase()
+        internal void SaveDatabase()
         {
-            File.WriteAllText(_database.FullName, SimpleJson.SerializeObject(_players));
+            var strat = new PocoJsonSerializerStrategy();
+            File.WriteAllText(_database.FullName, SimpleJson.SerializeObject(_players, strat));
         }
 
         private List<Player> saveGames = new List<Player>();

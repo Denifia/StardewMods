@@ -16,7 +16,7 @@ namespace denifia.stardew.sendletters.Domain
 
         public List<Message> Messages { get; set; }
 
-        public List<Player> Friends { get; set; }
+        public List<Friend> Friends { get; set; }
 
         public Player(string name, string farmName)
         {
@@ -25,7 +25,7 @@ namespace denifia.stardew.sendletters.Domain
             Id = string.Join(".", name, farmName, RandomString(5)).ToUpper();
 
             Messages = new List<Message>();
-            Friends = new List<Player>();
+            Friends = new List<Friend>();
         }
 
         public Player()
@@ -33,10 +33,11 @@ namespace denifia.stardew.sendletters.Domain
 
         }
 
-        private static string RandomString(int length)
+        private string RandomString(int length)
         {
             string allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             Random rng = new Random();
+            rng.Next();
 
             char[] chars = new char[length];
             int setLength = allowedChars.Length;

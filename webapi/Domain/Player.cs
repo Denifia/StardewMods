@@ -8,6 +8,8 @@ namespace denifia.stardew.webapi.Domain
 
         public string Name { get; set; }
 
+        public string FarmName { get; set; }
+
         public List<Message> Messages { get; set; }
 
         public Player()

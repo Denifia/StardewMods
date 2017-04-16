@@ -20,10 +20,12 @@ namespace denifia.stardew.sendletters.Services
         private Player _currentPlayer;
 
         private readonly IRepository _repository;
+        private readonly IConfigurationService _configService;
 
-        public PlayerService(IRepository repository)
+        public PlayerService(IRepository repository, IConfigurationService configService)
         {
             _repository = repository;
+            _configService = configService;
         }
 
         public Player GetCurrentPlayer()
@@ -36,7 +38,7 @@ namespace denifia.stardew.sendletters.Services
             return _repository.FindPlayers(x => x.Id == id).FirstOrDefault();
         }
 
-        public void LoadOrCreatePlayer()
+        public void LoadCurrentPlayer()
         {
             var name = Game1.player.name;
             var farmName = Game1.player.farmName;
@@ -45,19 +47,16 @@ namespace denifia.stardew.sendletters.Services
             if (matchingPlayers.Any())
             {
                 _currentPlayer = matchingPlayers.First();
-            } else
-            {
-                _currentPlayer = CreatePlayer(name, farmName);
+                if (!_configService.InLocalOnlyMode())
+                {
+                    _repository.Create(_currentPlayer);
+                }
             }
-        }
-
-        private Player CreatePlayer(string name, string farmName)
-        {
-            var player = new Player(name, farmName);
-            _repository.Create(player);
-            return player;
-        }
-        
+            else
+            {
+                throw new Exception("couldn't find current player!");
+            }
+        }     
 
         //public void CreatePlayer()
         //{

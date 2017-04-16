@@ -69,7 +69,7 @@ namespace denifia.stardew.sendletters
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
-            _playerService.LoadOrCreatePlayer();
+            _playerService.LoadCurrentPlayer();
 
             LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;

@@ -23,7 +23,15 @@ namespace denifia.stardew.sendletters
             var builder = new ContainerBuilder();
             builder.RegisterInstance(helper).As<IModHelper>();
             // ToDo: switch repos based on config
-            builder.RegisterType<LocalRepository>().As<IRepository>();
+            if (config.LocalOnly)
+            {
+                builder.RegisterType<LocalRepository>().As<IRepository>();
+            }
+            else
+            {
+                builder.RegisterType<LocalAndRemoteRepository>().As<IRepository>();
+            }
+            
             builder.RegisterAssemblyTypes(typeof(ModEntry).Assembly)
                 .Where(t => t.Name.EndsWith("Service"))
                 .AsImplementedInterfaces()
