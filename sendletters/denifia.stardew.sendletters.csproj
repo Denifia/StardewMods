@@ -53,12 +53,9 @@
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
-    <Compile Include="Domain\Repository.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Models\MessageCreateMessage.cs" />
-    <Compile Include="Models\PlayerCreaterModel.cs" />
-    <Compile Include="Domain\Message.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Domain\Player.cs" />
     <Compile Include="ModEvents.cs" />

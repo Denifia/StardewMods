@@ -1,4 +1,5 @@
-﻿using denifia.stardew.sendletters.Services;
+﻿using denifia.stardew.common.Domain;
+using denifia.stardew.sendletters.Services;
 using RestSharp;
 using StardewValley;
 using System;
@@ -14,6 +15,7 @@ namespace denifia.stardew.sendletters.Domain
     public class LocalRepository : IRepository
     {
         internal List<Player> _players;
+        internal List<Message> _messages;
         internal IConfigurationService _configService;
         private readonly string _databaseFileName = "data.json";
         private FileInfo _database;
@@ -38,25 +40,15 @@ namespace denifia.stardew.sendletters.Domain
             return _players.AsQueryable().Where(predicate);
         }
 
-        public virtual IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
+        public virtual IQueryable<Message> FindMessages(string playerId, Expression<Func<Message, bool>> predicate)
         {
-            var p = _players.FirstOrDefault(x => x.Id == playerId);
-            if (p != null)
-            {
-                return p.Messages.AsQueryable().Where(predicate);
-            }
-            return new List<Message>().AsQueryable();
+            return _messages.AsQueryable().Where(predicate);
         }
 
-        public virtual void CreateMessageForPlayer(string playerId, Message message)
+        public virtual void CreateMessage(Message message)
         {
-            var p = _players.FirstOrDefault(x => x.Id == playerId);
-            if (p != null)
-            {
-                // Player is local
-                p.Messages.Add(message);
-                SaveDatabase();
-            }
+            _messages.Add(message);
+            SaveDatabase();
         }
 
         public virtual void Create(Player player)
@@ -66,10 +58,7 @@ namespace denifia.stardew.sendletters.Domain
 
         public virtual void Delete(Message message)
         {
-            foreach (var player in _players)
-            {
-                player.Messages.RemoveAll(x => x.Id == message.Id);
-            }
+            _messages.RemoveAll(x => x.Id == message.Id);
             SaveDatabase();
         }
 

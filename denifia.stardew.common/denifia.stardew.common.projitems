@@ -9,6 +9,7 @@
     <Import_RootNamespace>denifia.stardew.common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Message.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MessageCreateModel.cs" />
   </ItemGroup>
 </Project>

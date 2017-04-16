@@ -1,15 +1,10 @@
-﻿using denifia.stardew.common.Models;
-using denifia.stardew.sendletters.Models;
+﻿using denifia.stardew.common.Domain;
+using denifia.stardew.common.Models;
 using denifia.stardew.sendletters.Services;
-using RestSharp;
-using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Domain
 {
@@ -24,14 +19,14 @@ namespace denifia.stardew.sendletters.Domain
             _restService = restService;
         }
 
-        public override IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
+        public override IQueryable<Message> FindMessages(string playerId, Expression<Func<Message, bool>> predicate)
         {
             // Get online messages
             var urlSegments = new Dictionary<string, string>();
             urlSegments.Add("playerId", playerId);
             _restService.GetRequest<List<Message>>("Messages/ToPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
 
-            return base.FindMessagesForPlayer(playerId, predicate);
+            return base.FindMessages(playerId, predicate);
         }
 
         private void RemoteMessagesRetreived(List<Message> remoteMessages)
@@ -40,25 +35,24 @@ namespace denifia.stardew.sendletters.Domain
             if (remoteMessages == null) return;
             foreach (var message in remoteMessages)
             {
-                base.CreateMessageForPlayer(_configService.CurrentPlayerId, message);
+                base.CreateMessage(message);
             }
         }
 
-        public override void CreateMessageForPlayer(string playerId, Message message)
+        public override void CreateMessage(Message message)
         {
-            base.CreateMessageForPlayer(playerId, message);
-            // online create message
-
-            if (!_players.Any(x => x.Id == playerId))
+            base.CreateMessage(message);
+            
+            if (!_players.Any(x => x.Id == message.ToPlayerId))
             {
+                // Message destined for remote player
                 var messageCreateModel = new MessageCreateModel
                 {
-                    ToPlayerId = playerId,
+                    ToPlayerId = message.ToPlayerId,
                     FromPlayerId = message.FromPlayerId,
                     Text = message.Text
                 };
 
-                // Not a local player
                 var urlSegments = new Dictionary<string, string>();
                 _restService.PostRequest("Messages", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
             }

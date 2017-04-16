@@ -1,4 +1,5 @@
-﻿using denifia.stardew.sendletters.Domain;
+﻿using denifia.stardew.common.Domain;
+using denifia.stardew.sendletters.Domain;
 using denifia.stardew.sendletters.Menus;
 using denifia.stardew.sendletters.Models;
 using StardewValley;
