@@ -26,7 +26,8 @@ namespace denifia.stardew.sendletters
             builder.RegisterType<LocalRepository>().As<IRepository>();
             builder.RegisterAssemblyTypes(typeof(ModEntry).Assembly)
                 .Where(t => t.Name.EndsWith("Service"))
-                .AsImplementedInterfaces();
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
 
             //builder.RegisterType<ConfigurationService>().As<IConfigurationService>();
             var container = builder.Build();

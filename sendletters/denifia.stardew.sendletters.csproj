@@ -53,7 +53,6 @@
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
     <Compile Include="Domain\Repository.cs" />
-    <Compile Include="Menus\ComposeLetterMenu.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Models\MessageCreateModel.cs" />

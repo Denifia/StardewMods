@@ -11,5 +11,6 @@ namespace denifia.stardew.sendletters.Services
     {
         void PostLetters(int count);
         void ShowLetter(Message message);
+        void ShowFriendSelecter();
     }
 }
