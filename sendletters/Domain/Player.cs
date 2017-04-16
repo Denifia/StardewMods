@@ -1,38 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Domain
 {
     public class Player
     {
         public string Id { get; set; }
-
         public string Name { get; set; }
-
         public string FarmName { get; set; }
-
-        public List<Message> Messages { get; set; }
-
         public List<Friend> Friends { get; set; }
+
+        private const int _randonStringLength = 5;
+
+        public Player()
+        {
+        }
 
         public Player(string name, string farmName)
         {
             Name = name;
             FarmName = farmName;
-            Id = string.Join(".", name, farmName, RandomString(5)).ToUpper();
-
-            Messages = new List<Message>();
+            Id = string.Join(".", name, farmName, RandomString(_randonStringLength)).ToUpper();
             Friends = new List<Friend>();
         }
-
-        public Player()
-        {
-
-        }
-
+        
         private string RandomString(int length)
         {
             string allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";

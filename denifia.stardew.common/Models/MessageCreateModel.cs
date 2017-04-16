@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Domain
+namespace denifia.stardew.common.Models
 {
-    public class Message
+    public class MessageCreateModel
     {
-        public string Id { get; set; }
-        public string Text { get; set; }
+        public string ToPlayerId { get; set; }
         public string FromPlayerId { get; set; }
+        public string Text { get; set; }
     }
 }

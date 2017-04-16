@@ -49,17 +49,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Database.cs" />
     <Compile Include="Domain\Friend.cs" />
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
-    <Compile Include="Domain\Repository.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Models\MessageCreateMessage.cs" />
-    <Compile Include="Models\MessageCreateModel.cs" />
-    <Compile Include="Models\PlayerCreaterModel.cs" />
-    <Compile Include="Domain\Message.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Domain\Player.cs" />
     <Compile Include="ModEvents.cs" />
@@ -85,6 +82,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\denifia.stardew.common\denifia.stardew.common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
   <Target Name="AfterBuild">

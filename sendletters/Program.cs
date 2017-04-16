@@ -61,12 +61,10 @@ namespace denifia.stardew.sendletters
 
         private void PlayerCreated(Player player)
         {
-            //throw new NotImplementedException();
         }
 
         private void MessageSent(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
         }
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)

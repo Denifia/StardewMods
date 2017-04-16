@@ -7,7 +7,6 @@ namespace denifia.stardew.sendletters
     public class ModConfig
     {
         public Uri ApiUrl { get; set; }
-        public List<Player> Players { get; set; }
         public bool Debug { get; set; }
         public bool LocalOnly { get; set; }
     }

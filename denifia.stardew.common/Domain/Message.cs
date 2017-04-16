@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace denifia.stardew.webapi.Domain
+namespace denifia.stardew.common.Domain
 {
     public class Message
     {

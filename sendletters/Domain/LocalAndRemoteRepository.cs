@@ -1,14 +1,10 @@
-﻿using denifia.stardew.sendletters.Models;
+﻿using denifia.stardew.common.Domain;
+using denifia.stardew.common.Models;
 using denifia.stardew.sendletters.Services;
-using RestSharp;
-using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace denifia.stardew.sendletters.Domain
 {
@@ -23,14 +19,14 @@ namespace denifia.stardew.sendletters.Domain
             _restService = restService;
         }
 
-        public override IQueryable<Message> FindMessagesForPlayer(string playerId, Expression<Func<Message, bool>> predicate)
+        public override IQueryable<Message> FindMessages(string playerId, Expression<Func<Message, bool>> predicate)
         {
             // Get online messages
             var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("id", playerId);
-            _restService.GetRequest<List<Message>>("messages/{id}", urlSegments, RemoteMessagesRetreived);
+            urlSegments.Add("playerId", playerId);
+            _restService.GetRequest<List<Message>>("Messages/ToPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
 
-            return base.FindMessagesForPlayer(playerId, predicate);
+            return base.FindMessages(playerId, predicate);
         }
 
         private void RemoteMessagesRetreived(List<Message> remoteMessages)
@@ -39,44 +35,27 @@ namespace denifia.stardew.sendletters.Domain
             if (remoteMessages == null) return;
             foreach (var message in remoteMessages)
             {
-                base.CreateMessageForPlayer(_configService.CurrentPlayerId, message);
+                base.CreateMessage(message);
             }
         }
 
-        public override void CreateMessageForPlayer(string playerId, Message message)
+        public override void CreateMessage(Message message)
         {
-            base.CreateMessageForPlayer(playerId, message);
-            // online create message
-
-            if (!_players.Any(x => x.Id == playerId))
+            base.CreateMessage(message);
+            
+            if (!_database.Players.Any(x => x.Id == message.ToPlayerId))
             {
+                // Message destined for remote player
                 var messageCreateModel = new MessageCreateModel
                 {
-                    ToPlayerId = playerId,
-                    Message = message.Text
+                    ToPlayerId = message.ToPlayerId,
+                    FromPlayerId = message.FromPlayerId,
+                    Text = message.Text
                 };
 
-                // Not a local player
                 var urlSegments = new Dictionary<string, string>();
-                urlSegments.Add("id", _configService.CurrentPlayerId);
-                _restService.PostRequest("messages/{id}", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
+                _restService.PostRequest("Messages", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
             }
-        }
-
-        public override void Create(Player player)
-        {
-            base.Create(player);
-
-            // online create player
-
-            var createrPlayerModel = new PlayerCreaterModel
-            {
-                Name = player.Name
-            };
-
-            var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("id", player.Id);
-            _restService.PutRequest<Player>("players/{id}", urlSegments, createrPlayerModel, ModEvents.RaisePlayerCreatedEvent, player);
         }
 
         public override void Delete(Message message)
@@ -85,9 +64,8 @@ namespace denifia.stardew.sendletters.Domain
             // online delete message
 
             var urlSegments = new Dictionary<string, string>();
-            urlSegments.Add("playerId", _configService.CurrentPlayerId);
-            urlSegments.Add("id", message.Id);
-            _restService.DeleteRequest("messages/{playerId}/{id}", urlSegments);
+            urlSegments.Add("messageId", message.Id);
+            _restService.DeleteRequest("Messages/{messageId}", urlSegments);
         }
     }
 }
