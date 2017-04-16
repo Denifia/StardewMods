@@ -114,7 +114,7 @@ namespace denifia.stardew.sendletters
             List<Response> responseList = new List<Response>();
             foreach (var friend in _playerService.GetCurrentPlayer().Friends)
             {
-                responseList.Add(new Response(friend.Id, friend.Id));//string.Format("{0} ({1})", friend.Name, friend.FarmName)));
+                responseList.Add(new Response(friend.Id, string.Format("{0} ({1})", friend.Name, friend.FarmName)));
             }
             responseList.Add(new Response("(Leave)", "(Leave)"));
             Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), new GameLocation.afterQuestionBehavior(this.selectChannel), (NPC)null);

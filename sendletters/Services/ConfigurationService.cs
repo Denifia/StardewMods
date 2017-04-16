@@ -28,5 +28,9 @@ namespace denifia.stardew.sendletters.Services
             return _modConfig.Debug;
         }
 
+        public bool InLocalOnlyMode()
+        {
+            return _modConfig.LocalOnly;
+        }
     }
 }

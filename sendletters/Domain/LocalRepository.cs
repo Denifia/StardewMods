@@ -1,5 +1,6 @@
 ﻿using denifia.stardew.sendletters.Services;
 using RestSharp;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,11 +87,73 @@ namespace denifia.stardew.sendletters.Domain
             {
                 _players = new List<Player>();
             }
+
+            GetSavedGames();
+            foreach (var save in saveGames)
+            {
+                if (!_players.Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
+                {
+                    _players.Add(save);
+                }
+            }
+
+            foreach (var player in _players)
+            {
+                foreach (var p in _players)
+                {
+                    if (!player.Friends.Any(x => x.Id == p.Id))
+                    {
+                        player.Friends.Add(p);
+                    }
+                }
+            }
         }
 
         private void SaveDatabase()
         {
             File.WriteAllText(_database.FullName, SimpleJson.SerializeObject(_players));
+        }
+
+        private List<Player> saveGames = new List<Player>();
+        private void GetSavedGames()
+        {
+            string str = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley"), "Saves"));
+            if (Directory.Exists(str))
+            {
+                string[] directories = Directory.GetDirectories(str);
+                if (directories.Length != 0)
+                {
+                    foreach (string path2 in directories)
+                    {
+                        try
+                        {
+                            FileInfo file = new FileInfo(Path.Combine(str, path2, "SaveGameInfo"));
+                            if (file.Exists)
+                            {
+                                var fileContents = File.ReadAllText(file.FullName);
+
+                                var farmerNodeStart = fileContents.IndexOf("<Farmer");
+                                var farmerNodeEnd = fileContents.IndexOf("</Farmer>");
+                                var farmerNode = fileContents.Substring(farmerNodeStart, farmerNodeEnd - farmerNodeStart);
+                                var playerNameNodeStart = farmerNode.IndexOf("<name>") + 6;
+                                var playerNameNodeEnd = farmerNode.IndexOf("</name>");
+                                var playerName = farmerNode.Substring(playerNameNodeStart, playerNameNodeEnd - playerNameNodeStart);
+
+                                var farmNameNodeStart = fileContents.IndexOf("<farmName>") + 10;
+                                var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
+                                var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
+
+                                var farmer = new Player(playerName, farmName);
+                                saveGames.Add(farmer);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+            }
+            //this.saveGames.Sort();
         }
     }
 }

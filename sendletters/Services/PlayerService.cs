@@ -53,27 +53,10 @@ namespace denifia.stardew.sendletters.Services
 
         private Player CreatePlayer(string name, string farmName)
         {
-            var player = new Player(name, farmName, RandomString(_randonStringLength));
+            var player = new Player(name, farmName);
             _repository.Create(player);
             return player;
         }
-
-        private static string RandomString(int length)
-        {
-            string allowedChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            Random rng = new Random();
-
-            char[] chars = new char[length];
-            int setLength = allowedChars.Length;
-
-            for (int i = 0; i < length; ++i)
-            {
-                chars[i] = allowedChars[rng.Next(setLength)];
-            }
-
-            return new string(chars, 0, length);
-        }
-
         
 
         //public void CreatePlayer()

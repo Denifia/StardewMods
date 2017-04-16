@@ -4,5 +4,6 @@
     {
         string GetLocalPath();
         bool InDebugMode();
+        bool InLocalOnlyMode();
     }
 }
