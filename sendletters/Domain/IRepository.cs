@@ -1,4 +1,4 @@
-﻿using denifia.stardew.common.Domain;
+﻿using denifia.stardew.sendletters.common.Domain;
 using System;
 using System.Linq;
 using System.Linq.Expressions;

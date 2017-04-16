@@ -1,5 +1,5 @@
-﻿using denifia.stardew.common.Domain;
-using denifia.stardew.common.Models;
+﻿using denifia.stardew.sendletters.common.Domain;
+using denifia.stardew.sendletters.common.Models;
 using denifia.stardew.sendletters.Services;
 using System;
 using System.Collections.Generic;

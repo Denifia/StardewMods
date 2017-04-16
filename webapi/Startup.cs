@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using denifia.stardew.webapi.Domain;
+using denifia.stardew.sendletters.webapi.Domain;
 
-namespace denifia.stardew.webapi
+namespace denifia.stardew.sendletters.webapi
 {
     public class Startup
     {

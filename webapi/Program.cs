@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace denifia.stardew.webapi
+namespace denifia.stardew.sendletters.webapi
 {
     public class Program
     {

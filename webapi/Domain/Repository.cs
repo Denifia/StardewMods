@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace denifia.stardew.webapi.Domain
+namespace denifia.stardew.sendletters.webapi.Domain
 {
     public class Repository
     {

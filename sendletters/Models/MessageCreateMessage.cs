@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using denifia.stardew.sendletters.Domain;
-using denifia.stardew.common.Domain;
+using denifia.stardew.sendletters.common.Domain;
 
 namespace denifia.stardew.sendletters.Models
 {

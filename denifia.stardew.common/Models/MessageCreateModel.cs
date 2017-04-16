@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.common.Models
+namespace denifia.stardew.sendletters.common.Models
 {
     public class MessageCreateModel
     {
