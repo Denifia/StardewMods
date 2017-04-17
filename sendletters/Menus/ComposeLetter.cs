@@ -17,9 +17,10 @@ namespace denifia.stardew.sendletters.Menus
         private TemporaryAnimatedSprite poof;
         private ComposeLetter.behaviorOnItemChange itemChangeBehavior;
         private string ToPlayerId;
+        private bool okClicked;
 
         public ComposeLetter(string toPlayerId, List<Item> inventory, int capacity, int rows = 3, ComposeLetter.behaviorOnItemChange itemChangeBehavior = null, InventoryMenu.highlightThisItem highlightMethod = null)
-          : base(highlightMethod, true, true, 0, 0)
+          : base(highlightMethod, true, false, 0, 0)
         {
             this.ToPlayerId = toPlayerId;
             this.itemChangeBehavior = itemChangeBehavior;
@@ -31,6 +32,7 @@ namespace denifia.stardew.sendletters.Menus
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
+            this.okClicked = false;
             Item heldItem = this.heldItem;
             int num = heldItem != null ? heldItem.Stack : -1;
             if (this.isWithinBounds(x, y))
@@ -43,17 +45,10 @@ namespace denifia.stardew.sendletters.Menus
             if (this.ItemsToGrabMenu.isWithinBounds(x, y))
             {
                 this.heldItem = this.ItemsToGrabMenu.leftClick(x, y, this.heldItem, false);
-                this.ItemsToGrabMenu.actualInventory.Add(this.heldItem);
-                Game1.playSound("Ship");
-                this.heldItem = null;
-                this.hoveredItem = null;
-
                 if (this.heldItem != null && heldItem == null || this.heldItem != null && heldItem != null && !this.heldItem.Equals((object)heldItem))
                 {
                     if (this.itemChangeBehavior != null)
-                    {
                         flag = this.itemChangeBehavior(this.heldItem, this.ItemsToGrabMenu.getInventoryPositionOfClick(x, y), heldItem, this, true);
-                    }
                     if (flag)
                         Game1.playSound("dwop");
                 }
@@ -66,9 +61,7 @@ namespace denifia.stardew.sendletters.Menus
                         old.Stack = num;
                     }
                     if (this.itemChangeBehavior != null)
-                    {
                         flag = this.itemChangeBehavior(heldItem, this.ItemsToGrabMenu.getInventoryPositionOfClick(x, y), old, this, false);
-                    }
                     if (flag)
                         Game1.playSound("Ship");
                 }
@@ -93,29 +86,29 @@ namespace denifia.stardew.sendletters.Menus
                 {
                     this.heldItem = (Item)null;
                     if (this.itemChangeBehavior != null)
-                    {
                         flag = this.itemChangeBehavior(this.heldItem, this.ItemsToGrabMenu.getInventoryPositionOfClick(x, y), heldItem, this, true);
-                    }
-
                     if (flag)
                         Game1.playSound("coin");
                 }
             }
-            if (this.okButton.containsPoint(x, y) && this.readyToClose())
+            if (this.okButton.containsPoint(x, y))
             {
-                Game1.playSound("bigDeSelect");
-                Game1.exitActiveMenu();
-                if (this.ItemsToGrabMenu.actualInventory.Any())
+                this.okClicked = true;
+                if (this.readyToClose())
                 {
-                    ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
+                    Game1.playSound("bigDeSelect");
+                    Game1.exitActiveMenu();
+                    if (this.ItemsToGrabMenu.inventory.Any())
+                    {
+                        ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
+                    }
                 }
             }
-            if (!this.trashCan.containsPoint(x, y) || this.heldItem == null || !this.heldItem.canBeTrashed())
-                return;
-            if (this.heldItem is StardewValley.Object && Game1.player.specialItems.Contains((this.heldItem as StardewValley.Object).parentSheetIndex))
-                Game1.player.specialItems.Remove((this.heldItem as StardewValley.Object).parentSheetIndex);
-            this.heldItem = (Item)null;
-            Game1.playSound("trashcan");
+        }
+
+        public override bool readyToClose()
+        {
+            return (this.heldItem == null && (okClicked || this.ItemsToGrabMenu.actualInventory.All(x => x == null)));
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)

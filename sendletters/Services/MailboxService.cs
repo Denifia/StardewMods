@@ -60,6 +60,8 @@ namespace denifia.stardew.sendletters.Services
 
         public void ShowFriendSelecter()
         {
+            if (Game1.activeClickableMenu != null) return;
+
             List<Response> responseList = new List<Response>();
             foreach (var friend in _playerService.GetCurrentPlayer().Friends)
             {
@@ -74,8 +76,64 @@ namespace denifia.stardew.sendletters.Services
         {
             if (!answer.Equals(_leaveSelectionKeyAndValue))
             {
-                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
+                var items = new List<Item>();
+                items.Add(null);
+                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
+                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1);
+                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange));
             }
+        }
+
+        private bool onLetterChange(Item i, int position, Item old, ComposeLetter container, bool onRemoval)
+        {
+            if (!onRemoval)
+            {
+                if (i.Stack > 1 || i.Stack == 1 && old != null && (old.Stack == 1 && i.canStackWith(old)))
+                {
+                    if (old != null && i != null && old.canStackWith(i))
+                    {
+                        container.ItemsToGrabMenu.actualInventory[position].Stack = 1;
+                        container.heldItem = old;
+                        return false;
+                    }
+                    if (old != null)
+                    {
+                        Utility.addItemToInventory(old, position, container.ItemsToGrabMenu.actualInventory, (ItemGrabMenu.behaviorOnItemSelect)null);
+                        container.heldItem = i;
+                        return false;
+                    }
+                    //int num = i.Stack - 1;
+                    //Item one = i.getOne();
+                    //one.Stack = num;
+                    container.heldItem = i;
+                    //i.Stack = 1;
+                }
+            }
+            else if (old != null && old.Stack > 1 && !old.Equals((object)i))
+                return false;
+            //if (Game1.IsMultiplayer)
+            //{
+            //    if (onRemoval && old == null)
+            //        MultiplayerUtility.sendMessageToEveryone(3, position.ToString() + " null null", Game1.player.uniqueMultiplayerID);
+            //    else
+            //        MultiplayerUtility.sendMessageToEveryone(3, position.ToString() + " " + (object)(i as Object).ParentSheetIndex + " " + (object)(i as Object).quality, Game1.player.uniqueMultiplayerID);
+            //}
+            //else
+            //this.addItemToLetter(!onRemoval || old != null && !old.Equals((object)i) ? i : (Item)null, position, true);
+            return true;
+        }
+
+        public void addItemToLetter(Item i, int position, bool force)
+        {
+            //if (this.grangeDisplay == null)
+            //{
+            //    this.grangeDisplay = new List<Item>();
+            //    for (int index = 0; index < 9; ++index)
+            //        this.grangeDisplay.Add((Item)null);
+            //}
+            //if (position < 0 || position >= this.grangeDisplay.Count || this.grangeDisplay[position] != null && !force)
+            //    return;
+            //this.grangeDisplay[position] = i;
         }
 
         private void OnCheckMailbox(object sender, EventArgs e)
