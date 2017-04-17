@@ -79,7 +79,7 @@ namespace denifia.stardew.sendletters.Services
                 var items = new List<Item>();
                 items.Add(null);
                 //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
-                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1);
+                Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, null, highlightGiftable);
                 //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange));
             }
         }
@@ -121,6 +121,11 @@ namespace denifia.stardew.sendletters.Services
             //else
             //this.addItemToLetter(!onRemoval || old != null && !old.Equals((object)i) ? i : (Item)null, position, true);
             return true;
+        }
+
+        public bool highlightGiftable(Item i)
+        {
+            return i.canBeGivenAsGift();
         }
 
         public void addItemToLetter(Item i, int position, bool force)
