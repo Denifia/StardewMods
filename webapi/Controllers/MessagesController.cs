@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net;
-using denifia.stardew.sendletters.webapi.Domain;
 using System.Collections.Generic;
 using denifia.stardew.sendletters.common.Models;
+using denifia.stardew.sendletters.common.Domain;
 
 namespace denifia.stardew.sendletters.webapi.Controllers
 {

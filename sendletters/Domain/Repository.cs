@@ -1,23 +1,20 @@
-﻿using Newtonsoft.Json;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Caching.Memory;
 using System.Threading.Tasks;
 using denifia.stardew.sendletters.common.Domain;
+using RestSharp;
 
-namespace denifia.stardew.sendletters.webapi.Domain
+namespace denifia.stardew.sendletters.Domain
 {
-    public class Repository : IRepository
+    public class Repository : denifia.stardew.sendletters.common.Domain.IRepository
     {
         private DirectoryInfo _dataDirectory;
-        private readonly IMemoryCache _memoryCache;
 
-        public Repository(IHostingEnvironment env, IMemoryCache memoryCache)
+        public Repository()
         {
-            _memoryCache = memoryCache;
-            _dataDirectory = new DirectoryInfo(env.ContentRootPath);
+            //_memoryCache = memoryCache;
+            //_dataDirectory = new DirectoryInfo(env.ContentRootPath);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync<T>() where T : Entity
@@ -42,22 +39,12 @@ namespace denifia.stardew.sendletters.webapi.Domain
 
         private IList<T> GetAll<T>() where T : Entity
         {
-            IList<T> entities = null;
-            var key = GetKeyForType<T>();
-            if (!_memoryCache.TryGetValue(key, out entities))
+            var entities = LoadEntity<T>();
+            if (entities == null)
             {
-                entities = LoadEntity<T>();
-                if (entities == null)
-                {
-                    entities = new List<T>();
-                    SaveEntity(entities);
-                }
-                else
-                {
-                    _memoryCache.Set(key, entities);
-                }
+                entities = new List<T>();
+                SaveEntity(entities);
             }
-            
             return entities;
         }
 
@@ -68,7 +55,7 @@ namespace denifia.stardew.sendletters.webapi.Domain
             {
                 SaveEntity(new List<T>());
             }
-            return JsonConvert.DeserializeObject<IList<T>>(File.ReadAllText(databaseFile.FullName));
+            return SimpleJson.DeserializeObject<IList<T>>(File.ReadAllText(databaseFile.FullName));
         }
 
         private async Task SaveEntityAsync<T>(IList<T> entity) where T : Entity
@@ -78,8 +65,7 @@ namespace denifia.stardew.sendletters.webapi.Domain
 
         private void SaveEntity<T>(IList<T> entity) where T : Entity
         {
-            _memoryCache.Set(typeof(T), entity);
-            File.WriteAllText(GetFileNameForType<T>(), JsonConvert.SerializeObject(entity));
+            File.WriteAllText(GetFileNameForType<T>(), SimpleJson.SerializeObject(entity));
         }
 
         private string GetFileNameForType<T>() where T : Entity

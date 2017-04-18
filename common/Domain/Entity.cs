@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.webapi.Domain
+namespace denifia.stardew.sendletters.common.Domain
 {
     public class Entity
     {
