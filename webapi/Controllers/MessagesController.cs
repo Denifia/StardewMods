@@ -13,37 +13,42 @@ namespace denifia.stardew.sendletters.webapi.Controllers
     [Route("api/[controller]")]
     public class MessagesController : Controller
     {
-        Repository repo = Repository.Instance;
+        private readonly IRepository _repository;
+
+        public MessagesController(IRepository repository)
+        {
+            _repository = repository;
+        }
 
         // GET api/Messages/{playerid}
         [HttpGet("{messageId}")]
-        public Message Get(string messageId)
+        public async Task<Message> Get(string messageId)
         {
-            var message = repo.Messages.Where(x => x.Id == messageId).FirstOrDefault();
-            return message;
+            var messages = await _repository.GetAllAsync<Message>();
+            return messages.FirstOrDefault(x => x.Id == messageId);
         }
 
         // GET api/Messages/toplayer/{playerid}
         [Route("~/api/Messages/ToPlayer/{playerId}")]
         [HttpGet("{playerId}")]
-        public List<Message> ToPlayer(string playerId)
+        public async Task<List<Message>> ToPlayer(string playerId)
         {
-            var messages = repo.Messages.Where(x => x.ToPlayerId == playerId).ToList();
-            return messages;
+            var messages = await _repository.GetAllAsync<Message>();
+            return messages.Where(x => x.ToPlayerId == playerId).ToList();
         }
 
         // GET api/Messages/fromplayer/{playerid}
         [Route("~/api/Messages/FromPlayer/{playerId}")]
         [HttpGet("{playerId}")]
-        public List<Message> FromPlayer(string playerId)
+        public async Task<List<Message>> FromPlayer(string playerId)
         {
-            var messages = repo.Messages.Where(x => x.FromPlayerId == playerId).ToList();
-            return messages;
+            var messages = await _repository.GetAllAsync<Message>();
+            return messages.Where(x => x.FromPlayerId == playerId).ToList();
         }
 
         // POST api/Messages
         [HttpPost]
-        public string Post([FromBody]MessageCreateModel model)
+        public async Task<string> Post([FromBody]MessageCreateModel model)
         {
             var message = new Message()
             {
@@ -54,17 +59,16 @@ namespace denifia.stardew.sendletters.webapi.Controllers
                 CreatedDate = DateTime.Now
             };
 
-            repo.Messages.Add(message);
-            repo.SaveDatabase();
-            return message.Id;
+            var newMessage = await _repository.AddAsync(message);
+            return newMessage.Id;
         }
 
         // DELETE api/Messages/{messageId}
         [HttpDelete("{messageId}")]
         public void Delete(string messageId)
         {
-            repo.Messages.RemoveAll(x => x.Id == messageId);
-            repo.SaveDatabase();
+            //repo.Messages.RemoveAll(x => x.Id == messageId);
+            //repo.SaveDatabase();
         }
     }
 }

@@ -30,6 +30,8 @@ namespace denifia.stardew.sendletters.webapi
         {
             // Add framework services.
             services.AddMvc();
+            services.AddMemoryCache();
+            services.AddTransient<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,7 +40,6 @@ namespace denifia.stardew.sendletters.webapi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            Repository.Instance.Init(env.ContentRootPath);
             app.UseMvc();
         }
     }

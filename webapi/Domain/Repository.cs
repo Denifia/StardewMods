@@ -1,55 +1,88 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
+using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.Collections;
 
 namespace denifia.stardew.sendletters.webapi.Domain
 {
-    public class Repository
+    public class Repository : IRepository
     {
-        private static Repository instance;
-        private readonly string _databaseFileName = "data.json";
-        private FileInfo _database;
+        private DirectoryInfo _dataDirectory;
+        private readonly IMemoryCache _memoryCache;
 
-        public List<Message> Messages { get; set; }
-
-        private Repository()
+        public Repository(IHostingEnvironment env, IMemoryCache memoryCache)
         {
+            _memoryCache = memoryCache;
+            _dataDirectory = new DirectoryInfo(env.ContentRootPath);
         }
 
-        public static Repository Instance
+        public async Task<IEnumerable<T>> GetAllAsync<T>() where T : new()
         {
-            get
+            return await Task.Run(() => GetAll<T>());
+        }
+
+        public async Task<T> AddAsync<T>(T entity) where T : new()
+        {
+            var entities = await Task.Run(() => GetAll<T>());
+            entities.Add(entity);
+            await SaveEntityAsync(entities);
+            return entity;
+        }
+
+        private IList<T> GetAll<T>() where T : new()
+        {
+            IList<T> entities = null;
+            var key = GetKeyForType<T>();
+            if (!_memoryCache.TryGetValue(key, out entities))
             {
-                if (instance == null)
-                {
-                    instance = new Repository();
-                }
-                return instance;
-            }
-        }
-
-        public void Init(string filePath)
-        {
-            _database = new FileInfo(Path.Combine(filePath, _databaseFileName));
-            LoadDatabase();
-        }
-
-        public void LoadDatabase()
-        {
-            if (!_database.Exists)
-            {
-                File.WriteAllText(_database.FullName, "[]");
+                entities = LoadEntity<T>();
+                _memoryCache.Set(key, entities);
             }
 
-            if (Messages == null)
+            if (entities == null)
             {
-                Messages = JsonConvert.DeserializeObject<List<Message>>(File.ReadAllText(_database.FullName));
+                entities = new List<T>();
+                SaveEntity(entities);
             }
+
+            return entities;
         }
 
-        public void SaveDatabase()
+        private IList<T> LoadEntity<T>() where T : new()
         {
-            File.WriteAllText(_database.FullName, JsonConvert.SerializeObject(Messages));
+            var databaseFile = new FileInfo(GetFileNameForType<T>());
+            if (!databaseFile.Exists)
+            {
+                SaveEntity(new List<T>());
+            }
+            return JsonConvert.DeserializeObject<IList<T>>(File.ReadAllText(databaseFile.FullName));
+        }
+
+        private async Task SaveEntityAsync<T>(IList<T> entity) where T : new()
+        {
+            await Task.Run(() => SaveEntity<T>(entity));
+        }
+
+        private void SaveEntity<T>(IList<T> entity) where T : new()
+        {
+            _memoryCache.Set(typeof(T), entity);
+            File.WriteAllText(GetFileNameForType<T>(), JsonConvert.SerializeObject(entity));
+        }
+
+        private string GetFileNameForType<T>() where T : new()
+        {
+            return Path.Combine(_dataDirectory.FullName, GetKeyForType<T>());
+        }
+
+        private string GetKeyForType<T>() where T : new()
+        {
+            return string.Format("data.{0}.json", typeof(T).Name);
         }
     }
 }
