@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.common.Domain;
 
-namespace denifia.stardew.sendletters.Models
+namespace Denifia.Stardew.SendLetters.Models
 {
     public class MessageCreateMessage
     {

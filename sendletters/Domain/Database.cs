@@ -1,11 +1,11 @@
-﻿using denifia.stardew.sendletters.common.Domain;
+﻿using Denifia.Stardew.SendLetters.common.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Domain
+namespace Denifia.Stardew.SendLetters.Domain
 {
     public class Database
     {

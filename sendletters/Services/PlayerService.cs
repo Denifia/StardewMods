@@ -1,18 +1,18 @@
-﻿using denifia.stardew.sendletters.Domain;
+﻿using Denifia.Stardew.SendLetters.Domain;
 using StardewValley;
 using System;
 using System.Linq;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public class PlayerService : IPlayerService
     {
         private Player _currentPlayer;
 
-        private readonly IRepository _repository;
+        private readonly OldIRepository _repository;
         private readonly IConfigurationService _configService;
 
-        public PlayerService(IRepository repository, IConfigurationService configService)
+        public PlayerService(OldIRepository repository, IConfigurationService configService)
         {
             _repository = repository;
             _configService = configService;

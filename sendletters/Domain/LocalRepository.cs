@@ -1,5 +1,5 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Services;
+﻿using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Services;
 using RestSharp;
 using StardewValley;
 using System;
@@ -10,9 +10,9 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Domain
+namespace Denifia.Stardew.SendLetters.Domain
 {
-    public class LocalRepository : IRepository
+    public class LocalRepository : OldIRepository
     {
         internal Database _database;       
         internal IConfigurationService _configService;

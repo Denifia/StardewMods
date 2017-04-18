@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net;
 using System.Collections.Generic;
-using denifia.stardew.sendletters.common.Models;
-using denifia.stardew.sendletters.common.Domain;
+using Denifia.Stardew.SendLetters.common.Models;
+using Denifia.Stardew.SendLetters.common.Domain;
 
-namespace denifia.stardew.sendletters.webapi.Controllers
+namespace Denifia.Stardew.SendLetters.webapi.Controllers
 {
     [Route("api/[controller]")]
     public class MessagesController : Controller

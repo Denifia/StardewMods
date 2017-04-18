@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.common.Domain
+namespace Denifia.Stardew.SendLetters.common.Domain
 {
     public interface IRepository
     {

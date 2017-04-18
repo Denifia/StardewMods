@@ -7,8 +7,8 @@
     <ProjectGuid>{D74FB037-CC7C-4047-8384-2C2E37999A7A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>denifia.stardew.sendletters</RootNamespace>
-    <AssemblyName>denifia.stardew.sendletters</AssemblyName>
+    <RootNamespace>Denifia.Stardew.SendLetters</RootNamespace>
+    <AssemblyName>Denifia.Stardew.SendLetters</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -52,7 +52,8 @@
   <ItemGroup>
     <Compile Include="Domain\Database.cs" />
     <Compile Include="Domain\Friend.cs" />
-    <Compile Include="Domain\IRepository.cs" />
+    <Compile Include="Domain\IMemoryCache.cs" />
+    <Compile Include="Domain\OldIRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
     <Compile Include="Domain\Repository.cs" />

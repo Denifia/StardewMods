@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IConfigurationService
     {

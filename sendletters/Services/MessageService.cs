@@ -1,20 +1,20 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Models;
+﻿using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IRepository _repository;
+        private readonly OldIRepository _repository;
         private readonly IPlayerService _playerService;
 
-        public MessageService(IRepository repository, IPlayerService playerService)
+        public MessageService(OldIRepository repository, IPlayerService playerService)
         {
             _repository = repository;
             _playerService = playerService;

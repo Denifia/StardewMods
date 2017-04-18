@@ -1,7 +1,7 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Menus;
-using denifia.stardew.sendletters.Models;
+﻿using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Menus;
+using Denifia.Stardew.SendLetters.Models;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public class MailboxService : IMailboxService
     {

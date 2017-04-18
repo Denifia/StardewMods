@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace denifia.stardew.sendletters.Domain
+namespace Denifia.Stardew.SendLetters.Domain
 {
     public class Player
     {

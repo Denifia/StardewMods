@@ -1,8 +1,8 @@
-﻿using denifia.stardew.sendletters.Domain;
+﻿using Denifia.Stardew.SendLetters.Domain;
 using System;
 using System.Collections.Generic;
 
-namespace denifia.stardew.sendletters
+namespace Denifia.Stardew.SendLetters
 {
     public class ModConfig
     {

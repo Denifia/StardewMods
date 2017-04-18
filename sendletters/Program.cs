@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Menus;
-using denifia.stardew.sendletters.Services;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Menus;
+using Denifia.Stardew.SendLetters.Services;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -16,13 +16,13 @@ using xTile.Dimensions;
 using xTile.ObjectModel;
 using xTile.Tiles;
 
-namespace denifia.stardew.sendletters
+namespace Denifia.Stardew.SendLetters
 {
     public class Program
     { 
         private readonly IModHelper _modHelper;
         private readonly IConfigurationService _configService;
-        private readonly IRepository _repository;
+        private readonly OldIRepository _repository;
         private readonly IPlayerService _playerService;
         private readonly IMessageService _messageService;
         private readonly IMailboxService _mailboxService;
@@ -35,8 +35,8 @@ namespace denifia.stardew.sendletters
             }
         }
 
-        public Program(IModHelper modHelper, 
-            IRepository repository, 
+        public Program(IModHelper modHelper,
+            OldIRepository repository, 
             IConfigurationService configService,
             IPlayerService playerService,
             IMessageService messageService,
