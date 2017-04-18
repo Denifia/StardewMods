@@ -1,4 +1,5 @@
-﻿using Denifia.Stardew.SendLetters.Domain;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
 using StardewValley;
 using System;
 using System.Linq;
@@ -7,37 +8,39 @@ namespace Denifia.Stardew.SendLetters.Services
 {
     public class PlayerService : IPlayerService
     {
+        private readonly IRepository _repository;
+
         private Player _currentPlayer;
-
-        private readonly OldIRepository _repository;
-        private readonly IConfigurationService _configService;
-
-        public PlayerService(OldIRepository repository, IConfigurationService configService)
-        {
-            _repository = repository;
-            _configService = configService;
+        public Player CurrentPlayer { get
+            {
+                if (_currentPlayer == null)
+                {
+                    _currentPlayer = LoadCurrentPlayer();
+                }
+                return _currentPlayer;
+            }
+            set => _currentPlayer = value;
         }
 
-        public Player GetCurrentPlayer()
+        public PlayerService(IRepository repository)
         {
-            return _currentPlayer;
+            _repository = repository;
         }
 
         public Player GetPlayerById(string id)
         {
-            return _repository.FindPlayers(x => x.Id == id).FirstOrDefault();
+            return _repository.GetAll<Player>().FirstOrDefault(x => x.Id == id);
         }
 
-        public void LoadCurrentPlayer()
+        private Player LoadCurrentPlayer()
         {
             var name = Game1.player.name;
             var farmName = Game1.player.farmName;
-
-            var matchingPlayers = _repository.FindPlayers(x => x.Name == name && x.FarmName == farmName);
+            var players = _repository.GetAll<Player>();
+            var matchingPlayers = players.Where(x => x.Name == name && x.FarmName == farmName).ToList();
             if (matchingPlayers.Any())
             {
-                _currentPlayer = matchingPlayers.First();
-                _configService.CurrentPlayerId = _currentPlayer.Id;
+                return matchingPlayers.First();
             }
             else
             {

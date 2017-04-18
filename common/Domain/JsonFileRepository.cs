@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
 namespace Denifia.Stardew.SendLetters.Common.Domain
 {
@@ -29,7 +29,7 @@ namespace Denifia.Stardew.SendLetters.Common.Domain
             await SaveEntityAsync(entities);
         }
 
-        internal List<T> GetAll<T>() where T : Entity
+        public List<T> GetAll<T>() where T : Entity
         {
             var key = GetKeyForType<T>();
             if (!TryGetValueCache(key, out List<T> entities))

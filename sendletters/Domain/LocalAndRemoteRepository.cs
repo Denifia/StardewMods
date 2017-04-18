@@ -1,5 +1,5 @@
-﻿using Denifia.Stardew.SendLetters.common.Domain;
-using Denifia.Stardew.SendLetters.common.Models;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Common.Models;
 using Denifia.Stardew.SendLetters.Services;
 using System;
 using System.Collections.Generic;

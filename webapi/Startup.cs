@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Denifia.Stardew.SendLetters.webapi.Domain;
-using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
 namespace Denifia.Stardew.SendLetters.webapi
 {

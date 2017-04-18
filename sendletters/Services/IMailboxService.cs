@@ -1,4 +1,4 @@
-﻿using Denifia.Stardew.SendLetters.common.Domain;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
 using Denifia.Stardew.SendLetters.Domain;
 using System;
 using System.Collections.Generic;

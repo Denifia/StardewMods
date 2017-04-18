@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Denifia.Stardew.SendLetters.Domain;
 using StardewValley;
-using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
 namespace Denifia.Stardew.SendLetters
 {

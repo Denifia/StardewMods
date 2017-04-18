@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using System;
 using System.Collections.Generic;
 
 namespace Denifia.Stardew.SendLetters.Domain
 {
-    public class Player
+    public class Player : Entity
     {
-        public string Id { get; set; }
         public string Name { get; set; }
         public string FarmName { get; set; }
         public List<Friend> Friends { get; set; }
@@ -22,6 +22,7 @@ namespace Denifia.Stardew.SendLetters.Domain
             FarmName = farmName;
             Id = string.Join(".", name, farmName, RandomString(_randonStringLength)).ToUpper();
             Friends = new List<Friend>();
+            CreatedDate = DateTime.Now;
         }
         
         private string RandomString(int length)

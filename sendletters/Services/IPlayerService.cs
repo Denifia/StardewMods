@@ -9,8 +9,7 @@ namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IPlayerService
     {
-        void LoadCurrentPlayer();
-        Player GetCurrentPlayer();
+        Player CurrentPlayer { get; set; }
         Player GetPlayerById(string id);
     }
 }

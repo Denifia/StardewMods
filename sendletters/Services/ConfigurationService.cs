@@ -1,6 +1,8 @@
-﻿using StardewModdingAPI;
+﻿using Denifia.Stardew.SendLetters.Domain;
+using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +13,6 @@ namespace Denifia.Stardew.SendLetters.Services
     {
         private IModHelper _modHelper;
         private ModConfig _modConfig;
-        public string CurrentPlayerId { get; set; }
 
         public ConfigurationService(IModHelper modHelper)
         {
@@ -37,6 +38,48 @@ namespace Denifia.Stardew.SendLetters.Services
         public bool InLocalOnlyMode()
         {
             return _modConfig.LocalOnly;
+        }
+
+        public List<Player> GetSavedGames()
+        {
+            var saveGames = new List<Player>();
+            string str = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley"), "Saves"));
+            if (Directory.Exists(str))
+            {
+                string[] directories = Directory.GetDirectories(str);
+                if (directories.Length != 0)
+                {
+                    foreach (string path2 in directories)
+                    {
+                        try
+                        {
+                            FileInfo file = new FileInfo(Path.Combine(str, path2, "SaveGameInfo"));
+                            if (file.Exists)
+                            {
+                                var fileContents = File.ReadAllText(file.FullName);
+
+                                var farmerNodeStart = fileContents.IndexOf("<Farmer");
+                                var farmerNodeEnd = fileContents.IndexOf("</Farmer>");
+                                var farmerNode = fileContents.Substring(farmerNodeStart, farmerNodeEnd - farmerNodeStart);
+                                var playerNameNodeStart = farmerNode.IndexOf("<name>") + 6;
+                                var playerNameNodeEnd = farmerNode.IndexOf("</name>");
+                                var playerName = farmerNode.Substring(playerNameNodeStart, playerNameNodeEnd - playerNameNodeStart);
+
+                                var farmNameNodeStart = fileContents.IndexOf("<farmName>") + 10;
+                                var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
+                                var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
+
+                                var farmer = new Player(playerName, farmName);
+                                saveGames.Add(farmer);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+            }
+            return saveGames;
         }
     }
 }

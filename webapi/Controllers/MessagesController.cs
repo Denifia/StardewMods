@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net;
 using System.Collections.Generic;
-using Denifia.Stardew.SendLetters.common.Models;
-using Denifia.Stardew.SendLetters.common.Domain;
+using Denifia.Stardew.SendLetters.Common.Models;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
 namespace Denifia.Stardew.SendLetters.webapi.Controllers
 {

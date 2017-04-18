@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Denifia.Stardew.SendLetters.common.Domain
+namespace Denifia.Stardew.SendLetters.Common.Domain
 {
     public class Message : Entity
     {
