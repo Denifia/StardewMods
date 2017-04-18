@@ -65,10 +65,14 @@ namespace denifia.stardew.sendletters.webapi.Controllers
 
         // DELETE api/Messages/{messageId}
         [HttpDelete("{messageId}")]
-        public void Delete(string messageId)
+        public async Task Delete(string messageId)
         {
-            //repo.Messages.RemoveAll(x => x.Id == messageId);
-            //repo.SaveDatabase();
+            var messages = await _repository.GetAllAsync<Message>();
+            var messageToDelete = messages.FirstOrDefault(x => x.Id == messageId);
+            if (messageToDelete != null)
+            {
+                await _repository.DeleteAsync(messageToDelete);
+            }
         }
     }
 }
