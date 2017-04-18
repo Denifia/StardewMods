@@ -33,7 +33,6 @@ namespace denifia.stardew.sendletters.Services
         public void ShowLetter(Message message)
         {
             if (Game1.mailbox == null || !Game1.mailbox.Any()) return;
-
             if (Game1.mailbox.Peek() == _playerMailKey)
             {
                 Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, _playerMailTitle);
@@ -65,7 +64,7 @@ namespace denifia.stardew.sendletters.Services
             List<Response> responseList = new List<Response>();
             foreach (var friend in _playerService.GetCurrentPlayer().Friends)
             {
-                responseList.Add(new Response(friend.Id, string.Format("{0} ({1})", friend.Name, friend.FarmName)));
+                responseList.Add(new Response(friend.Id, string.Format("{0} ({1} Farm)", friend.Name, friend.FarmName)));
             }
             responseList.Add(new Response(_leaveSelectionKeyAndValue, _leaveSelectionKeyAndValue));
             Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), new GameLocation.afterQuestionBehavior(this.SelectItem), (NPC)null);
@@ -128,23 +127,10 @@ namespace denifia.stardew.sendletters.Services
             return i.canBeGivenAsGift();
         }
 
-        public void addItemToLetter(Item i, int position, bool force)
-        {
-            //if (this.grangeDisplay == null)
-            //{
-            //    this.grangeDisplay = new List<Item>();
-            //    for (int index = 0; index < 9; ++index)
-            //        this.grangeDisplay.Add((Item)null);
-            //}
-            //if (position < 0 || position >= this.grangeDisplay.Count || this.grangeDisplay[position] != null && !force)
-            //    return;
-            //this.grangeDisplay[position] = i;
-        }
-
         private void OnCheckMailbox(object sender, EventArgs e)
         {
             var message = _messageService.GetFirstMessage(_playerService.GetCurrentPlayer().Id);
-            if (message != null)
+            if (message != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
             {
                 ShowLetter(message);
             }
