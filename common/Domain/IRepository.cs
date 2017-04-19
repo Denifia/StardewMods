@@ -9,7 +9,11 @@ namespace Denifia.Stardew.SendLetters.Common.Domain
     {
         Task<IEnumerable<T>> GetAllAsync<T>() where T : Entity;
         List<T> GetAll<T>() where T : Entity;
-        Task<T> AddAsync<T>(T entity) where T : Entity;
+
+        Task<T> AddOrUpdateAsync<T>(T entity) where T : Entity;
+        T AddOrUpdate<T>(T entity) where T : Entity;
+
         Task DeleteAsync<T>(T entity) where T : Entity;
+        void Delete<T>(T entity) where T : Entity;
     }
 }

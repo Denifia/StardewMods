@@ -40,9 +40,9 @@ namespace Denifia.Stardew.SendLetters.Services
             return _modConfig.LocalOnly;
         }
 
-        public List<Player> GetSavedGames()
+        public List<SavedGame> GetSavedGames()
         {
-            var saveGames = new List<Player>();
+            var savedGames = new List<SavedGame>();
             string str = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley"), "Saves"));
             if (Directory.Exists(str))
             {
@@ -69,8 +69,12 @@ namespace Denifia.Stardew.SendLetters.Services
                                 var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
                                 var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
 
-                                var farmer = new Player(playerName, farmName);
-                                saveGames.Add(farmer);
+                                var savedGame = new SavedGame {
+                                    Name = playerName,
+                                    FarmName = farmName
+                                };
+
+                                savedGames.Add(savedGame);
                             }
                         }
                         catch (Exception ex)
@@ -79,7 +83,7 @@ namespace Denifia.Stardew.SendLetters.Services
                     }
                 }
             }
-            return saveGames;
+            return savedGames;
         }
     }
 }

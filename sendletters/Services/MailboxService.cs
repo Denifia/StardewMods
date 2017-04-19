@@ -63,9 +63,9 @@ namespace Denifia.Stardew.SendLetters.Services
             if (Game1.activeClickableMenu != null) return;
 
             List<Response> responseList = new List<Response>();
-            foreach (var friend in _playerService.GetCurrentPlayer().Friends)
+            foreach (var friend in _playerService.CurrentPlayer.Friends)
             {
-                responseList.Add(new Response(friend.Id, string.Format("{0} ({1})", friend.Name, friend.FarmName)));
+                responseList.Add(new Response(friend.Id, string.Format("{0} ({1} Farm)", friend.Name, friend.FarmName)));
             }
             responseList.Add(new Response(_leaveSelectionKeyAndValue, _leaveSelectionKeyAndValue));
             Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), new GameLocation.afterQuestionBehavior(this.SelectItem), (NPC)null);
@@ -78,7 +78,6 @@ namespace Denifia.Stardew.SendLetters.Services
             {
                 var items = new List<Item>();
                 items.Add(null);
-                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
                 Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, null, highlightGiftable);
                 //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange));
             }
@@ -128,22 +127,9 @@ namespace Denifia.Stardew.SendLetters.Services
             return i.canBeGivenAsGift();
         }
 
-        public void addItemToLetter(Item i, int position, bool force)
-        {
-            //if (this.grangeDisplay == null)
-            //{
-            //    this.grangeDisplay = new List<Item>();
-            //    for (int index = 0; index < 9; ++index)
-            //        this.grangeDisplay.Add((Item)null);
-            //}
-            //if (position < 0 || position >= this.grangeDisplay.Count || this.grangeDisplay[position] != null && !force)
-            //    return;
-            //this.grangeDisplay[position] = i;
-        }
-
         private void OnCheckMailbox(object sender, EventArgs e)
         {
-            var message = _messageService.GetFirstMessage(_playerService.GetCurrentPlayer().Id);
+            var message = _messageService.GetFirstMessage(_playerService.CurrentPlayer.Id);
             if (message != null)
             {
                 ShowLetter(message);
@@ -159,9 +145,9 @@ namespace Denifia.Stardew.SendLetters.Services
 
         private void AfterMessageCrafted(string toPlayerId, Item item)
         {
-            var currentPlayer = _playerService.GetCurrentPlayer();
+            var currentPlayer = _playerService.CurrentPlayer;
             var messageText = string.Format(_messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
-            var newMessage = new MessageCreateMessage
+            var newMessage = new CreateMessageModel
             {
                 FromPlayerId = currentPlayer.Id,
                 ToPlayerId = toPlayerId,
@@ -169,7 +155,6 @@ namespace Denifia.Stardew.SendLetters.Services
             };
 
             _messageService.CreateMessage(newMessage);
-            //Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
         }
     }
 }

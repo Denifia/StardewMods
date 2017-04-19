@@ -14,7 +14,7 @@ namespace Denifia.Stardew.SendLetters.Domain
 {
     public class LocalRepository : OldIRepository
     {
-        internal Database _database;       
+        //internal Database _database;       
         internal IConfigurationService _configService;
         private readonly string _databaseFileName = "data.json";
         private FileInfo _databaseFile;
@@ -26,28 +26,31 @@ namespace Denifia.Stardew.SendLetters.Domain
             var filePath = _configService.GetLocalPath();
             _databaseFile = new FileInfo(Path.Combine(filePath, _databaseFileName));
 
-            LoadDatabase();
+            //LoadDatabase();
         }
+
+        List<Player> Players;
+        List<Message> Messages;
 
         public virtual IQueryable<Player> GetAllPlayers()
         {
-            return _database.Players.AsQueryable();
+            return Players.AsQueryable();
         }
 
         public virtual IQueryable<Player> FindPlayers(Expression<Func<Player, bool>> predicate)
         {
-            return _database.Players.AsQueryable().Where(predicate);
+            return Players.AsQueryable().Where(predicate);
         }
 
         public virtual IQueryable<Message> FindMessages(string playerId, Expression<Func<Message, bool>> predicate)
         {
-            return _database.Messages.AsQueryable().Where(predicate);
+            return Messages.AsQueryable().Where(predicate);
         }
 
         public virtual void CreateMessage(Message message)
         {
-            _database.Messages.Add(message);
-            SaveDatabase();
+            //_database.Messages.Add(message);
+            //SaveDatabase();
         }
 
         public virtual void Create(Player player)
@@ -57,64 +60,64 @@ namespace Denifia.Stardew.SendLetters.Domain
 
         public virtual void Delete(Message message)
         {
-            _database.Messages.RemoveAll(x => x.Id == message.Id);
-            SaveDatabase();
+            //_database.Messages.RemoveAll(x => x.Id == message.Id);
+            //SaveDatabase();
         }
 
-        internal void LoadDatabase()
-        {
-            if (!File.Exists(_databaseFile.FullName))
-            {
-                File.WriteAllText(_databaseFile.FullName, "{}");
-            }
+        //internal void LoadDatabase()
+        //{
+        //    if (!File.Exists(_databaseFile.FullName))
+        //    {
+        //        File.WriteAllText(_databaseFile.FullName, "{}");
+        //    }
 
-            var text = File.ReadAllText(_databaseFile.FullName);
-            _database = SimpleJson.DeserializeObject<Database>(text);
+        //    var text = File.ReadAllText(_databaseFile.FullName);
+        //    _database = SimpleJson.DeserializeObject<Database>(text);
 
-            if (_database == null)
-            {
-                _database = new Database();
-            }
-            if (_database.Players == null)
-            {
-                _database.Players = new List<Player>();
-            }
-            if (_database.Messages == null)
-            {
-                _database.Messages = new List<Message>();
-            }
+        //    if (_database == null)
+        //    {
+        //        _database = new Database();
+        //    }
+        //    if (_database.Players == null)
+        //    {
+        //        _database.Players = new List<Player>();
+        //    }
+        //    if (_database.Messages == null)
+        //    {
+        //        _database.Messages = new List<Message>();
+        //    }
 
-            GetSavedGames();
-            foreach (var save in saveGames)
-            {
-                if (!_database.Players.Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
-                {
-                    _database.Players.Add(save);
-                }
-            }
+        //    GetSavedGames();
+        //    foreach (var save in saveGames)
+        //    {
+        //        if (!_database.Players.Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
+        //        {
+        //            _database.Players.Add(save);
+        //        }
+        //    }
 
-            foreach (var player in _database.Players)
-            {
-                foreach (var p in _database.Players)
-                {
-                    if (!player.Friends.Any(x => x.Id == p.Id))
-                    {
-                        player.Friends.Add(new Friend()
-                        {
-                            Id = p.Id,
-                            Name = p.Name,
-                            FarmName = p.FarmName                            
-                        });
-                    }
-                }
-            }
+        //    foreach (var player in _database.Players)
+        //    {
+        //        foreach (var p in _database.Players)
+        //        {
+        //            if (!player.Friends.Any(x => x.Id == p.Id))
+        //            {
+        //                player.Friends.Add(new Friend()
+        //                {
+        //                    Id = p.Id,
+        //                    Name = p.Name,
+        //                    FarmName = p.FarmName                            
+        //                });
+        //            }
+        //        }
+        //    }
 
-            SaveDatabase();
-        }
+        //    SaveDatabase();
+        //}
 
         internal void SaveDatabase()
         {
-            File.WriteAllText(_databaseFile.FullName, SimpleJson.SerializeObject(_database));
+            //File.WriteAllText(_databaseFile.FullName, SimpleJson.SerializeObject(_database));
         }
 
     }

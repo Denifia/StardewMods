@@ -10,6 +10,6 @@ namespace Denifia.Stardew.SendLetters.Services
         string GetLocalPath();
         bool InDebugMode();
         bool InLocalOnlyMode();
-        List<Player> GetSavedGames();
+        List<SavedGame> GetSavedGames();
     }
 }

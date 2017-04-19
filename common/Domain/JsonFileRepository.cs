@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Denifia.Stardew.SendLetters.Common.Domain;
+using System.Linq;
 
 namespace Denifia.Stardew.SendLetters.Common.Domain
 {
@@ -14,19 +14,43 @@ namespace Denifia.Stardew.SendLetters.Common.Domain
             return await Task.Run(() => GetAll<T>());
         }
 
-        public async Task<T> AddAsync<T>(T entity) where T : Entity
+        public async Task<T> AddOrUpdateAsync<T>(T entity) where T : Entity
         {
-            var entities = await Task.Run(() => GetAll<T>());
-            entities.Add(entity);
-            await SaveEntityAsync(entities);
+            return await Task.Run(() => AddOrUpdate(entity));
+        }
+
+        public T AddOrUpdate<T>(T entity) where T : Entity
+        {
+            var entities = GetAll<T>();
+            var existing = entities.FirstOrDefault(x => x.Id == entity.Id);
+            if (existing == null)
+            {
+                entities.Add(entity);
+            }
+            else
+            {
+                var index = entities.IndexOf(existing);
+                entities[index] = entity;           
+            }
+            SaveEntity(entities);
             return entity;
         }
 
         public async Task DeleteAsync<T>(T entity) where T : Entity
         {
-            var entities = await Task.Run(() => GetAll<T>());
-            entities.Remove(entity);
-            await SaveEntityAsync(entities);
+            await Task.Run(() => Delete(entity));
+        }
+
+        public void Delete<T>(T entity) where T : Entity
+        {
+            var entities = GetAll<T>();
+            var existing = entities.FirstOrDefault(x => x.Id == entity.Id);
+            if (existing != null)
+            {
+                var index = entities.IndexOf(existing);
+                entities.RemoveAt(index);
+            }
+            SaveEntity(entities);
         }
 
         public List<T> GetAll<T>() where T : Entity

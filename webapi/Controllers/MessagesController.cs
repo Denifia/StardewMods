@@ -59,7 +59,7 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
                 CreatedDate = DateTime.Now
             };
 
-            var newMessage = await _repository.AddAsync(message);
+            var newMessage = await _repository.AddOrUpdateAsync(message);
             return newMessage.Id;
         }
 
