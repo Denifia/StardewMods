@@ -3,4 +3,4 @@ documentation and release notes:
 
 Note: I wrote these mods myself but took a lot of inspiration (and some helper code) from Pathoschild.
 
-* [SendLetters](SendLetters)
+* [SendLetters](sendletters) - Send letters and items to your other farms or other players
