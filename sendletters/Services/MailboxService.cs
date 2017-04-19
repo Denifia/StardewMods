@@ -33,7 +33,6 @@ namespace Denifia.Stardew.SendLetters.Services
         public void ShowLetter(Message message)
         {
             if (Game1.mailbox == null || !Game1.mailbox.Any()) return;
-
             if (Game1.mailbox.Peek() == _playerMailKey)
             {
                 Game1.activeClickableMenu = (IClickableMenu)new LetterViewerMenu(message.Text, _playerMailTitle);
@@ -130,7 +129,8 @@ namespace Denifia.Stardew.SendLetters.Services
         private void OnCheckMailbox(object sender, EventArgs e)
         {
             var message = _messageService.GetFirstMessage(_playerService.CurrentPlayer.Id);
-            if (message != null)
+            if (message != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
+
             {
                 ShowLetter(message);
             }
