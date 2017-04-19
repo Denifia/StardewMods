@@ -90,6 +90,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="readme.md" />
+    <None Include="release-notes.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="..\common\denifia.stardew.sendletters.common.projitems" Label="Shared" />
