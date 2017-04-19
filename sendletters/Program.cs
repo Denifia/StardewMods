@@ -12,22 +12,16 @@ namespace Denifia.Stardew.SendLetters
 {
     public class Program
     { 
-        private readonly IModHelper _modHelper;
         private readonly IConfigurationService _configService;
-        private readonly IRepository _repository;
         private readonly IPlayerService _playerService;
         private readonly IMessageService _messageService;
         private readonly IMailboxService _mailboxService;
 
-        public Program(IModHelper modHelper,
-            IRepository repository, 
-            IConfigurationService configService,
+        public Program(IConfigurationService configService,
             IPlayerService playerService,
             IMessageService messageService,
             IMailboxService mailboxService)
         {
-            _modHelper = modHelper;
-            _repository = repository;
             _configService = configService;
             _playerService = playerService;
             _messageService = messageService;

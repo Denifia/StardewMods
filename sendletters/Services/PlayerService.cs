@@ -8,25 +8,24 @@ namespace Denifia.Stardew.SendLetters.Services
 {
     public class PlayerService : IPlayerService
     {
-        private readonly IRepository _repository;
+        private readonly IPlayerRepository _playerRepository;
         private readonly IConfigurationService _configurationService;
 
-        private Player _currentPlayer;
         public Player CurrentPlayer { get
             {
                 return LoadCurrentPlayer();
             }
         }
 
-        public PlayerService(IRepository repository, IConfigurationService configurationService)
+        public PlayerService(IPlayerRepository playerRepository, IConfigurationService configurationService)
         {
-            _repository = repository;
+            _playerRepository = playerRepository;
             _configurationService = configurationService;
         }
 
         public Player GetPlayerById(string id)
         {
-            return _repository.GetAll<Player>().FirstOrDefault(x => x.Id == id);
+            return _playerRepository.GetAll().FirstOrDefault(x => x.Id == id);
         }
 
         public void LoadLocalPlayers()
@@ -34,14 +33,14 @@ namespace Denifia.Stardew.SendLetters.Services
             var savedGames = _configurationService.GetSavedGames();
             foreach (var save in savedGames)
             {
-                if (!_repository.GetAll<Player>().Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
+                if (!_playerRepository.GetAll().Any(x => x.Name == save.Name && x.FarmName == save.FarmName))
                 {
                     var player = new Player(save.Name, save.FarmName);
-                    _repository.AddOrUpdate(player);
+                    _playerRepository.AddOrUpdate(player);
                 }
             }
 
-            var players = _repository.GetAll<Player>().ToList();
+            var players = _playerRepository.GetAll().ToList();
             foreach (var player in players)
             {
                 var update = false;
@@ -60,7 +59,7 @@ namespace Denifia.Stardew.SendLetters.Services
                 }
                 if (update)
                 {
-                    _repository.AddOrUpdate(player);
+                    _playerRepository.AddOrUpdate(player);
                 }
             }
         }
@@ -69,7 +68,7 @@ namespace Denifia.Stardew.SendLetters.Services
         {
             var name = Game1.player.name;
             var farmName = Game1.player.farmName;
-            var matchingPlayers = _repository.GetAll<Player>().Where(x => x.Name == name && x.FarmName == farmName).ToList();
+            var matchingPlayers = _playerRepository.GetAll().Where(x => x.Name == name && x.FarmName == farmName).ToList();
             if (matchingPlayers.Any())
             {
                 return matchingPlayers.First();

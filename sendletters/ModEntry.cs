@@ -15,6 +15,8 @@ namespace Denifia.Stardew.SendLetters
 
             builder.RegisterInstance(helper).As<IModHelper>();
             builder.RegisterType<Repository>().As<IRepository>();
+            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
+            builder.RegisterType<MessageRepository>().As<IMessageRepository>();
             builder.RegisterType<MemoryCache>().As<IMemoryCache>();
             
             builder.RegisterAssemblyTypes(typeof(ModEntry).Assembly)
@@ -24,12 +26,12 @@ namespace Denifia.Stardew.SendLetters
             
             var container = builder.Build();
 
-            var program = new Program(helper, 
-                container.Resolve<IRepository>(), 
+            var program = new Program(
                 container.Resolve<IConfigurationService>(),
                 container.Resolve<IPlayerService>(),
                 container.Resolve<IMessageService>(),
-                container.Resolve<IMailboxService>());
+                container.Resolve<IMailboxService>()
+            );
 
             program.Init();
         }

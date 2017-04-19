@@ -8,6 +8,5 @@ namespace Denifia.Stardew.SendLetters
     {
         public Uri ApiUrl { get; set; }
         public bool Debug { get; set; }
-        public bool LocalOnly { get; set; }
     }
 }

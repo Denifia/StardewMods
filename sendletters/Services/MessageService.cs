@@ -1,21 +1,19 @@
 ﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
 using Denifia.Stardew.SendLetters.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendLetters.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IRepository _repository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IPlayerService _playerService;
 
-        public MessageService(IRepository repository, IPlayerService playerService)
+        public MessageService(IMessageRepository messageRepository, IPlayerService playerService)
         {
-            _repository = repository;
+            _messageRepository = messageRepository;
             _playerService = playerService;
             ModEvents.MessageRead += MessageRead;
         }
@@ -31,17 +29,17 @@ namespace Denifia.Stardew.SendLetters.Services
                 CreatedDate = DateTime.Now
             };
 
-            _repository.AddOrUpdate(message);
+            _messageRepository.AddOrUpdate(message);
         }
 
         public int UnreadMessageCount(string playerId)
         {
-            return _repository.GetAll<Message>().Where(x => x.ToPlayerId == playerId).Count();
+            return _messageRepository.GetMessagesToPlayer(playerId).Count();
         }
 
         public Message GetFirstMessage(string playerId)
         {
-            return _repository.GetAll<Message>().Where(x => x.ToPlayerId == playerId).FirstOrDefault();
+            return _messageRepository.GetMessagesToPlayer(playerId).FirstOrDefault();
         }
 
         public void CheckForMessages(string playerId)
@@ -51,7 +49,7 @@ namespace Denifia.Stardew.SendLetters.Services
 
         private void MessageRead(Message message)
         {
-            _repository.Delete(message);
+            _messageRepository.Delete(message);
         }
     }
 }

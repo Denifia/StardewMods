@@ -55,11 +55,16 @@
   <ItemGroup>
     <Compile Include="Domain\Friend.cs" />
     <Compile Include="Domain\IMemoryCache.cs" />
+    <Compile Include="Domain\IMessageRepository.cs" />
+    <Compile Include="Domain\IPlayerRepository.cs" />
     <Compile Include="Domain\MemoryCache.cs" />
+    <Compile Include="Domain\MessageRepository.cs" />
     <Compile Include="Domain\OldIRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
+    <Compile Include="Domain\PlayerRepository.cs" />
     <Compile Include="Domain\Repository.cs" />
+    <Compile Include="Domain\RestRepository.cs" />
     <Compile Include="Domain\SavedGame.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
@@ -78,7 +83,7 @@
     <Compile Include="Services\MailboxService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\PlayerService.cs" />
-    <Compile Include="Services\RestBaseService.cs" />
+    <Compile Include="Services\RestService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json">
