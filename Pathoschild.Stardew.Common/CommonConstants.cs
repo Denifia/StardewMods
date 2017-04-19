@@ -4,6 +4,6 @@
     internal class CommonConstants
     {
         /// <summary>The URL which contains the latest versions for each mod.</summary>
-        public const string UpdateUrl = "https://raw.githubusercontent.com/pathoschild/StardewMods/stable/latest-versions.json";
+        public const string UpdateUrl = "https://raw.githubusercontent.com/denifia/StardewMods/master/latest-versions.json";
     }
 }

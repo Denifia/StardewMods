@@ -79,7 +79,7 @@ namespace Denifia.Stardew.SendLetters.Domain
                 }
             }
 
-            CommonHelper.ShowInfoMessage("Message sent!");
+            CommonHelper.ShowInfoMessage("Letter sent!");
 
             return savedMessage;
         }

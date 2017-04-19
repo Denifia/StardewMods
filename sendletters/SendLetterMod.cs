@@ -64,7 +64,7 @@ namespace Denifia.Stardew.SendLetters
                     {
                         Task.Factory.StartNew(() =>
                         {
-                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, "Automate").Result;
+                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, "SendLetters").Result;
                             if (latest.IsNewerThan(this.CurrentVersion))
                                 this.NewRelease = latest;
                         });
