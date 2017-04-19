@@ -1,6 +1,7 @@
 ﻿using Denifia.Stardew.SendLetters.Common.Domain;
 using Denifia.Stardew.SendLetters.Common.Models;
 using Denifia.Stardew.SendLetters.Services;
+using Pathoschild.Stardew.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +78,8 @@ namespace Denifia.Stardew.SendLetters.Domain
                     _restService.PostRequest("Messages", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
                 }
             }
+
+            CommonHelper.ShowInfoMessage("Message sent!");
 
             return savedMessage;
         }

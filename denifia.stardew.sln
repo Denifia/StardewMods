@@ -13,14 +13,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".metadata", ".metadata", "{
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		latest-versions.json = latest-versions.json
 		LICENSE = LICENSE
 		readme.md = readme.md
 	EndProjectSection
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Pathoschild.Stardew.Common", "Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.shproj", "{EB97DAD7-6B56-40B9-8622-E1A795589D5F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		common\denifia.stardew.sendletters.common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
+		Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
 		common\denifia.stardew.sendletters.common.projitems*{e7f132c9-39b8-4344-b8aa-4b35829bedf1}*SharedItemsImports = 13
+		Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.projitems*{eb97dad7-6b56-40b9-8622-e1a795589d5f}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -1,13 +1,14 @@
 ﻿{
   "Name": "SendLetters",
-  "Author": "Luke Wale",
+  "Author": "Denifia",
   "Version": {
-    "MajorVersion": 1,
-    "MinorVersion": 0,
+    "MajorVersion": 0,
+    "MinorVersion": 1,
     "PatchVersion": 0,
-    "Build": ""
+    "Build": null
   },
-  "Description": "Send letters to your friends within Stardew",
-  "UniqueID": "Denifia.Stardew.SendLetters",
+  "MinimumApiVersion": "1.9",
+  "Description": "Send letters and items to your friends within Stardew",
+  "UniqueID": "Denifia.SendLetters",
   "EntryDll": "Denifia.Stardew.SendLetters.dll"
 }

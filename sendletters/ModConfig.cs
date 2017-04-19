@@ -1,6 +1,4 @@
-﻿using Denifia.Stardew.SendLetters.Domain;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Denifia.Stardew.SendLetters
 {
@@ -8,5 +6,6 @@ namespace Denifia.Stardew.SendLetters
     {
         public Uri ApiUrl { get; set; }
         public bool Debug { get; set; }
+        public bool CheckForUpdates { get; set; } = true;
     }
 }
