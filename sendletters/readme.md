@@ -1,9 +1,9 @@
 ﻿**SendLetters** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you send items to your
 other saved games or other players from around the world.
 
-![](screenshots/SendLetters-v0.1.3-Beta-Send.gif)
+![](Screenshots/SendLetters-v0.1.3-Beta-Send.gif)
 
-![](screenshots/SendLetters-v0.1.3-Beta-Receive.gif)
+![](Screenshots/SendLetters-v0.1.3-Beta-Receive.gif)
 
 Compatible with Stardew Valley 1.1+ on Windows. I've not tested anything else yet.
 
