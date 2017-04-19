@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /webapi/data.json
 /webapi/Properties/PublishProfiles/denifiastardewsendletters - Web Deploy.pubxml
+/webapi/data.message.json

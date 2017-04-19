@@ -37,7 +37,7 @@ namespace Denifia.Stardew.SendLetters.Services
 
         public bool InLocalOnlyMode()
         {
-            return _modConfig.ApiUrl == null || _modConfig.ApiUrl.AbsoluteUri.Length == 0;
+            return !(_modConfig.ApiUrl != null && _modConfig.ApiUrl.OriginalString.Length > 0 && _modConfig.ApiUrl.IsAbsoluteUri);
         }
 
         public List<SavedGame> GetSavedGames()
