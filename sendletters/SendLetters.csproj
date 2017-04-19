@@ -7,8 +7,8 @@
     <ProjectGuid>{D74FB037-CC7C-4047-8384-2C2E37999A7A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>denifia.stardew.sendletters</RootNamespace>
-    <AssemblyName>denifia.stardew.sendletters</AssemblyName>
+    <RootNamespace>Denifia.Stardew.SendLetters</RootNamespace>
+    <AssemblyName>Denifia.Stardew.SendLetters</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -36,11 +36,15 @@
     <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.5.0\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="AutoMapper, Version=5.0.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net45\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,14 +53,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Database.cs" />
     <Compile Include="Domain\Friend.cs" />
-    <Compile Include="Domain\IRepository.cs" />
+    <Compile Include="Domain\IMemoryCache.cs" />
+    <Compile Include="Domain\IMessageRepository.cs" />
+    <Compile Include="Domain\IPlayerRepository.cs" />
+    <Compile Include="Domain\MemoryCache.cs" />
+    <Compile Include="Domain\MessageRepository.cs" />
+    <Compile Include="Domain\OldIRepository.cs" />
     <Compile Include="Domain\LocalAndRemoteRepository.cs" />
     <Compile Include="Domain\LocalRepository.cs" />
+    <Compile Include="Domain\PlayerRepository.cs" />
+    <Compile Include="Domain\Repository.cs" />
+    <Compile Include="Domain\RestRepository.cs" />
+    <Compile Include="Domain\SavedGame.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
-    <Compile Include="Models\MessageCreateMessage.cs" />
+    <Compile Include="Models\CreateMessageModel.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Domain\Player.cs" />
     <Compile Include="ModEvents.cs" />
@@ -71,7 +83,7 @@
     <Compile Include="Services\MailboxService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\PlayerService.cs" />
-    <Compile Include="Services\RestBaseService.cs" />
+    <Compile Include="Services\RestService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json">
@@ -82,7 +94,8 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="..\denifia.stardew.common\denifia.stardew.common.projitems" Label="Shared" />
+  <ItemGroup />
+  <Import Project="..\common\denifia.stardew.sendletters.common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
   <Target Name="AfterBuild">

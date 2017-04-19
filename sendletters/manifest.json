@@ -8,6 +8,6 @@
     "Build": ""
   },
   "Description": "Send letters to your friends within Stardew",
-  "UniqueID": "denifia.stardew.sendletters",
-  "EntryDll": "denifia.stardew.sendletters.dll"
+  "UniqueID": "Denifia.Stardew.SendLetters",
+  "EntryDll": "Denifia.Stardew.SendLetters.dll"
 }

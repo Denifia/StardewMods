@@ -1,16 +1,11 @@
-﻿using denifia.stardew.sendletters.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Denifia.Stardew.SendLetters.Domain;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IPlayerService
     {
-        void LoadCurrentPlayer();
-        Player GetCurrentPlayer();
+        Player CurrentPlayer { get; }
         Player GetPlayerById(string id);
+        void LoadLocalPlayers();
     }
 }

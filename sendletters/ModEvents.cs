@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using denifia.stardew.sendletters.Domain;
+using Denifia.Stardew.SendLetters.Domain;
 using StardewValley;
-using denifia.stardew.sendletters.common.Domain;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
-namespace denifia.stardew.sendletters
+namespace Denifia.Stardew.SendLetters
 {
     public class ModEvents
     {

@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Denifia.Stardew.SendLetters.Domain;
+using System;
+using System.Collections.Generic;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IConfigurationService
     {
-        string CurrentPlayerId { get; set; }
         Uri GetApiUri();
         string GetLocalPath();
         bool InDebugMode();
         bool InLocalOnlyMode();
+        List<SavedGame> GetSavedGames();
     }
 }

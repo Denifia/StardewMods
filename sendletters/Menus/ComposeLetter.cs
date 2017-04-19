@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Menus
+namespace Denifia.Stardew.SendLetters.Menus
 {
     public class ComposeLetter : MenuWithInventory
     {

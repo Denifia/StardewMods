@@ -6,10 +6,13 @@
     <SharedGUID>e7f132c9-39b8-4344-b8aa-4b35829bedf1</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>denifia.stardew.common</Import_RootNamespace>
+    <Import_RootNamespace>Denifia.Stardew.SendLetters.Common</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\Entity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\IRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Domain\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Domain\JsonFileRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MessageCreateModel.cs" />
   </ItemGroup>
 </Project>

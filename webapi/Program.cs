@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 
-namespace denifia.stardew.sendletters.webapi
+namespace Denifia.Stardew.SendLetters.webapi
 {
     public class Program
     {
@@ -18,7 +18,7 @@ namespace denifia.stardew.sendletters.webapi
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .Build();
 
             host.Run();

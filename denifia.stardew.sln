@@ -3,21 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "denifia.stardew.sendletters", "sendletters\denifia.stardew.sendletters.csproj", "{D74FB037-CC7C-4047-8384-2C2E37999A7A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendLetters", "sendletters\SendLetters.csproj", "{D74FB037-CC7C-4047-8384-2C2E37999A7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "denifia.stardew.sendletters.webapi", "webapi\denifia.stardew.sendletters.webapi.csproj", "{526E9ED5-0D1E-4226-8370-888460AD5CBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendLetters.Api", "webapi\SendLetters.Api.csproj", "{526E9ED5-0D1E-4226-8370-888460AD5CBF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{870BC765-0BC0-4178-9316-7651E9400E3D}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SendLetters.Common", "common\SendLetters.Common.shproj", "{E7F132C9-39B8-4344-B8AA-4B35829BEDF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".metadata", ".metadata", "{7D99962B-F613-4157-81BB-F8AA3F54B065}"
 	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "denifia.stardew.sendletters.common", "common\denifia.stardew.sendletters.common.shproj", "{E7F132C9-39B8-4344-B8AA-4B35829BEDF1}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		denifia.stardew.common\denifia.stardew.common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
-		common\denifia.stardew.common.projitems*{e7f132c9-39b8-4344-b8aa-4b35829bedf1}*SharedItemsImports = 13
+		common\denifia.stardew.sendletters.common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
+		common\denifia.stardew.sendletters.common.projitems*{e7f132c9-39b8-4344-b8aa-4b35829bedf1}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

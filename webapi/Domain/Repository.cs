@@ -1,55 +1,40 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
+using Denifia.Stardew.SendLetters.Common.Domain;
+using System;
+using Newtonsoft.Json;
 
-namespace denifia.stardew.sendletters.webapi.Domain
+namespace Denifia.Stardew.SendLetters.webapi.Domain
 {
-    public class Repository
+    public class Repository : JsonFileRepository
     {
-        private static Repository instance;
-        private readonly string _databaseFileName = "data.json";
-        private FileInfo _database;
+        private readonly IMemoryCache _memoryCache;
 
-        public List<Message> Messages { get; set; }
-
-        private Repository()
+        public Repository(IHostingEnvironment env, IMemoryCache memoryCache)
         {
+            _memoryCache = memoryCache;
+            _dataDirectory = new DirectoryInfo(env.ContentRootPath);
         }
 
-        public static Repository Instance
+        internal override bool TryGetValueCache<T>(string key, out T value)
         {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Repository();
-                }
-                return instance;
-            }
+            return _memoryCache.TryGetValue(key, out value);
         }
 
-        public void Init(string filePath)
+        internal override void SaveToCache<T>(string key, T value)
         {
-            _database = new FileInfo(Path.Combine(filePath, _databaseFileName));
-            LoadDatabase();
+            _memoryCache.Set(key, value);
         }
 
-        public void LoadDatabase()
+        internal override string SerializeObject(object value)
         {
-            if (!_database.Exists)
-            {
-                File.WriteAllText(_database.FullName, "[]");
-            }
-
-            if (Messages == null)
-            {
-                Messages = JsonConvert.DeserializeObject<List<Message>>(File.ReadAllText(_database.FullName));
-            }
+            return JsonConvert.SerializeObject(value);
         }
 
-        public void SaveDatabase()
+        internal override T DeserializeObject<T>(string value)
         {
-            File.WriteAllText(_database.FullName, JsonConvert.SerializeObject(Messages));
+            return JsonConvert.DeserializeObject<T>(value);
         }
     }
 }

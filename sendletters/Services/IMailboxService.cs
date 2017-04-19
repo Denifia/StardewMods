@@ -1,12 +1,12 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Domain;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IMailboxService
     {

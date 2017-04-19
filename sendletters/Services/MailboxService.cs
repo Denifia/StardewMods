@@ -1,7 +1,7 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Menus;
-using denifia.stardew.sendletters.Models;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Menus;
+using Denifia.Stardew.SendLetters.Models;
 using StardewValley;
 using StardewValley.Menus;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public class MailboxService : IMailboxService
     {
@@ -62,7 +62,7 @@ namespace denifia.stardew.sendletters.Services
             if (Game1.activeClickableMenu != null) return;
 
             List<Response> responseList = new List<Response>();
-            foreach (var friend in _playerService.GetCurrentPlayer().Friends)
+            foreach (var friend in _playerService.CurrentPlayer.Friends)
             {
                 responseList.Add(new Response(friend.Id, string.Format("{0} ({1} Farm)", friend.Name, friend.FarmName)));
             }
@@ -77,7 +77,6 @@ namespace denifia.stardew.sendletters.Services
             {
                 var items = new List<Item>();
                 items.Add(null);
-                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, new List<Item>(), 1, 1);
                 Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, null, highlightGiftable);
                 //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange));
             }
@@ -129,8 +128,9 @@ namespace denifia.stardew.sendletters.Services
 
         private void OnCheckMailbox(object sender, EventArgs e)
         {
-            var message = _messageService.GetFirstMessage(_playerService.GetCurrentPlayer().Id);
+            var message = _messageService.GetFirstMessage(_playerService.CurrentPlayer.Id);
             if (message != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
+
             {
                 ShowLetter(message);
             }
@@ -145,9 +145,9 @@ namespace denifia.stardew.sendletters.Services
 
         private void AfterMessageCrafted(string toPlayerId, Item item)
         {
-            var currentPlayer = _playerService.GetCurrentPlayer();
+            var currentPlayer = _playerService.CurrentPlayer;
             var messageText = string.Format(_messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
-            var newMessage = new MessageCreateMessage
+            var newMessage = new CreateMessageModel
             {
                 FromPlayerId = currentPlayer.Id,
                 ToPlayerId = toPlayerId,
@@ -155,7 +155,6 @@ namespace denifia.stardew.sendletters.Services
             };
 
             _messageService.CreateMessage(newMessage);
-            //Game1.player.removeItemsFromInventory(item.parentSheetIndex, item.getStack());
         }
     }
 }

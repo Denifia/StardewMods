@@ -1,49 +1,27 @@
-﻿using Autofac;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Menus;
-using denifia.stardew.sendletters.Services;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Services;
 using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using xTile.Dimensions;
-using xTile.ObjectModel;
-using xTile.Tiles;
 
-namespace denifia.stardew.sendletters
+namespace Denifia.Stardew.SendLetters
 {
     public class Program
     { 
-        private readonly IModHelper _modHelper;
         private readonly IConfigurationService _configService;
-        private readonly IRepository _repository;
         private readonly IPlayerService _playerService;
         private readonly IMessageService _messageService;
         private readonly IMailboxService _mailboxService;
 
-        private string _currentPlayerId
-        {
-            get
-            {
-                return _playerService.GetCurrentPlayer().Id;
-            }
-        }
-
-        public Program(IModHelper modHelper, 
-            IRepository repository, 
-            IConfigurationService configService,
+        public Program(IConfigurationService configService,
             IPlayerService playerService,
             IMessageService messageService,
             IMailboxService mailboxService)
         {
-            _modHelper = modHelper;
-            _repository = repository;
             _configService = configService;
             _playerService = playerService;
             _messageService = messageService;
@@ -69,7 +47,7 @@ namespace denifia.stardew.sendletters
 
         private void PlayerMessagesUpdated(object sender, EventArgs e)
         {
-            var messageCount = _messageService.UnreadMessageCount(_playerService.GetCurrentPlayer().Id);
+            var messageCount = _messageService.UnreadMessageCount(_playerService.CurrentPlayer.Id);
             if (messageCount > 0)
             {
                 _mailboxService.PostLetters(messageCount);
@@ -78,7 +56,7 @@ namespace denifia.stardew.sendletters
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
-            _playerService.LoadCurrentPlayer();
+            _playerService.LoadLocalPlayers();
 
             LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
@@ -115,7 +93,7 @@ namespace denifia.stardew.sendletters
             }          
             if (timeToCheck)
             {
-                _messageService.CheckForMessages(_currentPlayerId);
+                _messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
             }
         }
 

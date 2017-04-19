@@ -1,27 +1,24 @@
-﻿using denifia.stardew.sendletters.common.Domain;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Models;
+﻿using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public class MessageService : IMessageService
     {
-        private readonly IRepository _repository;
+        private readonly IMessageRepository _messageRepository;
         private readonly IPlayerService _playerService;
 
-        public MessageService(IRepository repository, IPlayerService playerService)
+        public MessageService(IMessageRepository messageRepository, IPlayerService playerService)
         {
-            _repository = repository;
+            _messageRepository = messageRepository;
             _playerService = playerService;
             ModEvents.MessageRead += MessageRead;
         }
 
-        public void CreateMessage(MessageCreateMessage model)
+        public void CreateMessage(CreateMessageModel model)
         {
             var message = new Message
             {
@@ -32,17 +29,17 @@ namespace denifia.stardew.sendletters.Services
                 CreatedDate = DateTime.Now
             };
 
-            _repository.CreateMessage(message);
+            _messageRepository.AddOrUpdate(message);
         }
 
         public int UnreadMessageCount(string playerId)
         {
-            return _repository.FindMessages(playerId, x => x.ToPlayerId == playerId).Count();
+            return _messageRepository.GetMessagesToPlayer(playerId).Count();
         }
 
         public Message GetFirstMessage(string playerId)
         {
-            return _repository.FindMessages(playerId, x => x.ToPlayerId == playerId).FirstOrDefault();
+            return _messageRepository.GetMessagesToPlayer(playerId).FirstOrDefault();
         }
 
         public void CheckForMessages(string playerId)
@@ -52,7 +49,7 @@ namespace denifia.stardew.sendletters.Services
 
         private void MessageRead(Message message)
         {
-            _repository.Delete(message);
+            _messageRepository.Delete(message);
         }
     }
 }

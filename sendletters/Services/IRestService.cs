@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace denifia.stardew.sendletters.Services
+namespace Denifia.Stardew.SendLetters.Services
 {
     public interface IRestService
     {

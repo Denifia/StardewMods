@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using denifia.stardew.sendletters.webapi.Domain;
+using Denifia.Stardew.SendLetters.webapi.Domain;
+using Denifia.Stardew.SendLetters.Common.Domain;
 
-namespace denifia.stardew.sendletters.webapi
+namespace Denifia.Stardew.SendLetters.webapi
 {
     public class Startup
     {
@@ -30,6 +31,8 @@ namespace denifia.stardew.sendletters.webapi
         {
             // Add framework services.
             services.AddMvc();
+            services.AddMemoryCache();
+            services.AddTransient<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,7 +41,6 @@ namespace denifia.stardew.sendletters.webapi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            Repository.Instance.Init(env.ContentRootPath);
             app.UseMvc();
         }
     }

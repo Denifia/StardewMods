@@ -1,51 +1,37 @@
 ﻿using Autofac;
-using denifia.stardew.sendletters.Domain;
-using denifia.stardew.sendletters.Models;
-using denifia.stardew.sendletters.Services;
-using RestSharp;
+using Denifia.Stardew.SendLetters.Common.Domain;
+using Denifia.Stardew.SendLetters.Domain;
+using Denifia.Stardew.SendLetters.Services;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
-using StardewValley;
-using StardewValley.Menus;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace denifia.stardew.sendletters
+namespace Denifia.Stardew.SendLetters
 {
     public class ModEntry : Mod
     {
         public override void Entry(IModHelper helper)
         {
-            var config = helper.ReadConfig<ModConfig>();
-
             var builder = new ContainerBuilder();
+
             builder.RegisterInstance(helper).As<IModHelper>();
-            // ToDo: switch repos based on config
-            if (config.LocalOnly)
-            {
-                builder.RegisterType<LocalRepository>().As<IRepository>();
-            }
-            else
-            {
-                builder.RegisterType<LocalAndRemoteRepository>().As<IRepository>();
-            }
+            builder.RegisterType<Repository>().As<IRepository>();
+            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
+            builder.RegisterType<MessageRepository>().As<IMessageRepository>();
+            builder.RegisterType<MemoryCache>().As<IMemoryCache>();
             
             builder.RegisterAssemblyTypes(typeof(ModEntry).Assembly)
                 .Where(t => t.Name.EndsWith("Service"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
-
-            //builder.RegisterType<ConfigurationService>().As<IConfigurationService>();
+            
             var container = builder.Build();
 
-            var program = new Program(helper, 
-                container.Resolve<IRepository>(), 
+            var program = new Program(
                 container.Resolve<IConfigurationService>(),
                 container.Resolve<IPlayerService>(),
                 container.Resolve<IMessageService>(),
-                container.Resolve<IMailboxService>());
+                container.Resolve<IMailboxService>()
+            );
 
             program.Init();
         }
