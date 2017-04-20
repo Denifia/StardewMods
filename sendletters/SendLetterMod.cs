@@ -45,8 +45,10 @@ namespace Denifia.Stardew.SendLetters
         private void RegisterCommands()
         {
             _modHelper.ConsoleCommands
-                .Add("sendletters_addfriend", "Adds a friend to your currently loaded game.\n\nUsage: sentletters_addfriend \n- name: the name of your friend.\n- id: the id of your friend.", HandleCommand)
-                .Add("sendletters_me", "Shows you the command that your friends need to type to add you as a friend.\n\nUsage: sentletters_me", HandleCommand);
+                .Add("sendletters_friends", "Shows all the friends your currently loaded farmer.\n\nUsage: sendletters_friends -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_addfriend", "Adds a friend to your currently loaded farmer.\n\nUsage: sendletters_addfriend -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_removefriend", "Removes a friend from your currently loaded farmer.\n\nUsage: sendletters_removefriend -Id <id> \n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_me", "Shows you the command that your friends need to type to add this current farmer as a friend.\n\nUsage: sendletters_me", HandleCommand);
         }
         
         private void HandleCommand(string command, string[] args)
@@ -64,6 +66,9 @@ namespace Denifia.Stardew.SendLetters
                     _mod.Monitor.Log($"sendletters_addfriend -Name {_playerService.CurrentPlayer.Name} -FarmName {_playerService.CurrentPlayer.FarmName} -Id {_playerService.CurrentPlayer.Id}", LogLevel.Info);
                     _mod.Monitor.Log("Feel free to change your <Name> if you want but the <Id> needs to stay as it is.", LogLevel.Info);
                     break;
+                case "sendletters_friends":
+                    _mod.Monitor.Log("Not implemented yet...", LogLevel.Info);
+                    break;
                 case "sendletters_addfriend":
                     if (args.Length == 6 && args[0] == "-Name" && args[2] == "-FarmName" && args[4] == "-Id")
                     {
@@ -77,6 +82,9 @@ namespace Denifia.Stardew.SendLetters
                     {
                         LogArgumentsInvalid(command);
                     }
+                    break;
+                case "sendletters_removefriend":
+                    _mod.Monitor.Log("Not implemented yet...", LogLevel.Info);
                     break;
                 default:
                     throw new NotImplementedException($"SendLetters received unknown command '{command}'.");
