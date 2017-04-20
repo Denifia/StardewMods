@@ -140,7 +140,7 @@ namespace Denifia.Stardew.SendLetters
             }
             else
             {
-                if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1600))
+                if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1800))
                 {
                     // Check mail on every hour in game between 8am and 6pm
                     timeToCheck = true;
