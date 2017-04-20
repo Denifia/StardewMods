@@ -88,6 +88,19 @@ namespace Denifia.Stardew.SendLetters.Services
             }
         }
 
+        public void RemoveFriendFromCurrentPlayer(string id)
+        {
+            if (CurrentPlayer != null)
+            {
+                var friend = CurrentPlayer.Friends.FirstOrDefault(x => x.Id == id);
+                if (friend != null)
+                {
+                    CurrentPlayer.Friends.Remove(friend);
+                    _playerRepository.AddOrUpdate(CurrentPlayer);
+                }
+            }
+        }
+
         private Player LoadCurrentPlayer()
         {
             var name = Game1.player.name;

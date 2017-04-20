@@ -5,6 +5,7 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
+using System.Linq;
 using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendLetters
@@ -67,10 +68,23 @@ namespace Denifia.Stardew.SendLetters
                     _mod.Monitor.Log("Feel free to change your <Name> if you want but the <Id> needs to stay as it is.", LogLevel.Info);
                     break;
                 case "sendletters_friends":
-                    _mod.Monitor.Log("Not implemented yet...", LogLevel.Info);
+                    var friends = _playerService.CurrentPlayer.Friends;
+                    if (friends.Any())
+                    {
+                        _mod.Monitor.Log("Your friends for the currently loaded farmer are...", LogLevel.Info);
+                        foreach (var friend in friends)
+                        {
+                            _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [ID: {friend.Id}]", LogLevel.Info);
+                        }
+                    }
+                    else
+                    {
+                        _mod.Monitor.Log("The currently loaded farmer has no friends. How sad.", LogLevel.Info);
+                        _mod.Monitor.Log("You can add friends with the sendletters_addfriend command.", LogLevel.Info);
+                    }
                     break;
                 case "sendletters_addfriend":
-                    if (args.Length == 6 && args[0] == "-Name" && args[2] == "-FarmName" && args[4] == "-Id")
+                    if (args.Length == 6 && args[0].ToLower() == "-name" && args[2].ToLower() == "-farmname" && args[4].ToLower() == "-id")
                     {
                         var name = args[1];
                         var farmName = args[3];
@@ -84,7 +98,24 @@ namespace Denifia.Stardew.SendLetters
                     }
                     break;
                 case "sendletters_removefriend":
-                    _mod.Monitor.Log("Not implemented yet...", LogLevel.Info);
+                    if (args.Length == 2 && args[0].ToLower() == "-id")
+                    {
+                        var id = args[1];
+                        var friend = _playerService.CurrentPlayer.Friends.FirstOrDefault(x => x.Id == id);
+                        if (friend != null)
+                        {
+                            _playerService.RemoveFriendFromCurrentPlayer(id);
+                            _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) was removed!", LogLevel.Info);
+                        }
+                        else
+                        {
+                            _mod.Monitor.Log($"Couldn'd find a friend with that id.", LogLevel.Info);
+                        }
+                    }
+                    else
+                    {
+                        LogArgumentsInvalid(command);
+                    }
                     break;
                 default:
                     throw new NotImplementedException($"SendLetters received unknown command '{command}'.");
