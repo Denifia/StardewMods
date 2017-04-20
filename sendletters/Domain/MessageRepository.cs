@@ -32,7 +32,7 @@ namespace Denifia.Stardew.SendLetters.Domain
                 var urlSegments = new Dictionary<string, string> { { "playerId", id } };
                 _restService.GetRequest<List<Message>>("Messages/ToPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
             }
-            return GetAll().AsQueryable();
+            return GetAll().Where(x => x.ToPlayerId == id).AsQueryable();
         }
 
         public IQueryable<Message> GetMessagesFromPlayer(string id)
@@ -43,7 +43,7 @@ namespace Denifia.Stardew.SendLetters.Domain
                 var urlSegments = new Dictionary<string, string> { { "playerId", id } };
                 _restService.GetRequest<List<Message>>("Messages/FromPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
             }
-            return GetAll().AsQueryable();
+            return GetAll().Where(x => x.FromPlayerId == id).AsQueryable();
         }
 
         private void RemoteMessagesRetreived(List<Message> remoteMessages)

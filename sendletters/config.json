@@ -1,3 +1,4 @@
 ﻿{
-  "ApiUrl": "http://denifiastardewsendletters.azurewebsites.net/api"
+  "ApiUrl": "http://denifiastardewsendletters.azurewebsites.net/api",
+  "Debug": true
 }
