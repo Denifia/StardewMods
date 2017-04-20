@@ -62,6 +62,21 @@ namespace Denifia.Stardew.SendLetters
                 case "sendletters_me":
                     _mod.Monitor.Log("Command for others to add the currently loaded farmer as a friend is...", LogLevel.Info);
                     _mod.Monitor.Log($"sendletters_addfriend -Name {_playerService.CurrentPlayer.Name} -FarmName {_playerService.CurrentPlayer.FarmName} -Id {_playerService.CurrentPlayer.Id}", LogLevel.Info);
+                    _mod.Monitor.Log("Feel free to change your <Name> if you want but the <Id> needs to stay as it is.", LogLevel.Info);
+                    break;
+                case "sendletters_addfriend":
+                    if (args.Length == 6 && args[0] == "-Name" && args[2] == "-FarmName" && args[4] == "-Id")
+                    {
+                        var name = args[1];
+                        var farmName = args[3];
+                        var id = args[5];
+                        _playerService.AddFriendToCurrentPlayer(name, farmName, id);
+                        _mod.Monitor.Log($"{name} ({farmName} Farm) was added!", LogLevel.Info);
+                    }
+                    else
+                    {
+                        LogArgumentsInvalid(command);
+                    }
                     break;
                 default:
                     throw new NotImplementedException($"SendLetters received unknown command '{command}'.");
@@ -142,6 +157,19 @@ namespace Denifia.Stardew.SendLetters
                     ModEvents.RaiseCheckMailboxEvent();
                 }
             }
+        }
+
+        /****
+        ** Logging
+        ****/
+        private void LogUsageError(string error, string command)
+        {
+            _mod.Monitor.Log($"{error} Type 'help {command}' for usage.", LogLevel.Error);
+        }
+
+        private void LogArgumentsInvalid(string command)
+        {
+            LogUsageError("The arguments are invalid.", command);
         }
     }
 }
