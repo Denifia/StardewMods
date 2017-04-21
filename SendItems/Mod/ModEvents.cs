@@ -13,14 +13,14 @@ namespace Denifia.Stardew.SendLetters
     {
         public delegate void MessageReadEventHandler(Message message);
         public delegate void PlayerCreatedHandler(Player player);
-        public delegate void MessageCraftedHandler(string toPlayerId, Item item);
+        public delegate void AfterMailComposedHandler(string toFarmerId, Item item);
 
         public static event EventHandler PlayerMessagesUpdated;
         public static event PlayerCreatedHandler PlayerCreated;
         public static event EventHandler MessageSent;
         public static event MessageReadEventHandler MessageRead;
         public static event EventHandler CheckMailbox;
-        public static event MessageCraftedHandler MessageCrafted;
+        public static event AfterMailComposedHandler AfterMailComposed;
 
         internal static void RaisePlayerMessagesUpdatedEvent()
         {
@@ -47,9 +47,9 @@ namespace Denifia.Stardew.SendLetters
             CheckMailbox(null, null);
         }
         
-        internal static void RaiseMessageCraftedEvent(string toPlayerId, Item item)
+        internal static void InvokeAfterMailComposed(string toFarmerId, Item item)
         {
-            MessageCrafted(toPlayerId, item);
+            AfterMailComposed(toFarmerId, item);
         }
 
     }

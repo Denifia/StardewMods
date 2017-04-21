@@ -83,9 +83,13 @@
     <Compile Include="Services\IMessageService.cs" />
     <Compile Include="Services\IPlayerService.cs" />
     <Compile Include="Services\IRestService.cs" />
+    <Compile Include="Services\LetterboxService.cs" />
     <Compile Include="Services\MailboxService.cs" />
+    <Compile Include="Services\MailCleanupService.cs" />
+    <Compile Include="Services\MailDeliveryService.cs" />
     <Compile Include="Services\MessageService.cs" />
     <Compile Include="Services\PlayerService.cs" />
+    <Compile Include="Services\PostboxService.cs" />
     <Compile Include="Services\RestService.cs" />
   </ItemGroup>
   <ItemGroup>

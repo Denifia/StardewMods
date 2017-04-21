@@ -26,7 +26,7 @@ namespace Denifia.Stardew.SendLetters.Services
             _playerService = playerService;
             _messageService = messageService;
 
-            ModEvents.MessageCrafted += AfterMessageCrafted;
+            //ModEvents.MessageCrafted += AfterMessageCrafted;
             ModEvents.CheckMailbox += OnCheckMailbox;
         }
 
