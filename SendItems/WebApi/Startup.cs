@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Denifia.Stardew.SendLetters.webapi.Domain;
-using Denifia.Stardew.SendLetters.Common.Domain;
 
 namespace Denifia.Stardew.SendLetters.webapi
 {
@@ -31,8 +25,6 @@ namespace Denifia.Stardew.SendLetters.webapi
         {
             // Add framework services.
             services.AddMvc();
-            services.AddMemoryCache();
-            services.AddTransient<IRepository, Repository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

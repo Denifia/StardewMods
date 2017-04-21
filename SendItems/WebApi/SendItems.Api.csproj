@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NewFolder\**" />
     <Compile Remove="wwwroot\**" />
+    <Content Remove="NewFolder\**" />
     <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
     <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="NewFolder\**" />
     <None Remove="wwwroot\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="data.db" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="3.1.0" />
@@ -33,6 +41,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Import Project="..\Common\SendItems.Common.projitems" Label="Shared" />
 
 </Project>
