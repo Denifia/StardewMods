@@ -3,12 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
-    <AssemblyName>Denifia.Stardew.SendLetters.Api</AssemblyName>
-    <RootNamespace>Denifia.Stardew.SendLetters.Api</RootNamespace>
+    <AssemblyName>Denifia.Stardew.SendItems.Api</AssemblyName>
+    <RootNamespace>Denifia.Stardew.SendItems.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.0.0" />
@@ -29,6 +32,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Import Project="..\common\denifia.stardew.sendletters.common.projitems" Label="Shared" />
+  <Import Project="..\Common\SendItems.Common.projitems" Label="Shared" />
 
 </Project>
