@@ -7,5 +7,7 @@ namespace Denifia.Stardew.SendLetters.Services
         Player CurrentPlayer { get; }
         Player GetPlayerById(string id);
         void LoadLocalPlayers();
+        void AddFriendToCurrentPlayer(string name, string farmName, string id);
+        void RemoveFriendFromCurrentPlayer(string id);
     }
 }

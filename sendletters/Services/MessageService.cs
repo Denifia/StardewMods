@@ -1,6 +1,7 @@
 ﻿using Denifia.Stardew.SendLetters.Common.Domain;
 using Denifia.Stardew.SendLetters.Domain;
 using Denifia.Stardew.SendLetters.Models;
+using Pathoschild.Stardew.Common;
 using System;
 using System.Linq;
 
@@ -30,6 +31,9 @@ namespace Denifia.Stardew.SendLetters.Services
             };
 
             _messageRepository.AddOrUpdate(message);
+
+            // TODO: Needs to be moved out to SendLetterMod or MessageService after raising an event.
+            CommonHelper.ShowInfoMessage("Letter sent!");
         }
 
         public int UnreadMessageCount(string playerId)

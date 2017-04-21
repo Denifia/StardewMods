@@ -145,6 +145,8 @@ namespace Denifia.Stardew.SendLetters.Services
 
         private void AfterMessageCrafted(string toPlayerId, Item item)
         {
+            if (item == null) return; 
+
             var currentPlayer = _playerService.CurrentPlayer;
             var messageText = string.Format(_messageFormat, currentPlayer.Name, item.parentSheetIndex, item.getStack());
             var newMessage = new CreateMessageModel

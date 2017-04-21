@@ -1,103 +1,214 @@
-﻿using Autofac;
-using Denifia.Stardew.SendLetters.Common.Domain;
-using Denifia.Stardew.SendLetters.Domain;
+﻿using Denifia.Stardew.SendLetters.Domain;
 using Denifia.Stardew.SendLetters.Services;
-using Pathoschild.Stardew.Common;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendLetters
 {
-    public class SendLetterMod : Mod
+    public class SendLetterMod
     {
-        private ModConfig Config;
-        private ISemanticVersion CurrentVersion;
-        private ISemanticVersion NewRelease;
-        private bool HasSeenUpdateWarning;
+        private readonly IMod _mod;
+        private readonly IModHelper _modHelper;
+        private readonly IConfigurationService _configService;
+        private readonly IPlayerService _playerService;
+        private readonly IMessageService _messageService;
+        private readonly IMailboxService _mailboxService;
 
-        public override void Entry(IModHelper helper)
+        private bool SavedGameLoaded = false;
+
+        public SendLetterMod(IMod mod,
+            IModHelper modHelper,
+            IConfigurationService configService,
+            IPlayerService playerService,
+            IMessageService messageService,
+            IMailboxService mailboxService)
         {
-            // read config
-            this.Config = helper.ReadConfig<ModConfig>();
-            this.CurrentVersion = this.ModManifest.Version;
+            _mod = mod;
+            _modHelper = modHelper;
+            _configService = configService;
+            _playerService = playerService;
+            _messageService = messageService;
+            _mailboxService = mailboxService;
 
-            // hooks for update check
-            GameEvents.GameLoaded += this.GameEvents_GameLoaded;
-            SaveEvents.AfterLoad += this.SaveEvents_AfterLoad;
+            ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
+            ModEvents.PlayerCreated += PlayerCreated;
+            ModEvents.MessageSent += MessageSent;
+            SaveEvents.AfterLoad += AfterSavedGameLoad;
 
-            var builder = new ContainerBuilder();
-
-            builder.RegisterInstance(helper).As<IModHelper>();
-            builder.RegisterType<Repository>().As<IRepository>();
-            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
-            builder.RegisterType<MessageRepository>().As<IMessageRepository>();
-            builder.RegisterType<MemoryCache>().As<IMemoryCache>();
-            
-            builder.RegisterAssemblyTypes(typeof(SendLetterMod).Assembly)
-                .Where(t => t.Name.EndsWith("Service"))
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
-            
-            var container = builder.Build();
-
-            var program = new Program(
-                container.Resolve<IConfigurationService>(),
-                container.Resolve<IPlayerService>(),
-                container.Resolve<IMessageService>(),
-                container.Resolve<IMailboxService>()
-            );
-
-            program.Init();
+            RegisterCommands();
         }
-
-        private void GameEvents_GameLoaded(object sender, EventArgs e)
+        
+        private void RegisterCommands()
         {
-            // check for mod update
-            if (this.Config.CheckForUpdates)
+            _modHelper.ConsoleCommands
+                .Add("sendletters_friends", "Shows all the friends your currently loaded farmer.\n\nUsage: sendletters_friends -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_addfriend", "Adds a friend to your currently loaded farmer.\n\nUsage: sendletters_addfriend -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_removefriend", "Removes a friend from your currently loaded farmer.\n\nUsage: sendletters_removefriend -Id <id> \n- id: the id of your friend.", HandleCommand)
+                .Add("sendletters_me", "Shows you the command that your friends need to type to add this current farmer as a friend.\n\nUsage: sendletters_me", HandleCommand);
+        }
+        
+        private void HandleCommand(string command, string[] args)
+        {
+            if (!SavedGameLoaded)
             {
-                try
-                {
-                    Task.Factory.StartNew(() =>
+                _mod.Monitor.Log("Please load up a saved game first, then try again.", LogLevel.Warn);
+                return;
+            }
+
+            switch (command)
+            {
+                case "sendletters_me":
+                    _mod.Monitor.Log("Command for others to add the currently loaded farmer as a friend is...", LogLevel.Info);
+                    _mod.Monitor.Log($"sendletters_addfriend -Name {_playerService.CurrentPlayer.Name} -FarmName {_playerService.CurrentPlayer.FarmName} -Id {_playerService.CurrentPlayer.Id}", LogLevel.Info);
+                    _mod.Monitor.Log("Feel free to change your <Name> if you want but the <Id> needs to stay as it is.", LogLevel.Info);
+                    break;
+                case "sendletters_friends":
+                    var friends = _playerService.CurrentPlayer.Friends;
+                    if (friends.Any())
                     {
-                        Task.Factory.StartNew(() =>
+                        _mod.Monitor.Log("Your friends for the currently loaded farmer are...", LogLevel.Info);
+                        foreach (var friend in friends)
                         {
-                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, "SendLetters").Result;
-                            if (latest.IsNewerThan(this.CurrentVersion))
-                                this.NewRelease = latest;
-                        });
-                    });
-                }
-                catch (Exception ex)
-                {
-                    this.HandleError(ex, "checking for a new version");
-                }
+                            _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [ID: {friend.Id}]", LogLevel.Info);
+                        }
+                    }
+                    else
+                    {
+                        _mod.Monitor.Log("The currently loaded farmer has no friends. How sad.", LogLevel.Info);
+                        _mod.Monitor.Log("You can add friends with the sendletters_addfriend command.", LogLevel.Info);
+                    }
+                    break;
+                case "sendletters_addfriend":
+                    if (args.Length == 6 && args[0].ToLower() == "-name" && args[2].ToLower() == "-farmname" && args[4].ToLower() == "-id")
+                    {
+                        var name = args[1];
+                        var farmName = args[3];
+                        var id = args[5];
+                        _playerService.AddFriendToCurrentPlayer(name, farmName, id);
+                        _mod.Monitor.Log($"{name} ({farmName} Farm) was added!", LogLevel.Info);
+                    }
+                    else
+                    {
+                        LogArgumentsInvalid(command);
+                    }
+                    break;
+                case "sendletters_removefriend":
+                    if (args.Length == 2 && args[0].ToLower() == "-id")
+                    {
+                        var id = args[1];
+                        var friend = _playerService.CurrentPlayer.Friends.FirstOrDefault(x => x.Id == id);
+                        if (friend != null)
+                        {
+                            _playerService.RemoveFriendFromCurrentPlayer(id);
+                            _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) was removed!", LogLevel.Info);
+                        }
+                        else
+                        {
+                            _mod.Monitor.Log($"Couldn'd find a friend with that id.", LogLevel.Info);
+                        }
+                    }
+                    else
+                    {
+                        LogArgumentsInvalid(command);
+                    }
+                    break;
+                default:
+                    throw new NotImplementedException($"SendLetters received unknown command '{command}'.");
             }
         }
 
-        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        private void PlayerCreated(Player player)
         {
-            // render update warning
-            if (this.Config.CheckForUpdates && !this.HasSeenUpdateWarning && this.NewRelease != null)
+        }
+
+        private void MessageSent(object sender, EventArgs e)
+        {
+        }
+
+        private void PlayerMessagesUpdated(object sender, EventArgs e)
+        {
+            var messageCount = _messageService.UnreadMessageCount(_playerService.CurrentPlayer.Id);
+            if (messageCount > 0)
             {
-                try
+                _mailboxService.PostLetters(messageCount);
+            }
+        }
+
+        private void AfterSavedGameLoad(object sender, EventArgs e)
+        {
+            SavedGameLoaded = true;
+            _playerService.LoadLocalPlayers();
+
+            LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
+            TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
+            SaveEvents.AfterLoad -= AfterSavedGameLoad;
+        }
+
+        private void CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
+        {
+            if (e.NewLocation.name == "Farm")
+            {
+                // Only watch for mouse events while at the farm, for performance
+                ControlEvents.MouseChanged += MouseChanged;
+            }
+            else
+            {
+                ControlEvents.MouseChanged -= MouseChanged;
+            }
+        }
+
+        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
+        {
+            var timeToCheck = false;
+            if (_configService.InDebugMode())
+            {
+                timeToCheck = true;
+            }
+            else
+            {
+                if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1800))
                 {
-                    this.HasSeenUpdateWarning = true;
-                    CommonHelper.ShowInfoMessage($"You can update Automate from {this.CurrentVersion} to {this.NewRelease}.");
+                    // Check mail on every hour in game between 8am and 6pm
+                    timeToCheck = true;
                 }
-                catch (Exception ex)
+            }          
+            if (timeToCheck)
+            {
+                _messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
+            }
+        }
+
+        private void MouseChanged(object sender, EventArgsMouseStateChanged e)
+        {
+            if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                // Check if the click is on the mailbox tile or the one above it
+                Location tileLocation = new Location() { X = (int)Game1.currentCursorTile.X, Y = (int)Game1.currentCursorTile.Y };
+                Vector2 key = new Vector2((float)tileLocation.X, (float)tileLocation.Y);
+
+                if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    this.HandleError(ex, "showing the new version available");
+                    ModEvents.RaiseCheckMailboxEvent();
                 }
             }
         }
 
-        private void HandleError(Exception ex, string verb)
+        /****
+        ** Logging
+        ****/
+        private void LogUsageError(string error, string command)
         {
-            this.Monitor.Log($"Something went wrong {verb}:\n{ex}", LogLevel.Error);
-            CommonHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
+            _mod.Monitor.Log($"{error} Type 'help {command}' for usage.", LogLevel.Error);
+        }
+
+        private void LogArgumentsInvalid(string command)
+        {
+            LogUsageError("The arguments are invalid.", command);
         }
     }
 }

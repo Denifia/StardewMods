@@ -1,8 +1,6 @@
 ﻿using Denifia.Stardew.SendLetters.Common.Domain;
 using Denifia.Stardew.SendLetters.Common.Models;
 using Denifia.Stardew.SendLetters.Services;
-using Pathoschild.Stardew.Common;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,7 +32,7 @@ namespace Denifia.Stardew.SendLetters.Domain
                 var urlSegments = new Dictionary<string, string> { { "playerId", id } };
                 _restService.GetRequest<List<Message>>("Messages/ToPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
             }
-            return GetAll().AsQueryable();
+            return GetAll().Where(x => x.ToPlayerId == id).AsQueryable();
         }
 
         public IQueryable<Message> GetMessagesFromPlayer(string id)
@@ -45,7 +43,7 @@ namespace Denifia.Stardew.SendLetters.Domain
                 var urlSegments = new Dictionary<string, string> { { "playerId", id } };
                 _restService.GetRequest<List<Message>>("Messages/FromPlayer/{playerId}", urlSegments, RemoteMessagesRetreived);
             }
-            return GetAll().AsQueryable();
+            return GetAll().Where(x => x.FromPlayerId == id).AsQueryable();
         }
 
         private void RemoteMessagesRetreived(List<Message> remoteMessages)
@@ -60,6 +58,7 @@ namespace Denifia.Stardew.SendLetters.Domain
 
         public Message AddOrUpdate(Message message)
         {
+            var messageExists = _repository.GetAll<Message>().Any(x => x.Id == message.Id);
             var savedMessage = _repository.AddOrUpdate(message);
 
             if (!_configurationService.InLocalOnlyMode())
@@ -78,8 +77,6 @@ namespace Denifia.Stardew.SendLetters.Domain
                     _restService.PostRequest("Messages", urlSegments, messageCreateModel, ModEvents.RaiseMessageSentEvent);
                 }
             }
-
-            CommonHelper.ShowInfoMessage("Letter sent!");
 
             return savedMessage;
         }

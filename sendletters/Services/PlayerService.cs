@@ -11,9 +11,19 @@ namespace Denifia.Stardew.SendLetters.Services
         private readonly IPlayerRepository _playerRepository;
         private readonly IConfigurationService _configurationService;
 
-        public Player CurrentPlayer { get
+        private Player _currentPlayer;
+        public Player CurrentPlayer {
+            get
             {
-                return LoadCurrentPlayer();
+                if (_currentPlayer == null)
+                {
+                    _currentPlayer = LoadCurrentPlayer();
+                }
+                return _currentPlayer;
+            }
+            private set
+            {
+                _currentPlayer = value;
             }
         }
 
@@ -60,6 +70,33 @@ namespace Denifia.Stardew.SendLetters.Services
                 if (update)
                 {
                     _playerRepository.AddOrUpdate(player);
+                }
+            }
+        }
+
+        public void AddFriendToCurrentPlayer(string name, string farmName, string id)
+        {
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.Friends.Add(new Friend
+                {
+                    Name = name,
+                    FarmName = farmName,
+                    Id = id
+                });
+                _playerRepository.AddOrUpdate(CurrentPlayer);
+            }
+        }
+
+        public void RemoveFriendFromCurrentPlayer(string id)
+        {
+            if (CurrentPlayer != null)
+            {
+                var friend = CurrentPlayer.Friends.FirstOrDefault(x => x.Id == id);
+                if (friend != null)
+                {
+                    CurrentPlayer.Friends.Remove(friend);
+                    _playerRepository.AddOrUpdate(CurrentPlayer);
                 }
             }
         }
