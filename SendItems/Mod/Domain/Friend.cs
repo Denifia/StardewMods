@@ -1,7 +1,4 @@
-﻿using Denifia.Stardew.SendLetters.Common.Domain;
-using System.Collections.Generic;
-
-namespace Denifia.Stardew.SendLetters.Domain
+﻿namespace Denifia.Stardew.SendLetters.Domain
 {
     public class Friend
     {
