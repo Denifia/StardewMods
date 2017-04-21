@@ -57,7 +57,8 @@ namespace Denifia.Stardew.SendItems.Services
             if (item == null) return;
 
             var messageText = string.Format(_messageFormat, "farmerName", item.parentSheetIndex, item.getStack());
-            // Create Mail and set it to Posted
+            
+            // TODO: Create mail in local DB and set it to Posted
         }
     }
 }
