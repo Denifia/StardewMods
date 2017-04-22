@@ -16,19 +16,25 @@ namespace Denifia.Stardew.SendItems
         private readonly ICommandService _commandService;
         private readonly IFarmerService _farmerService;
         private readonly IPostboxService _postboxService;
+        private readonly ILetterboxService _letterboxService;
+        private readonly ILetterboxInteractionService _letterboxInteractionService;
 
         public SendItems(
             IMod mod,
             IConfigurationService configService,
             ICommandService commandService,
             IFarmerService farmerService,
-            IPostboxService postboxService)
+            IPostboxService postboxService,
+            ILetterboxService letterboxService,
+            ILetterboxInteractionService letterboxInteractionService)
         {
             _mod = mod;
             _commandService = commandService;
             _configService = configService;
             _farmerService = farmerService;
             _postboxService = postboxService;
+            _letterboxService = letterboxService;
+            _letterboxInteractionService = letterboxInteractionService;
 
             SaveEvents.AfterLoad += AfterSavedGameLoad;
 
@@ -37,6 +43,8 @@ namespace Denifia.Stardew.SendItems
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
+            _letterboxInteractionService.Init();
+
             //_playerService.LoadLocalPlayers(); // TODO : Do i still need to replace this?
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
@@ -53,7 +61,7 @@ namespace Denifia.Stardew.SendItems
             if (timeToCheck || _configService.InDebugMode())
             {
                 //_messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
-                // TODO: Riase event to do stuff
+                // TODO: Raise event to deliver mail
             }
         }
     }

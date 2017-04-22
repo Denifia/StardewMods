@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using Denifia.Stardew.SendItems.Domain;
 using Denifia.Stardew.SendItems.Menus;
 using Denifia.Stardew.SendItems.Events;
+using System.Threading.Tasks;
+using LiteDB;
+using System;
 
 namespace Denifia.Stardew.SendItems.Services
 {
     public interface IPostboxService {
-        void ShowComposeMailUI();
+        Task ShowComposeMailUIAsync();
     }
 
     public class PostboxService : IPostboxService
@@ -28,16 +31,17 @@ namespace Denifia.Stardew.SendItems.Services
             ModEvents.MailComposed += MailComposed;
         }
 
-        public void ShowComposeMailUI()
+        public async Task ShowComposeMailUIAsync()
         {
-            DisplayFriendSelector();
+            await DisplayFriendSelector();
         }
 
-        private void DisplayFriendSelector()
+        private async Task DisplayFriendSelector()
         {
             if (Game1.activeClickableMenu != null) return;
             List<Response> responseList = new List<Response>();
-            foreach (var friend in new List<Friend>()) // TODO: Replace with real list
+            var farmers = await _farmerService.GetFarmersAsync();
+            foreach (var friend in farmers)
             {
                 responseList.Add(new Response(friend.Id, friend.DisplayText));
             }
@@ -67,13 +71,31 @@ namespace Denifia.Stardew.SendItems.Services
         private void MailComposed(object sender, MailComposedEventArgs e)
         {
             var toFarmerId = e.ToFarmerId;
+            var fromFarmer = _farmerService.CurrentFarmer;
             var item = e.Item;
 
             if (item == null) return;
 
-            var messageText = string.Format(_messageFormat, "farmerName", item.parentSheetIndex, item.getStack()); // TODO: add farmer name
+            var messageText = string.Format(_messageFormat, fromFarmer.Name, item.parentSheetIndex, item.getStack());
 
-            // TODO: Create mail in local DB and set it to Posted
+            // Consider: Moving this to own service
+            Task.Run(() =>
+            {
+                using (var db = new LiteRepository(_configService.GetLocalPath()))
+                {
+                    var mail = new Mail()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        ToFarmerId = toFarmerId,
+                        FromFarmerId = fromFarmer.Id,
+                        Text = messageText,
+                        CreatedDate = DateTime.Now,
+                        Status = MailStatus.Posted
+                    };
+
+                    db.Insert(mail);
+                }
+            }).Wait();
         }
     }
 }

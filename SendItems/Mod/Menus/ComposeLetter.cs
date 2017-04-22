@@ -99,7 +99,7 @@ namespace Denifia.Stardew.SendItems.Menus
                     if (this.ItemsToGrabMenu.inventory.Any())
                     {
                         //ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
-                        // TODO : raise event
+                        // TODO: Raise event when Compose Letter menu closes with player clicking OK
                     }
                 }
             }

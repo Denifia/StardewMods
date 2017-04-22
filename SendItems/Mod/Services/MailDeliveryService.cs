@@ -30,6 +30,7 @@ namespace Denifia.Stardew.SendItems.Services
             // Hook up events
         }
 
+        // TODO: Replace this method with an event handler reacting to something like OnDeliverMailSchedule
         public async Task DeliverPostedMail()
         {
             await DeliverLocalMail();
@@ -42,7 +43,7 @@ namespace Denifia.Stardew.SendItems.Services
         private async Task DeliverLocalMail()
         {
             var localMail = await GetLocallyPostedMail();
-            var localFarmers = _farmerService.GetFarmers();
+            var localFarmers = await _farmerService.GetFarmersAsync();
             var updatedLocalMail = new List<Mail>();
 
             foreach (var mail in localMail)
@@ -56,7 +57,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             foreach (var mail in updatedLocalMail)
             {
-				// TODO: Update  mail in local DB
+				// TODO: Update mail in local DB
 			}
         }
 

@@ -8,5 +8,10 @@ namespace Denifia.Stardew.SendItems.Domain
         public string Name { get; set; }
         public string FarmName { get; set; }
         public List<Friend> Friends { get; set; }
+
+        public string DisplayText
+        {
+            get;
+        }
     }
 }
