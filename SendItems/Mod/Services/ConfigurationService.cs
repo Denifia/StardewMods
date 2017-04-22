@@ -8,6 +8,7 @@ namespace Denifia.Stardew.SendItems.Services
 {
 	public interface IConfigurationService
 	{
+        string ConnectionString { get; }
 		Uri GetApiUri();
 		string GetLocalPath();
 		bool InDebugMode();
@@ -19,6 +20,14 @@ namespace Denifia.Stardew.SendItems.Services
     {
         private IModHelper _modHelper;
         private ModConfig _modConfig;
+        private const string _databaseName = "data.db";
+
+        public string ConnectionString
+        {
+            get {
+                return Path.Combine(GetLocalPath(), _databaseName);
+            }
+        }
 
         public ConfigurationService(IModHelper modHelper)
         {
