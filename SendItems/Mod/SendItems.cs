@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using xTile.Dimensions;
 using Denifia.Stardew.SendItems.Services;
+using Denifia.Stardew.SendItems.Events;
 
 namespace Denifia.Stardew.SendItems
 {
@@ -37,6 +38,7 @@ namespace Denifia.Stardew.SendItems
             _letterboxInteractionService = letterboxInteractionService;
 
             SaveEvents.AfterLoad += AfterSavedGameLoad;
+            TimeEvents.AfterDayStarted += AfterDayStarted;
 
             _commandService.RegisterCommands();
         }
@@ -44,24 +46,28 @@ namespace Denifia.Stardew.SendItems
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             _letterboxInteractionService.Init();
-
-            //_playerService.LoadLocalPlayers(); // TODO : Do i still need to replace this?
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
+        }
+
+        private void AfterDayStarted(object sender, EventArgs e)
+        {
+            // Deliver mail each night
+            ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
         }
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
         {
             var timeToCheck = false;
-            if (e.NewInt % 10 == 0 && (e.NewInt >= 800 && e.NewInt <= 1800))
+
+            // Deliver mail at lunch time
+            if (e.NewInt == 1200)
             {
-                // Check mail on every hour in game between 8am and 6pm
                 timeToCheck = true;
             }        
 
             if (timeToCheck || _configService.InDebugMode())
             {
-                //_messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
-                // TODO: Raise event to deliver mail
+                ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
             }
         }
     }

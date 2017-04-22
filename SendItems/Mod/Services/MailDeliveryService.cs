@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Denifia.Stardew.SendItems.Domain;
 using LiteDB;
 using RestSharp;
+using Denifia.Stardew.SendItems.Events;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -28,9 +29,14 @@ namespace Denifia.Stardew.SendItems.Services
             _restClient = new RestClient(_configService.GetApiUri());
 
             // Hook up events
+            ModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
         }
 
-        // TODO: Replace this method with an event handler reacting to something like OnDeliverMailSchedule
+        private void OnMailDeliverySchedule(object sender, EventArgs e)
+        {
+            Task.Run(DeliverPostedMail).Wait();
+        }
+
         public async Task DeliverPostedMail()
         {
             await DeliverLocalMail();

@@ -6,6 +6,7 @@ namespace Denifia.Stardew.SendItems.Events
     {
         public static event EventHandler<MailComposedEventArgs> MailComposed;
         public static event EventHandler PlayerCheckedLetterbox;
+        public static event EventHandler OnMailDeliverySchedule;
 
         internal static void RaiseMailComposed(object sender, MailComposedEventArgs e)
         {
@@ -15,6 +16,11 @@ namespace Denifia.Stardew.SendItems.Events
         internal static void RaisePlayerCheckedLetterbox(object sender, EventArgs e)
         {
             PlayerCheckedLetterbox(sender, e);
+        }
+
+        internal static void RaiseOnMailDeliverySchedule(object sender, EventArgs e)
+        {
+            OnMailDeliverySchedule(sender, e);
         }
     }
 }

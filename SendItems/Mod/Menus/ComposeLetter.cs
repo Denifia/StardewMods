@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Denifia.Stardew.SendItems.Events;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewValley;
@@ -14,13 +15,13 @@ namespace Denifia.Stardew.SendItems.Menus
         public InventoryMenu ItemsToGrabMenu;
         private TemporaryAnimatedSprite poof;
         private ComposeLetter.behaviorOnItemChange itemChangeBehavior;
-        private string ToPlayerId;
+        private string toFarmerId;
         private bool okClicked;
 
         public ComposeLetter(string toPlayerId, List<Item> inventory, int capacity, int rows = 3, ComposeLetter.behaviorOnItemChange itemChangeBehavior = null, InventoryMenu.highlightThisItem highlightMethod = null)
           : base(highlightMethod, true, false, 0, 0)
         {
-            this.ToPlayerId = toPlayerId;
+            this.toFarmerId = toPlayerId;
             this.itemChangeBehavior = itemChangeBehavior;
             int num1 = Game1.tileSize * (capacity / rows);
             int tileSize = Game1.tileSize;
@@ -89,17 +90,20 @@ namespace Denifia.Stardew.SendItems.Menus
                         Game1.playSound("coin");
                 }
             }
-            if (this.okButton.containsPoint(x, y))
+            if (okButton.containsPoint(x, y))
             {
-                this.okClicked = true;
-                if (this.readyToClose())
+                okClicked = true;
+                if (readyToClose())
                 {
                     Game1.playSound("bigDeSelect");
                     Game1.exitActiveMenu();
-                    if (this.ItemsToGrabMenu.inventory.Any())
+                    if (ItemsToGrabMenu.inventory.Any())
                     {
-                        //ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
-                        // TODO: Raise event when Compose Letter menu closes with player clicking OK
+                        ModEvents.RaiseMailComposed(this, new MailComposedEventArgs()
+                        {
+                            ToFarmerId = toFarmerId,
+                            Item = ItemsToGrabMenu.actualInventory[0]
+                        });
                     }
                 }
             }
