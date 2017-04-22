@@ -16,6 +16,8 @@ namespace Denifia.Stardew.SendItems
         private ISemanticVersion NewRelease;
         private bool HasSeenUpdateWarning;
 
+        private string ModName = "SendItems";
+
         public override void Entry(IModHelper helper)
         {
             // read config
@@ -57,7 +59,7 @@ namespace Denifia.Stardew.SendItems
                     {
                         Task.Factory.StartNew(() =>
                         {
-                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, "SendLetters").Result;
+                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, ModName).Result;
                             if (latest.IsNewerThan(this.CurrentVersion))
                                 this.NewRelease = latest;
                         });
@@ -78,7 +80,7 @@ namespace Denifia.Stardew.SendItems
                 try
                 {
                     this.HasSeenUpdateWarning = true;
-                    CommonHelper.ShowInfoMessage($"You can update Automate from {this.CurrentVersion} to {this.NewRelease}.");
+                    CommonHelper.ShowInfoMessage($"You can update {ModName} from {this.CurrentVersion} to {this.NewRelease}.");
                 }
                 catch (Exception ex)
                 {

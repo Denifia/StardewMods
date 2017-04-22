@@ -34,7 +34,8 @@ namespace Denifia.Stardew.SendItems
 
             RegisterCommands();
         }
-        
+
+        // TODO: move commands into a command service to keep this clean!
         private void RegisterCommands()
         {
             _modHelper.ConsoleCommands
