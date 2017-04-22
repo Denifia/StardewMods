@@ -1,6 +1,4 @@
-﻿using Denifia.Stardew.SendLetters.Domain;
-using Denifia.Stardew.SendLetters.Services;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -8,9 +6,9 @@ using System;
 using System.Linq;
 using xTile.Dimensions;
 
-namespace Denifia.Stardew.SendLetters
+namespace Denifia.Stardew.SendItems
 {
-    public class SendLetterMod
+    public class SendItemsMod
     {
         private readonly IMod _mod;
         private readonly IModHelper _modHelper;
