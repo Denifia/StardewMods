@@ -1,12 +1,17 @@
-﻿using Denifia.Stardew.SendLetters;
-using Denifia.Stardew.SendLetters.Domain;
-using Denifia.Stardew.SendLetters.Menus;
-using StardewValley;
+﻿using StardewValley;
 using System.Collections.Generic;
+using Denifia.Stardew.SendItems;
+using Denifia.Stardew.SendItems.Domain;
+using Denifia.Stardew.SendItems.Menus;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public class PostboxService
+    
+    public interface IPostboxService {
+        void ShowComposeMailUI();
+    }
+
+    public class PostboxService : IPostboxService
     {
         private const string _leaveSelectionKeyAndValue = "(Leave)";
         private const string _messageFormat = "Hey there!^^  I thought you might like this... Take care! ^    -{0} %item object {1} {2} %%";
@@ -34,7 +39,7 @@ namespace Denifia.Stardew.SendItems.Services
             Game1.player.Halt();
         }
 
-        private void FriendSelectorAnswered(Farmer who, string answer)
+        private void FriendSelectorAnswered(StardewValley.Farmer farmer, string answer)
         {
             if (!answer.Equals(_leaveSelectionKeyAndValue))
             {

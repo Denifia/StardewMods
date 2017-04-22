@@ -5,6 +5,7 @@ using StardewValley;
 using System;
 using System.Linq;
 using xTile.Dimensions;
+using Denifia.Stardew.SendItems.Services;
 
 namespace Denifia.Stardew.SendItems
 {
@@ -13,29 +14,22 @@ namespace Denifia.Stardew.SendItems
         private readonly IMod _mod;
         private readonly IModHelper _modHelper;
         private readonly IConfigurationService _configService;
-        private readonly IPlayerService _playerService;
-        private readonly IMessageService _messageService;
-        private readonly IMailboxService _mailboxService;
+        private readonly IFarmerService _farmerService;
+        private readonly IPostboxService _postboxService;
 
         private bool SavedGameLoaded = false;
 
-        public SendLetterMod(IMod mod,
-            IModHelper modHelper,
+        public SendItemsMod(IMod mod,
             IConfigurationService configService,
-            IPlayerService playerService,
-            IMessageService messageService,
-            IMailboxService mailboxService)
+            IFarmerService farmerService,
+            IPostboxService postboxService)
         {
             _mod = mod;
-            _modHelper = modHelper;
+            _modHelper = _mod.Helper;
             _configService = configService;
-            _playerService = playerService;
-            _messageService = messageService;
-            _mailboxService = mailboxService;
+            _farmerService = farmerService;
+            _postboxService = postboxService;
 
-            ModEvents.PlayerMessagesUpdated += PlayerMessagesUpdated;
-            ModEvents.PlayerCreated += PlayerCreated;
-            ModEvents.MessageSent += MessageSent;
             SaveEvents.AfterLoad += AfterSavedGameLoad;
 
             RegisterCommands();
@@ -62,11 +56,11 @@ namespace Denifia.Stardew.SendItems
             {
                 case "sendletters_me":
                     _mod.Monitor.Log("Command for others to add the currently loaded farmer as a friend is...", LogLevel.Info);
-                    _mod.Monitor.Log($"sendletters_addfriend -Name {_playerService.CurrentPlayer.Name} -FarmName {_playerService.CurrentPlayer.FarmName} -Id {_playerService.CurrentPlayer.Id}", LogLevel.Info);
+                    _mod.Monitor.Log($"sendletters_addfriend -Name {_farmerService.CurrentFarmer.Name} -FarmName {_farmerService.CurrentFarmer.FarmName} -Id {_farmerService.CurrentFarmer.Id}", LogLevel.Info);
                     _mod.Monitor.Log("Feel free to change your <Name> if you want but the <Id> needs to stay as it is.", LogLevel.Info);
                     break;
                 case "sendletters_friends":
-                    var friends = _playerService.CurrentPlayer.Friends;
+                    var friends = _farmerService.CurrentFarmer.Friends;
                     if (friends.Any())
                     {
                         _mod.Monitor.Log("Your friends for the currently loaded farmer are...", LogLevel.Info);
@@ -87,7 +81,7 @@ namespace Denifia.Stardew.SendItems
                         var name = args[1];
                         var farmName = args[3];
                         var id = args[5];
-                        _playerService.AddFriendToCurrentPlayer(name, farmName, id);
+                        //_farmerService.AddFriendToCurrentPlayer(name, farmName, id); // TODO: Replace
                         _mod.Monitor.Log($"{name} ({farmName} Farm) was added!", LogLevel.Info);
                     }
                     else
@@ -99,10 +93,10 @@ namespace Denifia.Stardew.SendItems
                     if (args.Length == 2 && args[0].ToLower() == "-id")
                     {
                         var id = args[1];
-                        var friend = _playerService.CurrentPlayer.Friends.FirstOrDefault(x => x.Id == id);
+                        var friend = _farmerService.CurrentFarmer.Friends.FirstOrDefault(x => x.Id == id);
                         if (friend != null)
                         {
-                            _playerService.RemoveFriendFromCurrentPlayer(id);
+                            //_farmerService.RemoveFriendFromCurrentPlayer(id); // TODO: replace
                             _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) was removed!", LogLevel.Info);
                         }
                         else
@@ -120,27 +114,10 @@ namespace Denifia.Stardew.SendItems
             }
         }
 
-        private void PlayerCreated(Player player)
-        {
-        }
-
-        private void MessageSent(object sender, EventArgs e)
-        {
-        }
-
-        private void PlayerMessagesUpdated(object sender, EventArgs e)
-        {
-            var messageCount = _messageService.UnreadMessageCount(_playerService.CurrentPlayer.Id);
-            if (messageCount > 0)
-            {
-                _mailboxService.PostLetters(messageCount);
-            }
-        }
-
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             SavedGameLoaded = true;
-            _playerService.LoadLocalPlayers();
+            //_playerService.LoadLocalPlayers(); // TODO : Do i still need to replace this?
 
             LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
@@ -177,7 +154,8 @@ namespace Denifia.Stardew.SendItems
             }          
             if (timeToCheck)
             {
-                _messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
+                //_messageService.CheckForMessages(_playerService.CurrentPlayer.Id);
+                // TODO: Riase event to do stuff
             }
         }
 
@@ -191,7 +169,7 @@ namespace Denifia.Stardew.SendItems
 
                 if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    ModEvents.RaiseCheckMailboxEvent();
+                    //ModEvents.RaiseCheckMailboxEvent(); // TODO: Relace this with new event
                 }
             }
         }

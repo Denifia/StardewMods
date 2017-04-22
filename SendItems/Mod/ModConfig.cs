@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Denifia.Stardew.SendLetters
+namespace Denifia.Stardew.SendItems
 {
     public class ModConfig
     {

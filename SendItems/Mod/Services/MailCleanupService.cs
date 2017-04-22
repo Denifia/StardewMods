@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    class MailCleanupService
+    public interface IMailCleanupService
+    {
+        
+    }
+
+    public class MailCleanupService : IMailCleanupService
     {
         // DeleteReadMail
     }

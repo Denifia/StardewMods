@@ -1,4 +1,4 @@
-﻿namespace Denifia.Stardew.SendLetters.Domain
+﻿namespace Denifia.Stardew.SendItems.Domain
 {
     public class Friend
     {

@@ -1,14 +1,20 @@
-﻿using Denifia.Stardew.SendLetters.Domain;
+﻿using Denifia.Stardew.SendItems.Domain;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Denifia.Stardew.SendLetters.Services
+namespace Denifia.Stardew.SendItems.Services
 {
+	public interface IConfigurationService
+	{
+		Uri GetApiUri();
+		string GetLocalPath();
+		bool InDebugMode();
+		bool InLocalOnlyMode();
+		List<SavedGame> GetSavedGames();
+	}
+
     public class ConfigurationService : IConfigurationService
     {
         private IModHelper _modHelper;

@@ -2,7 +2,7 @@
 {
     public enum MailStatus
     {
-        0 = Unknown,
+        Unknown = 0,
         Posted,
         Delivered,
         Read

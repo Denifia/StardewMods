@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    class LetterboxService
+    public interface ILetterboxService
     {
+        
+    }
+
+    public class LetterboxService
+    {
+        
     }
 }

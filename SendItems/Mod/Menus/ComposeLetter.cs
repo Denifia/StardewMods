@@ -6,10 +6,8 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Denifia.Stardew.SendLetters.Menus
+namespace Denifia.Stardew.SendItems.Menus
 {
     public class ComposeLetter : MenuWithInventory
     {
@@ -100,7 +98,8 @@ namespace Denifia.Stardew.SendLetters.Menus
                     Game1.exitActiveMenu();
                     if (this.ItemsToGrabMenu.inventory.Any())
                     {
-                        ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
+                        //ModEvents.RaiseMessageCraftedEvent(ToPlayerId, this.ItemsToGrabMenu.actualInventory[0]);
+                        // TODO : raise event
                     }
                 }
             }
