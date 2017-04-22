@@ -30,14 +30,14 @@ namespace Denifia.Stardew.SendItems
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(helper).As<IModHelper>();
-            builder.RegisterAssemblyTypes(typeof(SendItemsMod).Assembly)
+            builder.RegisterAssemblyTypes(typeof(SendItems).Assembly)
                 .Where(t => t.Name.EndsWith("Service"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             
             var container = builder.Build();
 
-            var program = new SendItemsMod(this,
+            var program = new SendItems(this,
                 container.Resolve<IConfigurationService>(),
                 container.Resolve<IFarmerService>(),
                 container.Resolve<IPostboxService>()

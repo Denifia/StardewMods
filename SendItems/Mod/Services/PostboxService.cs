@@ -1,12 +1,11 @@
 ﻿using StardewValley;
 using System.Collections.Generic;
-using Denifia.Stardew.SendItems;
 using Denifia.Stardew.SendItems.Domain;
 using Denifia.Stardew.SendItems.Menus;
+using Denifia.Stardew.SendItems.Events;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    
     public interface IPostboxService {
         void ShowComposeMailUI();
     }
@@ -16,9 +15,17 @@ namespace Denifia.Stardew.SendItems.Services
         private const string _leaveSelectionKeyAndValue = "(Leave)";
         private const string _messageFormat = "Hey there!^^  I thought you might like this... Take care! ^    -{0} %item object {1} {2} %%";
 
-        public PostboxService()
+        private readonly IFarmerService _farmerService;
+        private readonly IConfigurationService _configService;
+
+        public PostboxService(
+            IConfigurationService configService,
+            IFarmerService farmerService)
         {
-            ModEvents.AfterMailComposed += AfterMailComposed;
+            _configService = configService;
+            _farmerService = farmerService;
+
+            ModEvents.MailComposed += MailComposed;
         }
 
         public void ShowComposeMailUI()
@@ -57,12 +64,15 @@ namespace Denifia.Stardew.SendItems.Services
             return i.canBeGivenAsGift();
         }
 
-        private void AfterMailComposed(string toFarmerId, Item item)
+        private void MailComposed(object sender, MailComposedEventArgs e)
         {
+            var toFarmerId = e.ToFarmerId;
+            var item = e.Item;
+
             if (item == null) return;
 
-            var messageText = string.Format(_messageFormat, "farmerName", item.parentSheetIndex, item.getStack());
-            
+            var messageText = string.Format(_messageFormat, "farmerName", item.parentSheetIndex, item.getStack()); // TODO: add farmer name
+
             // TODO: Create mail in local DB and set it to Posted
         }
     }

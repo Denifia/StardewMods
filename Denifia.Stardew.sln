@@ -23,8 +23,6 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
-		SendItems\Common\SendItems.Common.projitems*{d74fb037-cc7c-4047-8384-2c2e37999a7a}*SharedItemsImports = 4
-		SendItems\Common\SendItems.Common.projitems*{e7f132c9-39b8-4344-b8aa-4b35829bedf1}*SharedItemsImports = 13
 		Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.projitems*{eb97dad7-6b56-40b9-8622-e1a795589d5f}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

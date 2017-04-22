@@ -63,13 +63,15 @@
     <Compile Include="Domain\MessageRepository.cs" />
     <Compile Include="Domain\PlayerRepository.cs" />
     <Compile Include="Domain\SavedGame.cs" />
+    <Compile Include="Events\MailComposedEventArgs.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Domain\Player.cs" />
-    <Compile Include="ModEvents.cs" />
-    <Compile Include="SendItemsMod.cs" />
+    <Compile Include="Events\ModEvents.cs" />
+    <Compile Include="SendItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\FarmerService.cs" />
     <Compile Include="Services\LetterboxService.cs" />
