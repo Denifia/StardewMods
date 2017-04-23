@@ -1,4 +1,6 @@
-﻿using StardewModdingAPI;
+﻿using Denifia.Stardew.SendItems.Domain;
+using LiteDB;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
 using System.Collections.Generic;
@@ -55,8 +57,19 @@ namespace Denifia.Stardew.SendItems.Services
             switch (command)
             {
                 case "temp":
-                    var farmer = _farmerService.CurrentFarmer;
-                    var saves = _configService.GetSavedGames();
+
+                    using (var db = new LiteRepository(_configService.ConnectionString))
+                    {
+                        db.Insert(new Mail()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            ToFarmerId = "150965384",
+                            FromFarmerId = "150965384",
+                            Text = "Hi2",
+                            Status = MailStatus.Composed
+                        });
+                    }
+
                     break;
                 case "sendletters_me":
                     _mod.Monitor.Log("Command for others to add the currently loaded farmer as a friend is...", LogLevel.Info);

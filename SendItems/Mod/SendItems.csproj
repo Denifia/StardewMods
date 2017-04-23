@@ -68,7 +68,6 @@
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />
-    <Compile Include="Domain\Player.cs" />
     <Compile Include="Events\ModEvents.cs" />
     <Compile Include="SendItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

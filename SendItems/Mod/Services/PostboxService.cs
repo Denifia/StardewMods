@@ -83,7 +83,7 @@ namespace Denifia.Stardew.SendItems.Services
             // Consider: Moving this to own service
             Task.Run(() =>
             {
-                using (var db = new LiteRepository(_configService.GetLocalPath()))
+                using (var db = new LiteRepository(_configService.ConnectionString))
                 {
                     var mail = new Mail()
                     {
@@ -92,7 +92,7 @@ namespace Denifia.Stardew.SendItems.Services
                         FromFarmerId = fromFarmer.Id,
                         Text = messageText,
                         CreatedDate = DateTime.Now,
-                        Status = MailStatus.Posted
+                        Status = MailStatus.Composed
                     };
 
                     db.Insert(mail);

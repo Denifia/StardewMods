@@ -44,7 +44,8 @@ namespace Denifia.Stardew.SendItems
                 container.Resolve<IPostboxService>(),
                 container.Resolve<IPostboxInteractionService>(),
                 container.Resolve<ILetterboxService>(),
-                container.Resolve<ILetterboxInteractionService>()
+                container.Resolve<ILetterboxInteractionService>(),
+                container.Resolve<IMailDeliveryService>()
             );
         }
 

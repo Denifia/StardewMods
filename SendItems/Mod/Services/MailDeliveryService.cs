@@ -7,6 +7,8 @@ using Denifia.Stardew.SendItems.Domain;
 using LiteDB;
 using RestSharp;
 using Denifia.Stardew.SendItems.Events;
+using StardewModdingAPI.Events;
+using Denifia.Stardew.SendItems.Models;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -31,7 +33,8 @@ namespace Denifia.Stardew.SendItems.Services
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
 
-            // Hook up events
+            TimeEvents.AfterDayStarted += AfterDayStarted;
+            TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
             SendItemsModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
         }
 
@@ -45,13 +48,14 @@ namespace Denifia.Stardew.SendItems.Services
             await DeliverLocalMail();
             if (_configService.InLocalOnlyMode())
             {
-                await DeliverCloudMail();    
+                await DeliverLocalMailToCloud();
+                await DeliverCloudMailLocally();
             }
         }
 
         private async Task DeliverLocalMail()
         {
-            var localMail = await GetLocallyPostedMail();
+            var localMail = await GetLocallyComposedMail();
             var localFarmers = await _farmerService.GetFarmersAsync();
             var updatedLocalMail = new List<Mail>();
 
@@ -64,49 +68,125 @@ namespace Denifia.Stardew.SendItems.Services
 				}
             }
 
-            foreach (var mail in updatedLocalMail)
-            {
-				// TODO: Update mail in local DB
-			}
+            await UpdateLocalMail(updatedLocalMail);
         }
 
-        private async Task DeliverCloudMail()
+        private async Task DeliverLocalMailToCloud()
         {
-            var RemoteMail = await GetRemotelyPostedMail();
+            var localMail = await GetLocallyComposedMail();
+            var localFarmers = await _farmerService.GetFarmersAsync();
+            var updatedLocalMail = new List<Mail>();
 
-            // TODO: Complete method
+            foreach (var mail in localMail)
+            {
+                if (!localFarmers.Any(x => x.Id == mail.ToFarmerId))
+                {
+                    var mailCreateModel = new MailCreateModel
+                    {
+                        ToFarmerId = mail.ToFarmerId,
+                        FromFarmerId = mail.FromFarmerId,
+                        Text = mail.Text
+                    };
+
+                    var urlSegments = new Dictionary<string, string>();
+                    var request = FormStandardRequest("mail", urlSegments, Method.GET);
+                    var response = _restClient.Execute<Guid>(request);
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        mail.Status = MailStatus.Posted;
+                        updatedLocalMail.Add(mail);
+                    }
+                }
+            }
         }
 
-        private async Task<List<Mail>> GetLocallyPostedMail()
+        private async Task DeliverCloudMailLocally()
+        {
+            var remoteMail = await GetRemotelyPostedMailForCurrentFarmer();
+            if (!remoteMail.Any()) return;
+
+            var localFarmers = await _farmerService.GetFarmersAsync();
+            if (!localFarmers.Any()) return;
+
+            var localFarmer = localFarmers.FirstOrDefault(x => x.Id == remoteMail.First().ToFarmerId);
+            if (localFarmer == null) return;
+
+            foreach (var mail in remoteMail)
+            {
+                mail.Status = MailStatus.Delivered;
+            }
+
+            using (var db = new LiteRepository(_configService.ConnectionString))
+            {   
+                db.Update(remoteMail);
+            }
+        }
+
+        private async Task<List<Mail>> GetLocallyComposedMail()
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(_configService.GetLocalPath()))
+                using (var db = new LiteRepository(_configService.ConnectionString))
                 {
-                    return db.Query<Mail>().Where(x => x.Status == MailStatus.Posted).ToList();
+                    return db.Query<Mail>().Where(x => x.Status == MailStatus.Composed).ToList();
                 }
             });
         }
 
-        private async Task<List<Mail>> GetRemotelyPostedMail()
+        private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmer()
         {
             return await Task.Run(() =>
             {
                 var urlSegments = new Dictionary<string, string> { { "farmerId", _farmerService.CurrentFarmer.Id } };
 				var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
-                var respone = _restClient.Execute<List<Mail>>(request);
+                var response = _restClient.Execute<List<Mail>>(request);
 
                 var mail = new List<Mail>();
-                if (respone.StatusCode == System.Net.HttpStatusCode.OK)
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    mail.AddRange(respone.Data);
+                    mail.AddRange(response.Data);
                 }
 
                 return mail;
             });
         }
 
-		private RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
+        private void AfterDayStarted(object sender, EventArgs e)
+        {
+            // Deliver mail each night
+            SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+        }
+
+        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
+        {
+            var timeToCheck = false;
+
+            // Deliver mail at lunch time
+            if (e.NewInt == 1200)
+            {
+                timeToCheck = true;
+            }
+
+            if (timeToCheck || _configService.InDebugMode())
+            {
+                SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+            }
+        }
+
+        private async Task UpdateLocalMail(List<Mail> mail)
+        {
+            await Task.Run(() =>
+            {
+                if (!mail.Any()) return;
+                using (var db = new LiteRepository(_configService.ConnectionString))
+                {
+                    db.Update(mail);
+                }
+            });
+        }
+
+        private RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
 		{
 			var request = new RestRequest(resource, method);
 			request.AddHeader("Content-type", "application/json; charset=utf-8");

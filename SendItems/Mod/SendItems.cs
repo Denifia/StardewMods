@@ -20,6 +20,7 @@ namespace Denifia.Stardew.SendItems
         private readonly IPostboxInteractionService _postboxInteractionService;
         private readonly ILetterboxService _letterboxService;
         private readonly ILetterboxInteractionService _letterboxInteractionService;
+        private readonly IMailDeliveryService _mailDeliveryService;
 
         public SendItems(
             IMod mod,
@@ -29,7 +30,8 @@ namespace Denifia.Stardew.SendItems
             IPostboxService postboxService,
             IPostboxInteractionService postboxInteractionService,
             ILetterboxService letterboxService,
-            ILetterboxInteractionService letterboxInteractionService)
+            ILetterboxInteractionService letterboxInteractionService,
+            IMailDeliveryService mailDeliveryService)
         {
             _mod = mod;
             _commandService = commandService;
@@ -39,9 +41,9 @@ namespace Denifia.Stardew.SendItems
             _postboxInteractionService = postboxInteractionService;
             _letterboxService = letterboxService;
             _letterboxInteractionService = letterboxInteractionService;
+            _mailDeliveryService = mailDeliveryService;
 
             SaveEvents.AfterLoad += AfterSavedGameLoad;
-            TimeEvents.AfterDayStarted += AfterDayStarted;
 
             _commandService.RegisterCommands();
         }
@@ -54,28 +56,6 @@ namespace Denifia.Stardew.SendItems
             _postboxInteractionService.Init();
 
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
-        }
-
-        private void AfterDayStarted(object sender, EventArgs e)
-        {
-            // Deliver mail each night
-            SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
-        }
-
-        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
-        {
-            var timeToCheck = false;
-
-            // Deliver mail at lunch time
-            if (e.NewInt == 1200)
-            {
-                timeToCheck = true;
-            }        
-
-            if (timeToCheck || _configService.InDebugMode())
-            {
-                SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
-            }
         }
     }
 }
