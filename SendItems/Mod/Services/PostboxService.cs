@@ -10,9 +10,12 @@ using System;
 namespace Denifia.Stardew.SendItems.Services
 {
     public interface IPostboxService {
-        Task ShowComposeMailUIAsync();
+
     }
 
+    /// <summary>
+    /// Handles what to do when a player uses the postbox and creates a letter
+    /// </summary>
     public class PostboxService : IPostboxService
     {
         private const string _leaveSelectionKeyAndValue = "(Leave)";
@@ -28,12 +31,13 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
+            SendItemsModEvents.PlayerUsingPostbox += PlayerUsingPostbox;
             SendItemsModEvents.MailComposed += MailComposed;
         }
 
-        public async Task ShowComposeMailUIAsync()
+        private void PlayerUsingPostbox(object sender, EventArgs e)
         {
-            await DisplayFriendSelector();
+            Task.Run(DisplayFriendSelector);
         }
 
         private async Task DisplayFriendSelector()
@@ -52,15 +56,11 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void FriendSelectorAnswered(StardewValley.Farmer farmer, string answer)
         {
-            if (!answer.Equals(_leaveSelectionKeyAndValue))
-            {
-                var items = new List<Item>
-                {
-                    null
-                };
-                Game1.activeClickableMenu = new ComposeLetter(answer, items, 1, 1, null, HighlightOnlyGiftableItems);
-                //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange)); // TODO: Should I use this instead?
-            }
+            if (answer.Equals(_leaveSelectionKeyAndValue)) return;
+
+            var items = new List<Item> { null };
+            Game1.activeClickableMenu = new ComposeLetter(answer, items, 1, 1, null, HighlightOnlyGiftableItems);
+            //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange)); // TODO: Should I use this instead?
         }
 
         private bool HighlightOnlyGiftableItems(Item i)

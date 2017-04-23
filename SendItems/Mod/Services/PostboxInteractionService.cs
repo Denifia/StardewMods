@@ -6,17 +6,17 @@ using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface ILetterboxInteractionService
+    public interface IPostboxInteractionService
     {
         void Init();
     }
 
     /// <summary>
-    /// Detects when the player is interacting with the letterbox
+    /// Detects when the player is interacting with the postbox
     /// </summary>
-    public class LetterboxInteractionService
+    public class PostboxInteractionService
     {
-        private const string locationOfLetterbox = "Farm";
+        private const string locationOfPostbox = "Farm";
 
         public void Init()
         {
@@ -25,9 +25,9 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
         {
-            if (e.NewLocation.name == locationOfLetterbox)
+            if (e.NewLocation.name == locationOfPostbox)
             {
-                // Only watch for mouse events while at the location of the letterbox, for performance
+                // Only watch for mouse events while at the location of the postbox, for performance
                 ControlEvents.MouseChanged += MouseChanged;
             }
             else
@@ -45,7 +45,7 @@ namespace Denifia.Stardew.SendItems.Services
 
                 if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    SendItemsModEvents.RaisePlayerUsingLetterbox(this, EventArgs.Empty);
+                    SendItemsModEvents.RaisePlayerUsingPostbox(this, EventArgs.Empty);
                 }
             }
         }

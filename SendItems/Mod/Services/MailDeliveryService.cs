@@ -15,6 +15,9 @@ namespace Denifia.Stardew.SendItems.Services
         Task DeliverPostedMail();
     }
 
+    /// <summary>
+    /// Handles the local and remote delivery of mail to farmers
+    /// </summary>
     public class MailDeliveryService : IMailDeliveryService
     {
 

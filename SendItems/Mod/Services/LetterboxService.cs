@@ -16,6 +16,9 @@ namespace Denifia.Stardew.SendItems.Services
 
     }
 
+    /// <summary>
+    /// Handles what to do when a player uses the letter box and reads letters
+    /// </summary>
     public class LetterboxService
     {
         private const string _playerMailKey = "playerMail";
@@ -31,11 +34,11 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
-            SendItemsModEvents.PlayerCheckedLetterbox += PlayerCheckedLetterbox;
+            SendItemsModEvents.PlayerUsingLetterbox += PlayerUsingLetterbox;
             SendItemsModEvents.MailRead += MailRead;
         }
 
-        private void PlayerCheckedLetterbox(object sender, EventArgs e)
+        private void PlayerUsingLetterbox(object sender, EventArgs e)
         {
             Task.Run(() =>
             {

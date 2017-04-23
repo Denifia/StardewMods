@@ -17,6 +17,7 @@ namespace Denifia.Stardew.SendItems
         private readonly ICommandService _commandService;
         private readonly IFarmerService _farmerService;
         private readonly IPostboxService _postboxService;
+        private readonly IPostboxInteractionService _postboxInteractionService;
         private readonly ILetterboxService _letterboxService;
         private readonly ILetterboxInteractionService _letterboxInteractionService;
 
@@ -26,6 +27,7 @@ namespace Denifia.Stardew.SendItems
             ICommandService commandService,
             IFarmerService farmerService,
             IPostboxService postboxService,
+            IPostboxInteractionService postboxInteractionService,
             ILetterboxService letterboxService,
             ILetterboxInteractionService letterboxInteractionService)
         {
@@ -34,6 +36,7 @@ namespace Denifia.Stardew.SendItems
             _configService = configService;
             _farmerService = farmerService;
             _postboxService = postboxService;
+            _postboxInteractionService = postboxInteractionService;
             _letterboxService = letterboxService;
             _letterboxInteractionService = letterboxInteractionService;
 

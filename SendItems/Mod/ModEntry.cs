@@ -39,8 +39,12 @@ namespace Denifia.Stardew.SendItems
 
             var program = new SendItems(this,
                 container.Resolve<IConfigurationService>(),
+                container.Resolve<ICommandService>(),
                 container.Resolve<IFarmerService>(),
-                container.Resolve<IPostboxService>()
+                container.Resolve<IPostboxService>(),
+                container.Resolve<IPostboxInteractionService>(),
+                container.Resolve<ILetterboxService>(),
+                container.Resolve<ILetterboxInteractionService>()
             );
         }
 
