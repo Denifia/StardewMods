@@ -12,27 +12,27 @@ namespace Denifia.Stardew.SendItems.Events
 
         internal static void RaiseMailComposed(object sender, MailComposedEventArgs e)
         {
-            MailComposed(sender, e);
+            MailComposed?.Invoke(sender, e);
         }
 
         internal static void RaisePlayerUsingLetterbox(object sender, EventArgs e)
         {
-            PlayerUsingLetterbox(sender, e);
+            PlayerUsingLetterbox?.Invoke(sender, e);
         }
 
         internal static void RaisePlayerUsingPostbox(object sender, EventArgs e)
         {
-            PlayerUsingPostbox(sender, e);
+            PlayerUsingPostbox?.Invoke(sender, e);
         }
 
         internal static void RaiseOnMailDeliverySchedule(object sender, EventArgs e)
         {
-            OnMailDeliverySchedule(sender, e);
+            OnMailDeliverySchedule?.Invoke(sender, e);
         }
 
         internal static void RaiseMailRead(object sender, MailReadEventArgs e)
         {
-            MailRead(sender, e);
+            MailRead?.Invoke(sender, e);
         }
     }
 }

@@ -103,12 +103,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <PropertyGroup>
-      <ModPath>$(GamePath)\Mods\$(TargetName)</ModPath>
+      <ModPath>$(GamePath)\Mods\SendItems</ModPath>
     </PropertyGroup>
     <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\RestSharp.dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\Autofac.dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\Newtonsoft.Json.dll" DestinationFolder="$(ModPath)" />
+    <Copy SourceFiles="$(TargetDir)\LiteDB.dll" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\config.json" DestinationFolder="$(ModPath)" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
     <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />

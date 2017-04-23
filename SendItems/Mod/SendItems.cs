@@ -48,7 +48,11 @@ namespace Denifia.Stardew.SendItems
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
+            _farmerService.LoadCurrentFarmerAsync();
+
             _letterboxInteractionService.Init();
+            _postboxInteractionService.Init();
+
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
 

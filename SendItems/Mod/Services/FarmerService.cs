@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Denifia.Stardew.SendItems.Domain;
 using LiteDB;
@@ -11,6 +12,7 @@ namespace Denifia.Stardew.SendItems.Services
         Domain.Farmer CurrentFarmer { get; }
         Task<Domain.Farmer> GetFarmerByIdAsync(string id);
         Task<List<Domain.Farmer>> GetFarmersAsync();
+        Task LoadCurrentFarmerAsync();
     }
 
     public class FarmerService : IFarmerService
@@ -22,7 +24,7 @@ namespace Denifia.Stardew.SendItems.Services
             get {
                 if (_currentFarmer == null)
                 {
-                    ExecuteDetermineCurrentFarmerAsync();
+                    Task.Run(DetermineCurrentFarmerAsync).Wait();
                 }
                 return _currentFarmer;
             }
@@ -31,6 +33,14 @@ namespace Denifia.Stardew.SendItems.Services
         public FarmerService(IConfigurationService configService)
         {
             _configService = configService;
+        }
+
+        public Task LoadCurrentFarmerAsync()
+        {
+            return Task.Run(() =>
+            {
+                var savedGames = _configService.GetSavedGames();
+            });
         }
 
         public async Task<Domain.Farmer> GetFarmerByIdAsync(string id)
@@ -55,9 +65,9 @@ namespace Denifia.Stardew.SendItems.Services
 			});
         }
 
-        private void ExecuteDetermineCurrentFarmerAsync()
+        private Task DetermineCurrentFarmerAsync()
         {
-            Task.Run(() =>
+            return Task.Run(() =>
 			{
 				var name = Game1.player.name;
 				var farmName = Game1.player.farmName;
@@ -65,7 +75,7 @@ namespace Denifia.Stardew.SendItems.Services
 				{
 					_currentFarmer = db.Query<Domain.Farmer>().Where(x => x.Name == name && x.FarmName == farmName).FirstOrDefault();
 				}
-			}).Wait();
+			});
 		}
     }
 }

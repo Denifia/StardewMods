@@ -32,7 +32,7 @@
 
 //            _messageRepository.AddOrUpdate(message);
 
-//            // TODO: Needs to be moved out to SendLetterMod or MessageService after raising an event.
+//            // Needs to be moved out to SendLetterMod or MessageService after raising an event.
 //            CommonHelper.ShowInfoMessage("Letter sent!");
 //        }
 

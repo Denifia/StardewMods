@@ -20,15 +20,15 @@ namespace Denifia.Stardew.SendItems
 
         public override void Entry(IModHelper helper)
         {
-            // read config
             Config = helper.ReadConfig<ModConfig>();
             CurrentVersion = ModManifest.Version;
 
-            // hooks for update check
-            GameEvents.GameLoaded += GameEvents_GameLoaded;
-            SaveEvents.AfterLoad += SaveEvents_AfterLoad;
+            // TODO: Uncomment
+            //GameEvents.GameLoaded += GameEvents_GameLoaded;
+            //SaveEvents.AfterLoad += SaveEvents_AfterLoad;
 
             var builder = new ContainerBuilder();
+            builder.RegisterInstance(this).As<IMod>();
             builder.RegisterInstance(helper).As<IModHelper>();
             builder.RegisterAssemblyTypes(typeof(SendItems).Assembly)
                 .Where(t => t.Name.EndsWith("Service"))

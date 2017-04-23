@@ -6,6 +6,7 @@ using Denifia.Stardew.SendItems.Events;
 using System.Threading.Tasks;
 using LiteDB;
 using System;
+using Pathoschild.Stardew.Common;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -18,6 +19,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class PostboxService : IPostboxService
     {
+        private const string _letterPostedNotification = "Letter Posted!";
         private const string _leaveSelectionKeyAndValue = "(Leave)";
         private const string _messageFormat = "Hey there!^^  I thought you might like this... Take care! ^    -{0} %item object {1} {2} %%";
 
@@ -94,6 +96,7 @@ namespace Denifia.Stardew.SendItems.Services
                     };
 
                     db.Insert(mail);
+                    CommonHelper.ShowInfoMessage(_letterPostedNotification);
                 }
             }).Wait();
         }

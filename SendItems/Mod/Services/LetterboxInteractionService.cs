@@ -2,6 +2,7 @@
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
+using System.Linq;
 using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
@@ -14,9 +15,10 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Detects when the player is interacting with the letterbox
     /// </summary>
-    public class LetterboxInteractionService
+    public class LetterboxInteractionService : ILetterboxInteractionService
     {
-        private const string locationOfLetterbox = "Farm";
+        private const string _locationOfLetterbox = "Farm";
+        private const string _playerMailKey = "playerMail";
 
         public void Init()
         {
@@ -25,7 +27,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void CurrentLocationChanged(object sender, EventArgsCurrentLocationChanged e)
         {
-            if (e.NewLocation.name == locationOfLetterbox)
+            if (e.NewLocation.name == _locationOfLetterbox)
             {
                 // Only watch for mouse events while at the location of the letterbox, for performance
                 ControlEvents.MouseChanged += MouseChanged;
@@ -45,9 +47,17 @@ namespace Denifia.Stardew.SendItems.Services
 
                 if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    SendItemsModEvents.RaisePlayerUsingLetterbox(this, EventArgs.Empty);
+                    if (CanUseLetterbox())
+                    {
+                        SendItemsModEvents.RaisePlayerUsingLetterbox(this, EventArgs.Empty);
+                    }
                 }
             }
+        }
+
+        private bool CanUseLetterbox()
+        {
+            return Game1.mailbox != null && Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey;
         }
     }
 }

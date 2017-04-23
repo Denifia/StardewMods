@@ -19,7 +19,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Handles what to do when a player uses the letter box and reads letters
     /// </summary>
-    public class LetterboxService
+    public class LetterboxService : ILetterboxService
     {
         private const string _playerMailKey = "playerMail";
         private const string _playerMailTitle = "Player Mail";

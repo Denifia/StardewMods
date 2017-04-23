@@ -13,18 +13,21 @@ namespace Denifia.Stardew.SendItems.Services
         void RegisterCommands();
     }
 
-    public class CommandService
+    public class CommandService : ICommandService
     {
         private bool SavedGameLoaded = false;
 
         private readonly IMod _mod;
+        private readonly IConfigurationService _configService;
         private readonly IFarmerService _farmerService;
 
         public CommandService(
-            IMod mod,
+            IMod mod, 
+            IConfigurationService configService,
             IFarmerService farmerService)
         {
             _mod = mod;
+            _configService = configService;
             _farmerService = farmerService;
 
             SaveEvents.AfterLoad += AfterSavedGameLoad;
@@ -33,10 +36,11 @@ namespace Denifia.Stardew.SendItems.Services
         public void RegisterCommands()
         {
             _mod.Helper.ConsoleCommands
-                .Add("sendletters_friends", "Shows all the friends your currently loaded farmer.\n\nUsage: sendletters_friends -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
-                .Add("sendletters_addfriend", "Adds a friend to your currently loaded farmer.\n\nUsage: sendletters_addfriend -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
-                .Add("sendletters_removefriend", "Removes a friend from your currently loaded farmer.\n\nUsage: sendletters_removefriend -Id <id> \n- id: the id of your friend.", HandleCommand)
-                .Add("sendletters_me", "Shows you the command that your friends need to type to add this current farmer as a friend.\n\nUsage: sendletters_me", HandleCommand);
+                .Add("temp", "", HandleCommand)
+                .Add("senditems_friends", "Shows all the friends your currently loaded farmer.\n\nUsage: sendletters_friends -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("senditems_addfriend", "Adds a friend to your currently loaded farmer.\n\nUsage: sendletters_addfriend -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
+                .Add("senditems_removefriend", "Removes a friend from your currently loaded farmer.\n\nUsage: sendletters_removefriend -Id <id> \n- id: the id of your friend.", HandleCommand)
+                .Add("senditems_me", "Shows you the command that your friends need to type to add this current farmer as a friend.\n\nUsage: sendletters_me", HandleCommand);
         }
 
         private void HandleCommand(string command, string[] args)
@@ -47,8 +51,13 @@ namespace Denifia.Stardew.SendItems.Services
                 return;
             }
 
+            // TODO: Split these into methods
             switch (command)
             {
+                case "temp":
+                    var farmer = _farmerService.CurrentFarmer;
+                    var saves = _configService.GetSavedGames();
+                    break;
                 case "sendletters_me":
                     _mod.Monitor.Log("Command for others to add the currently loaded farmer as a friend is...", LogLevel.Info);
                     _mod.Monitor.Log($"sendletters_addfriend -Name {_farmerService.CurrentFarmer.Name} -FarmName {_farmerService.CurrentFarmer.FarmName} -Id {_farmerService.CurrentFarmer.Id}", LogLevel.Info);

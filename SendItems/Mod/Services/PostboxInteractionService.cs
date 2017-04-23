@@ -2,6 +2,7 @@
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
+using System.Linq;
 using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
@@ -14,7 +15,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Detects when the player is interacting with the postbox
     /// </summary>
-    public class PostboxInteractionService
+    public class PostboxInteractionService : IPostboxInteractionService
     {
         private const string locationOfPostbox = "Farm";
 
@@ -45,9 +46,17 @@ namespace Denifia.Stardew.SendItems.Services
 
                 if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    SendItemsModEvents.RaisePlayerUsingPostbox(this, EventArgs.Empty);
+                    if (CanUsePostbox())
+                    {
+                        SendItemsModEvents.RaisePlayerUsingPostbox(this, EventArgs.Empty);
+                    }
                 }
             }
+        }
+
+        private bool CanUsePostbox()
+        {
+            return Game1.mailbox != null && !Game1.mailbox.Any();
         }
     }
 }

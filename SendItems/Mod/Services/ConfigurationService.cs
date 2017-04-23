@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -58,43 +59,42 @@ namespace Denifia.Stardew.SendItems.Services
         public List<SavedGame> GetSavedGames()
         {
             var savedGames = new List<SavedGame>();
-            string str = Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley"), "Saves"));
-            if (Directory.Exists(str))
+            string saveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StardewValley", "Saves");
+            if (Directory.Exists(saveDirectory))
             {
-                string[] directories = Directory.GetDirectories(str);
-                if (directories.Length != 0)
+                string[] directories = Directory.GetDirectories(saveDirectory);
+                foreach (string savedGameDirectory in directories)
                 {
-                    foreach (string path2 in directories)
+                    try
                     {
-                        try
+                        FileInfo file = new FileInfo(Path.Combine(savedGameDirectory, "SaveGameInfo"));
+                        if (file.Exists)
                         {
-                            FileInfo file = new FileInfo(Path.Combine(str, path2, "SaveGameInfo"));
-                            if (file.Exists)
-                            {
-                                var fileContents = File.ReadAllText(file.FullName);
+                            var saveGameFolder = file.Directory.Name;
+                            var fileContents = File.ReadAllText(file.FullName);
 
-                                var farmerNodeStart = fileContents.IndexOf("<Farmer");
-                                var farmerNodeEnd = fileContents.IndexOf("</Farmer>");
-                                var farmerNode = fileContents.Substring(farmerNodeStart, farmerNodeEnd - farmerNodeStart);
-                                var playerNameNodeStart = farmerNode.IndexOf("<name>") + 6;
-                                var playerNameNodeEnd = farmerNode.IndexOf("</name>");
-                                var playerName = farmerNode.Substring(playerNameNodeStart, playerNameNodeEnd - playerNameNodeStart);
+                            var farmerNodeStart = fileContents.IndexOf("<Farmer");
+                            var farmerNodeEnd = fileContents.IndexOf("</Farmer>");
+                            var farmerNode = fileContents.Substring(farmerNodeStart, farmerNodeEnd - farmerNodeStart);
+                            var playerNameNodeStart = farmerNode.IndexOf("<name>") + 6;
+                            var playerNameNodeEnd = farmerNode.IndexOf("</name>");
+                            var playerName = farmerNode.Substring(playerNameNodeStart, playerNameNodeEnd - playerNameNodeStart);
 
-                                var farmNameNodeStart = fileContents.IndexOf("<farmName>") + 10;
-                                var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
-                                var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
+                            var farmNameNodeStart = fileContents.IndexOf("<farmName>") + 10;
+                            var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
+                            var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
 
-                                var savedGame = new SavedGame {
-                                    Name = playerName,
-                                    FarmName = farmName
-                                };
+                            var savedGame = new SavedGame {
+                                Id = saveGameFolder,
+                                Name = playerName,
+                                FarmName = farmName
+                            };
 
-                                savedGames.Add(savedGame);
-                            }
+                            savedGames.Add(savedGame);
                         }
-                        catch (Exception ex)
-                        {
-                        }
+                    }
+                    catch (Exception ex)
+                    {
                     }
                 }
             }
