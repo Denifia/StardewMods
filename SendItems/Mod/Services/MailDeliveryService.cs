@@ -29,7 +29,7 @@ namespace Denifia.Stardew.SendItems.Services
             _restClient = new RestClient(_configService.GetApiUri());
 
             // Hook up events
-            ModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
+            SendItemsModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
         }
 
         private void OnMailDeliverySchedule(object sender, EventArgs e)

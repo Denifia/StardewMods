@@ -28,7 +28,7 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
-            ModEvents.MailComposed += MailComposed;
+            SendItemsModEvents.MailComposed += MailComposed;
         }
 
         public async Task ShowComposeMailUIAsync()

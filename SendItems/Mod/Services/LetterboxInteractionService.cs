@@ -42,7 +42,7 @@ namespace Denifia.Stardew.SendItems.Services
 
                 if (tileLocation.X == 68 && (tileLocation.Y >= 15 && tileLocation.Y <= 16))
                 {
-                    ModEvents.RaisePlayerCheckedLetterbox(this, EventArgs.Empty);
+                    SendItemsModEvents.RaisePlayerCheckedLetterbox(this, EventArgs.Empty);
                 }
             }
         }

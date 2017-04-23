@@ -64,6 +64,7 @@
     <Compile Include="Domain\PlayerRepository.cs" />
     <Compile Include="Domain\SavedGame.cs" />
     <Compile Include="Events\MailComposedEventArgs.cs" />
+    <Compile Include="Events\MailReadEventArgs.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />

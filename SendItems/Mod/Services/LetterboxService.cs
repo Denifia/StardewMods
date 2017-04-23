@@ -22,42 +22,39 @@ namespace Denifia.Stardew.SendItems.Services
         private const string _playerMailTitle = "Player Mail";
 
         private readonly IConfigurationService _configService;
+        private readonly IFarmerService _farmerService;
 
         public LetterboxService(
-            IConfigurationService configService)
+            IConfigurationService configService,
+            IFarmerService farmerService)
         {
             _configService = configService;
-            ModEvents.PlayerCheckedLetterbox += PlayerCheckedLetterbox;
+            _farmerService = farmerService;
+
+            SendItemsModEvents.PlayerCheckedLetterbox += PlayerCheckedLetterbox;
+            SendItemsModEvents.MailRead += MailRead;
         }
 
-        private void PlayerCheckedLetterbox(object sender, EventArgs e) // TODO: Change event args to pass in current farmer id? or just use the farmer service?
+        private void PlayerCheckedLetterbox(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
                 using (var db = new LiteRepository(_configService.ConnectionString))
                 {
-                    var mail = db.Query<Mail>().Where(x => x.Status == MailStatus.Posted).ToList();
-                }
-
-                var message = _messageService.GetFirstMessage(_playerService.CurrentPlayer.Id);
-                if (message != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
-
-                {
-                    ShowLetter(message);
-                }
-                else
-                {
-                    if (!Game1.mailbox.Any())
+                    var currentFarmerId = _farmerService.CurrentFarmer.Id;
+                    var mail = db.Query<Mail>().Where(x => x.Status == MailStatus.Posted && x.ToFarmerId == currentFarmerId).FirstOrDefault();
+                    if (mail != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
                     {
-                        ShowFriendSelecter();
+                        ShowLetter(mail);
                     }
                 }
-            }).Wait();
+            });
         }
 
         private void ShowLetter(Mail mail)
         {
             if (Game1.mailbox == null || !Game1.mailbox.Any()) return;
+
             if (Game1.mailbox.Peek() == _playerMailKey)
             {
                 Game1.activeClickableMenu = new LetterViewerMenu(mail.Text, _playerMailTitle);
@@ -65,8 +62,20 @@ namespace Denifia.Stardew.SendItems.Services
                 {
                     Game1.mailbox.Dequeue();
                 }
-                ModEvents.RaiseMessageReadEvent(mail);
+                SendItemsModEvents.RaiseMailRead(this, new MailReadEventArgs { Id = mail.Id });
             }
+        }
+
+        private void MailRead(object sender, MailReadEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                using (var db = new LiteRepository(_configService.ConnectionString))
+                {
+                    var currentFarmerId = _farmerService.CurrentFarmer.Id;
+                    db.Delete<Mail>(x => x.Id == e.Id);
+                }
+            });
         }
     }
 }

@@ -52,7 +52,7 @@ namespace Denifia.Stardew.SendItems
         private void AfterDayStarted(object sender, EventArgs e)
         {
             // Deliver mail each night
-            ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+            SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
         }
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
@@ -67,7 +67,7 @@ namespace Denifia.Stardew.SendItems
 
             if (timeToCheck || _configService.InDebugMode())
             {
-                ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+                SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
             }
         }
     }
