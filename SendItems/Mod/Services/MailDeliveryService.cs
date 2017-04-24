@@ -9,6 +9,7 @@ using RestSharp;
 using Denifia.Stardew.SendItems.Events;
 using StardewModdingAPI.Events;
 using Denifia.Stardew.SendItems.Models;
+using StardewValley;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -23,7 +24,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class MailDeliveryService : IMailDeliveryService
     {
-
+        private const string _playerMailKey = "playerMail";
         private IConfigurationService _configService;
         private IFarmerService _farmerService;
         private RestClient _restClient { get; set; }
@@ -57,6 +58,34 @@ namespace Denifia.Stardew.SendItems.Services
                 await DeliverLocalMailToCloud();
                 await DeliverCloudMailLocally();
             }
+            await DeliverMailToLetterBox();
+        }
+
+        private async Task DeliverMailToLetterBox()
+        {
+            if (_farmerService.CurrentFarmer == null) return;
+            var currentFarmerId = _farmerService.CurrentFarmer.Id;
+            await Task.Run(() =>
+            {
+                var count = 0;
+                using (var db = new LiteRepository(_configService.ConnectionString))
+                {
+                    count = db.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count();
+                }
+
+                if (count > 0)
+                {
+                    while (Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey)
+                    {
+                        Game1.mailbox.Dequeue();
+                    }
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        Game1.mailbox.Enqueue(_playerMailKey);
+                    }
+                }
+            });
         }
 
         private async Task DeliverLocalMail()
@@ -124,8 +153,8 @@ namespace Denifia.Stardew.SendItems.Services
             }
 
             using (var db = new LiteRepository(_configService.ConnectionString))
-            {   
-                db.Update(remoteMail.AsEnumerable());
+            {
+                db.Insert(remoteMail.AsEnumerable());
             }
         }
 
@@ -143,7 +172,6 @@ namespace Denifia.Stardew.SendItems.Services
         private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmer()
         {
             if (_farmerService.CurrentFarmer == null) return new List<Mail>();
-
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
             return await Task.Run(() =>
             {

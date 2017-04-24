@@ -45,7 +45,7 @@ namespace Denifia.Stardew.SendItems.Services
                 using (var db = new LiteRepository(_configService.ConnectionString))
                 {
                     var currentFarmerId = _farmerService.CurrentFarmer.Id;
-                    var mail = db.Query<Mail>().Where(x => x.Status == MailStatus.Posted && x.ToFarmerId == currentFarmerId).FirstOrDefault();
+                    var mail = db.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).FirstOrDefault();
                     if (mail != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
                     {
                         ShowLetter(mail);
