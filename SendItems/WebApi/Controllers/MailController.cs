@@ -15,7 +15,7 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
 
         // GET api/mail/{mailId}
         [HttpGet("{mailId}")]
-        public async Task<Mail> Get(string mailId)
+        public async Task<Mail> Get(Guid mailId)
         {
             return await Task.Run(() =>
             {
@@ -54,7 +54,7 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
 
         // POST api/mail
         [HttpPost]
-        public async Task<string> Post([FromBody]CreateMailModel model)
+        public async Task<Guid> Post([FromBody]CreateMailModel model)
         {
             return await Task.Run(() =>
             {
@@ -62,7 +62,7 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
                 {
                     var mail = new Mail()
                     {
-                        Id = Guid.NewGuid().ToString(),
+                        Id = Guid.NewGuid(),
                         Text = model.Text,
                         ToFarmerId = model.ToFarmerId,
                         FromFarmerId = model.FromFarmerId,
@@ -78,7 +78,7 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
 
         // DELETE api/mail/{mailId}
         [HttpDelete("{mailId}")]
-        public async Task<bool> Delete(string mailId)
+        public async Task<bool> Delete(Guid mailId)
         {
             return await Task.Run(() =>
             {

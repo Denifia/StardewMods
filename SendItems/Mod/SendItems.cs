@@ -54,6 +54,7 @@ namespace Denifia.Stardew.SendItems
 
             _letterboxInteractionService.Init();
             _postboxInteractionService.Init();
+            _mailDeliveryService.Init();
 
             SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }

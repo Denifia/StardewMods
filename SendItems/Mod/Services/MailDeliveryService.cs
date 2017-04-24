@@ -14,6 +14,7 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface IMailDeliveryService
     {
+        void Init();
         Task DeliverPostedMail();
     }
 
@@ -32,6 +33,11 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
+        }
+
+        public void Init()
+        {
+            AfterDayStarted(this, EventArgs.Empty);
 
             TimeEvents.AfterDayStarted += AfterDayStarted;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
@@ -40,13 +46,13 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void OnMailDeliverySchedule(object sender, EventArgs e)
         {
-            Task.Run(DeliverPostedMail).Wait();
+            Task.Run(DeliverPostedMail);
         }
 
         public async Task DeliverPostedMail()
         {
             await DeliverLocalMail();
-            if (_configService.InLocalOnlyMode())
+            if (!_configService.InLocalOnlyMode())
             {
                 await DeliverLocalMailToCloud();
                 await DeliverCloudMailLocally();
@@ -119,7 +125,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             using (var db = new LiteRepository(_configService.ConnectionString))
             {   
-                db.Update(remoteMail);
+                db.Update(remoteMail.AsEnumerable());
             }
         }
 
@@ -136,16 +142,22 @@ namespace Denifia.Stardew.SendItems.Services
 
         private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmer()
         {
+            if (_farmerService.CurrentFarmer == null) return new List<Mail>();
+
+            var currentFarmerId = _farmerService.CurrentFarmer.Id;
             return await Task.Run(() =>
             {
-                var urlSegments = new Dictionary<string, string> { { "farmerId", _farmerService.CurrentFarmer.Id } };
+                var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
 				var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
                 var response = _restClient.Execute<List<Mail>>(request);
 
                 var mail = new List<Mail>();
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    mail.AddRange(response.Data);
+                    if (response.Data != null && response.Data.GetType() == typeof(List<Mail>))
+                    {
+                        mail.AddRange(response.Data);
+                    }
                 }
 
                 return mail;
@@ -181,7 +193,7 @@ namespace Denifia.Stardew.SendItems.Services
                 if (!mail.Any()) return;
                 using (var db = new LiteRepository(_configService.ConnectionString))
                 {
-                    db.Update(mail);
+                    db.Update(mail.AsEnumerable());
                 }
             });
         }

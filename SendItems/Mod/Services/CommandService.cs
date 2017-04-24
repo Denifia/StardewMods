@@ -62,11 +62,11 @@ namespace Denifia.Stardew.SendItems.Services
                     {
                         db.Insert(new Mail()
                         {
-                            Id = Guid.NewGuid().ToString(),
                             ToFarmerId = "150965384",
                             FromFarmerId = "150965384",
                             Text = "Hi2",
-                            Status = MailStatus.Composed
+                            Status = MailStatus.Composed,
+                            CreatedDate = DateTime.Now
                         });
                     }
 

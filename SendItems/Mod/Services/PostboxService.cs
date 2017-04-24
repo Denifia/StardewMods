@@ -87,7 +87,6 @@ namespace Denifia.Stardew.SendItems.Services
                 {
                     var mail = new Mail()
                     {
-                        Id = Guid.NewGuid().ToString(),
                         ToFarmerId = toFarmerId,
                         FromFarmerId = fromFarmer.Id,
                         Text = messageText,
