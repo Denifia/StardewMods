@@ -82,6 +82,7 @@
     <Compile Include="Services\MailDeliveryService.cs" />
     <Compile Include="Services\PostboxService.cs" />
     <Compile Include="Models\MailCreateModel.cs" />
+    <Compile Include="Services\VersionCheckService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="manifest.json">
