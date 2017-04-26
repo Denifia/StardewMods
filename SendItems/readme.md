@@ -2,10 +2,10 @@
 send items to your other farms (saved games) or other players from around the world.
 
 Sending 5 stone to myself...
-![](Screenshots/SendLetters-v0.1.3-Beta-Send.gif)
+![](Screenshots/animation-send.gif)
 
 Receiving the 5 stone in the mail...
-![](Screenshots/SendLetters-v0.1.3-Beta-Receive.gif)
+![](Screenshots/animation-receive.gif)
 
 Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else yet.
 
