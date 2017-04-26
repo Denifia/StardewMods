@@ -7,7 +7,7 @@ using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface IPostboxInteractionService
+    public interface IPostboxInteractionDetector
     {
         void Init();
     }
@@ -15,7 +15,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Detects when the player is interacting with the postbox
     /// </summary>
-    public class PostboxInteractionService : IPostboxInteractionService // TODO: Rename to PostboxInteractionDetector?
+    public class PostboxInteractionDetector : IPostboxInteractionDetector
     {
         private const string locationOfPostbox = "Farm";
 
