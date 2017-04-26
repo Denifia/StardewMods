@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendItems", "SendItems\Mod\SendItems.csproj", "{D74FB037-CC7C-4047-8384-2C2E37999A7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendItems.Api", "SendItems\WebApi\SendItems.Api.csproj", "{526E9ED5-0D1E-4226-8370-888460AD5CBF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendItemsApi", "SendItems\WebApi\SendItemsApi.csproj", "{526E9ED5-0D1E-4226-8370-888460AD5CBF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".metadata", ".metadata", "{7D99962B-F613-4157-81BB-F8AA3F54B065}"
 	ProjectSection(SolutionItems) = preProject

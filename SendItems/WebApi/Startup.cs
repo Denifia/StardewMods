@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Denifia.Stardew.SendLetters.webapi
+namespace Denifia.Stardew.SendItemsApi
 {
     public class Startup
     {

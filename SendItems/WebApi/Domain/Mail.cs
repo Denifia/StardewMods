@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Denifia.Stardew.SendItems.Api.Domain
+namespace Denifia.Stardew.SendItemsApi.Domain
 {
     public class Mail
     {

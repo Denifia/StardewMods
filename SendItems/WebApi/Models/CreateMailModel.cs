@@ -1,4 +1,4 @@
-﻿namespace Denifia.Stardew.SendItems.Api.Models
+﻿namespace Denifia.Stardew.SendItemsApi.Models
 {
     public class CreateMailModel
     {

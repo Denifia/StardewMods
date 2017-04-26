@@ -3,8 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
-    <AssemblyName>Denifia.Stardew.SendItems.Api</AssemblyName>
-    <RootNamespace>Denifia.Stardew.SendItems.Api</RootNamespace>
+    <AssemblyName>Denifia.Stardew.SendItemsApi</AssemblyName>
+    <RootNamespace>Denifia.Stardew.SendItemsApi</RootNamespace>
+    <Version>0.2.0</Version>
+    <Description>WebApi for the Stardew Valley mod SendItems.</Description>
+    <Authors>Denifia</Authors>
+    <Company>Denifia</Company>
+    <Product>Send Items Web Api</Product>
   </PropertyGroup>
 
   <ItemGroup>

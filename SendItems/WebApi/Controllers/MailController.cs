@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using LiteDB;
-using Denifia.Stardew.SendItems.Api.Domain;
-using Denifia.Stardew.SendItems.Api.Models;
+using Denifia.Stardew.SendItemsApi.Domain;
+using Denifia.Stardew.SendItemsApi.Models;
 
-namespace Denifia.Stardew.SendLetters.webapi.Controllers
+namespace Denifia.Stardew.SendItemsApi.Controllers
 {
     [Route("api/[controller]")]
     public class MailController : Controller
@@ -48,6 +48,19 @@ namespace Denifia.Stardew.SendLetters.webapi.Controllers
                 using (var db = new LiteRepository(connectionString))
                 {
                     return db.Query<Mail>().Where(x => x.FromFarmerId == farmerId).ToList();
+                }
+            });
+        }
+
+        // GET api/mail/count
+        [HttpGet("count")]
+        public async Task<int> GetMailCount()
+        {
+            return await Task.Run(() =>
+            {
+                using (var db = new LiteRepository(connectionString))
+                {
+                    return db.Query<Mail>().Count();
                 }
             });
         }
