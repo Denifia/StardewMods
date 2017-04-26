@@ -37,7 +37,7 @@ namespace Denifia.Stardew.SendItems.Domain
         public void Init(IConfigurationService configService)
         {
             _configService = configService;
-        }
+        }       
 
         /// <summary>
         /// Insert a new document into collection. Document Id must be a new value in collection - Returns document Id

@@ -10,8 +10,8 @@ namespace Denifia.Stardew.SendItems.Services
     public interface IFarmerService
     {
         Domain.Farmer CurrentFarmer { get; }
-        Task LoadCurrentFarmerAsync();
-        Task<List<Domain.Farmer>> GetFarmersAsync();
+        LoadCurrentFarmer();
+        List<Domain.Farmer> GetFarmers();
     }
 
     public class FarmerService : IFarmerService
@@ -28,16 +28,17 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
         }
 
-        public async Task LoadCurrentFarmerAsync()
+        public void LoadCurrentFarmer()
         {
             var newFarmer = new Domain.Farmer()
             {
+                // TODO: Set the id to the save folder name
                 Id = SaveGame.loaded.uniqueIDForThisGame.ToString(),
                 Name = SaveGame.loaded.player.name,
                 FarmName = SaveGame.loaded.player.farmName
             };
 
-            var existingFarmer = await GetFarmerByIdAsync(newFarmer.Id);
+            var existingFarmer = GetFarmerById(newFarmer.Id);
 
             if (existingFarmer != null)
             {
@@ -45,54 +46,30 @@ namespace Denifia.Stardew.SendItems.Services
                 return;
             }
 
-            await SaveFarmerAsync(newFarmer);
+            SaveFarmer(newFarmer);
             _currentFarmer = newFarmer;
         }
 
-        public async Task<List<Domain.Farmer>> GetFarmersAsync()
+        public List<Domain.Farmer> GetFarmers()
         {
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    return db.Query<Domain.Farmer>().ToList();
-                }
-            });
+            return Repository.Instance.Fetch<Domain.Farmer>();
         }
 
-        private async Task SaveFarmerAsync(Domain.Farmer farmer)
+        private void SaveFarmer(Domain.Farmer farmer)
         {
-            await Task.Run(() =>
-            {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    db.Insert(farmer);
-                }
-            });
+            Repository.Instance.Upsert(farmer);
         }
 
-        private async Task<Domain.Farmer> GetFarmerByIdAsync(string id)
+        private Domain.Farmer GetFarmerById(string id)
         {
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    return db.Query<Domain.Farmer>().Where(x => x.Id == id).FirstOrDefault();
-                }
-            });
+            return Repository.Instance.SingleOrDefault<Domain.Farmer>(x => x.Id == id);
         }
 
-        private Task DetermineCurrentFarmerAsync()
+        private void DetermineCurrentFarmer()
         {
-            return Task.Run(() =>
-			{
-				var name = Game1.player.name;
-				var farmName = Game1.player.farmName;
-				using (var db = new LiteRepository(_configService.ConnectionString))
-				{
-					_currentFarmer = db.Query<Domain.Farmer>().Where(x => x.Name == name && x.FarmName == farmName).FirstOrDefault();
-				}
-			});
+            var name = Game1.player.name;
+            var farmName = Game1.player.farmName;
+            _currentFarmer = Repository.Instance.FirstOrDefault<Domain.Farmer>(x => x.Name == name && x.FarmName == farmName);
 		}
     }
 }

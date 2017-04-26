@@ -98,7 +98,15 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void Temp(string[] args)
         {
-            Repository.Instance.Test();
+            var mail = new Mail()
+            {
+                ToFarmerId = "150965384",
+                FromFarmerId = "150965384",
+                Text = "Hi2",
+                Status = MailStatus.Composed,
+                CreatedDate = DateTime.Now
+            };
+            Repository.Instance.Insert(mail);
         }
 
         private void Me(string[] args)
