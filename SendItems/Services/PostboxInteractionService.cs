@@ -15,7 +15,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Detects when the player is interacting with the postbox
     /// </summary>
-    public class PostboxInteractionService : IPostboxInteractionService
+    public class PostboxInteractionService : IPostboxInteractionService // TODO: Rename to PostboxInteractionDetector?
     {
         private const string locationOfPostbox = "Farm";
 

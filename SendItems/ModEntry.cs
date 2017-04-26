@@ -31,7 +31,7 @@ namespace Denifia.Stardew.SendItems
             builder.RegisterInstance(this).As<IMod>();
             builder.RegisterInstance(helper).As<IModHelper>();
             builder.RegisterAssemblyTypes(typeof(SendItems).Assembly)
-                .Where(t => t.Name.EndsWith("Service"))
+                .Where(t => t.Name.EndsWith("Service")) // TODO: Add another scan for "Detector"
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             
@@ -48,6 +48,8 @@ namespace Denifia.Stardew.SendItems
                 container.Resolve<IMailDeliveryService>()
             );
         }
+
+        // TODO : Move the below methods into a VersionCheckService
 
         /****
         ** Version Checking

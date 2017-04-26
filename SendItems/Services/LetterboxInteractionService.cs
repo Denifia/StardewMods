@@ -15,7 +15,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// <summary>
     /// Detects when the player is interacting with the letterbox
     /// </summary>
-    public class LetterboxInteractionService : ILetterboxInteractionService
+    public class LetterboxInteractionService : ILetterboxInteractionService // TODO: Rename to LetterboxInteractionDetector?
     {
         private const string _locationOfLetterbox = "Farm";
         private const string _playerMailKey = "playerMail";
