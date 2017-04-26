@@ -22,13 +22,17 @@ Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else ye
 4. Run the game using SMAPI.
 
 ## Usage
-### Send to your other farms (saved games)
+### Sending items
 1. Right click on the letter box by your house
 2. Select the farm you want to send to
 3. Put an item (or stack) into the box
 4. Click ok
 
-* Mail is delivered overnight
+_Mail is delivered overnight_
+
+
+### Adding your other farms (saved games)
+Coming soon...
 
 ### Adding online friends
 Coming soon...

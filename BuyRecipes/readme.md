@@ -11,4 +11,4 @@ purchase recipes you don't know from a magazine rack in Pierre's shop.
 See [release notes](release-notes.md).
 
 ## See also
-* [My other mods](..\readme.md)
+* [My other mods](../readme.md)
