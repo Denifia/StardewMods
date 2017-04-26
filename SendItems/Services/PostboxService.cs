@@ -19,6 +19,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class PostboxService : IPostboxService
     {
+        // TODO: Move to ModConstants
         private const string _letterPostedNotification = "Letter Posted!";
         private const string _leaveSelectionKeyAndValue = "(Leave)";
         private const string _messageFormat = "Hey there!^^  I thought you might like this... Take care! ^    -{0} %item object {1} {2} %%";
@@ -39,14 +40,14 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void PlayerUsingPostbox(object sender, EventArgs e)
         {
-            Task.Run(DisplayFriendSelector);
+            DisplayFriendSelector();
         }
 
-        private async Task DisplayFriendSelector()
+        private void DisplayFriendSelector()
         {
             if (Game1.activeClickableMenu != null) return;
             List<Response> responseList = new List<Response>();
-            var farmers = await _farmerService.GetFarmersAsync();
+            var farmers = _farmerService.GetFarmers();
             foreach (var friend in farmers)
             {
                 responseList.Add(new Response(friend.Id, friend.DisplayText));
@@ -82,23 +83,16 @@ namespace Denifia.Stardew.SendItems.Services
             var messageText = string.Format(_messageFormat, fromFarmer.Name, item.parentSheetIndex, item.getStack());
 
             // Consider: Moving this to own service
-            Task.Run(() =>
+            var mail = new Mail()
             {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    var mail = new Mail()
-                    {
-                        ToFarmerId = toFarmerId,
-                        FromFarmerId = fromFarmer.Id,
-                        Text = messageText,
-                        CreatedDate = DateTime.Now,
-                        Status = MailStatus.Composed
-                    };
-
-                    db.Insert(mail);
-                    ModHelper.ShowInfoMessage(_letterPostedNotification);
-                }
-            }).Wait();
+                ToFarmerId = toFarmerId,
+                FromFarmerId = fromFarmer.Id,
+                Text = messageText,
+                CreatedDate = DateTime.Now,
+                Status = MailStatus.Composed
+            };
+            Repository.Instance.Insert(mail);
+            ModHelper.ShowInfoMessage(_letterPostedNotification);
         }
     }
 }
