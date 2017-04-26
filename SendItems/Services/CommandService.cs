@@ -39,10 +39,13 @@ namespace Denifia.Stardew.SendItems.Services
         {
             _mod.Helper.ConsoleCommands
                 .Add("temp", "", HandleCommand)
-                .Add("senditems_friends", "Shows all the friends your currently loaded farmer.\n\nUsage: sendletters_friends -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
-                .Add("senditems_addfriend", "Adds a friend to your currently loaded farmer.\n\nUsage: sendletters_addfriend -Name <name> -FarmName <farmName> -Id <id> \n- name: the name of your friend.\n- farmName: the name of your friends farm.\n- id: the id of your friend.", HandleCommand)
-                .Add("senditems_removefriend", "Removes a friend from your currently loaded farmer.\n\nUsage: sendletters_removefriend -Id <id> \n- id: the id of your friend.", HandleCommand)
-                .Add("senditems_me", "Shows you the command that your friends need to type to add this current farmer as a friend.\n\nUsage: sendletters_me", HandleCommand);
+                .Add("SendItems_Me", "Shows you the command that your friends need to type to add the current farmer as a friend. \n\nUsage: SendItems_Me", HandleCommand)
+                .Add("SendItems_ListLocalFarmers", "Lists all the local farmers (saved games). \n\nUsage: SendItems_ListLocalFarmers", HandleCommand)
+                .Add("SendItems_AddAllLocalFarmersAsFriends", "Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: SendItems_AddAllLocalFarmersAsFriends", HandleCommand)
+                .Add("SendItems_AddFriend", "Adds a friend to the current farmer. \n\nUsage: SendItems_AddFriend <id> <name> <farmName> \n- id: the id of your friend.\n- name: the name of your friend.\n- farmName: the name of your friends farm.", HandleCommand)
+                .Add("SendItems_RemoveFriend", "Removes a friend of the current farmer. \n\nUsage: SendItems_RemoveFriend <id> \n- id: id of your friend.", HandleCommand)
+                .Add("SendItems_RemoveAllFriend", "Removes all the friends of the current farmer. \n\nUsage: SendItems_RemoveAllFriend", HandleCommand)
+                .Add("SendItems_ListMyFriends", "Lists all the friends of the current farmer. \n\nUsage: SendItems_ListLocalFarmers", HandleCommand);
         }
 
         private void HandleCommand(string command, string[] args)
