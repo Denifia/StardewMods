@@ -34,7 +34,7 @@ Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else ye
 Coming soon...
 
 ### Running the server locally
-See [Send Items API](..\SendItemsApi\readme.md)
+See [Send Items API](../SendItemsApi/readme.md)
 
 ## Configuration
 The mod will work fine out of the box, but you can tweak its settings by editing the `config.json`
@@ -51,4 +51,4 @@ See [release notes](release-notes.md).
 ## See also
 * [Nexus mod](http://www.nexusmods.com/stardewvalley/mods/1087)
 * [Discussion thread](http://community.playstarbound.com/threads/smapi-send-letters.132236/)
-* [My other mods](..\readme.md)
+* [My other mods](../readme.md)

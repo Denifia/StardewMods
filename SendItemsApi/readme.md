@@ -18,7 +18,7 @@ Runs on Linux, Mac and Windows and can be cloud hosted.
 4. Ensure your [Send Items](http://www.nexusmods.com/stardewvalley/mods/1087) mod config file has an ApiUrl pointing to you copy of the API
 
 ## Usage
-See [Send Items Readme](..\SendItems\readme.md)
+See [Send Items Readme](../SendItems/readme.md)
 
 ## Versions
 See [release notes](release-notes.md).
@@ -26,4 +26,4 @@ See [release notes](release-notes.md).
 ## See also
 * [Nexus mod](http://www.nexusmods.com/stardewvalley/mods/1087)
 * [Discussion thread](http://community.playstarbound.com/threads/smapi-send-letters.132236/)
-* [My other mods](..\readme.md)
+* [My other mods](../readme.md)
