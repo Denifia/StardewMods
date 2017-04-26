@@ -6,7 +6,7 @@ using Denifia.Stardew.SendItems.Events;
 using System.Threading.Tasks;
 using LiteDB;
 using System;
-using Pathoschild.Stardew.Common;
+using Denifia.Stardew.SendItems.Framework;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -96,7 +96,7 @@ namespace Denifia.Stardew.SendItems.Services
                     };
 
                     db.Insert(mail);
-                    CommonHelper.ShowInfoMessage(_letterPostedNotification);
+                    ModHelper.ShowInfoMessage(_letterPostedNotification);
                 }
             }).Wait();
         }

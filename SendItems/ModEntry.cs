@@ -1,11 +1,10 @@
 ﻿using Autofac;
-using Pathoschild.Stardew.Common;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Denifia.Stardew.SendItems.Services;
+using Denifia.Stardew.SendItems.Framework;
 
 namespace Denifia.Stardew.SendItems
 {
@@ -15,8 +14,6 @@ namespace Denifia.Stardew.SendItems
         private ISemanticVersion CurrentVersion;
         private ISemanticVersion NewRelease;
         private bool HasSeenUpdateWarning;
-
-        private string ModName = "Send Items";
 
         public override void Entry(IModHelper helper)
         {
@@ -52,30 +49,23 @@ namespace Denifia.Stardew.SendItems
 
         // TODO: Move the below methods into a VersionCheckService
 
-        /****
-        ** Version Checking
-        ****/
-
         private void GameEvents_GameLoaded(object sender, EventArgs e)
         {
             // check for mod update
-            if (this.Config.CheckForUpdates)
+            if (Config.CheckForUpdates)
             {
                 try
                 {
                     Task.Factory.StartNew(() =>
                     {
-                        Task.Factory.StartNew(() =>
-                        {
-                            ISemanticVersion latest = UpdateHelper.LogVersionCheck(this.Monitor, this.ModManifest.Version, ModName).Result;
-                            if (latest.IsNewerThan(this.CurrentVersion))
-                                this.NewRelease = latest;
-                        });
+                        ISemanticVersion latest = UpdateHelper.LogVersionCheck(Monitor, ModManifest.Version).Result;
+                        if (latest.IsNewerThan(CurrentVersion))
+                            NewRelease = latest;
                     });
                 }
                 catch (Exception ex)
                 {
-                    this.HandleError(ex, "checking for a new version");
+                    HandleError(ex, "checking for a new version");
                 }
             }
         }
@@ -83,24 +73,24 @@ namespace Denifia.Stardew.SendItems
         private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             // render update warning
-            if (this.Config.CheckForUpdates && !this.HasSeenUpdateWarning && this.NewRelease != null)
+            if (Config.CheckForUpdates && !HasSeenUpdateWarning && NewRelease != null)
             {
                 try
                 {
-                    this.HasSeenUpdateWarning = true;
-                    CommonHelper.ShowInfoMessage($"You can update {ModName} from {this.CurrentVersion} to {this.NewRelease}.");
+                    HasSeenUpdateWarning = true;
+                    ModHelper.ShowInfoMessage($"You can update {ModConstants.ModName} from {CurrentVersion} to {NewRelease}.");
                 }
                 catch (Exception ex)
                 {
-                    this.HandleError(ex, "showing the new version available");
+                    HandleError(ex, "showing the new version available");
                 }
             }
         }
 
         private void HandleError(Exception ex, string verb)
         {
-            this.Monitor.Log($"Something went wrong {verb}:\n{ex}", LogLevel.Error);
-            CommonHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
+            Monitor.Log($"Something went wrong {verb}:\n{ex}", LogLevel.Error);
+            ModHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
         }
     }
 }

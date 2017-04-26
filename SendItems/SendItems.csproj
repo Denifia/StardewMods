@@ -60,11 +60,12 @@
     <Compile Include="Domain\Friend.cs" />
     <Compile Include="Domain\Mail.cs" />
     <Compile Include="Domain\MailStatus.cs" />
-    <Compile Include="Domain\MessageRepository.cs" />
-    <Compile Include="Domain\PlayerRepository.cs" />
     <Compile Include="Domain\SavedGame.cs" />
     <Compile Include="Events\MailComposedEventArgs.cs" />
     <Compile Include="Events\MailReadEventArgs.cs" />
+    <Compile Include="Framework\ModConstants.cs" />
+    <Compile Include="Framework\ModHelper.cs" />
+    <Compile Include="Framework\UpdateHelper.cs" />
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="ModEntry.cs" />
@@ -77,13 +78,9 @@
     <Compile Include="Services\PostboxInteractionService.cs" />
     <Compile Include="Services\LetterboxInteractionService.cs" />
     <Compile Include="Services\LetterboxService.cs" />
-    <Compile Include="Services\MailboxService.cs" />
     <Compile Include="Services\MailCleanupService.cs" />
     <Compile Include="Services\MailDeliveryService.cs" />
-    <Compile Include="Services\MessageService.cs" />
-    <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\PostboxService.cs" />
-    <Compile Include="Services\RestService.cs" />
     <Compile Include="Models\MailCreateModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,7 +95,6 @@
     <None Include="release-notes.md" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\Pathoschild.Stardew.Common\Pathoschild.Stardew.Common.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <PropertyGroup>

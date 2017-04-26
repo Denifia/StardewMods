@@ -8,17 +8,12 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using StardewModdingAPI;
 
-namespace Pathoschild.Stardew.Common
+namespace Denifia.Stardew.SendItems.Framework
 {
-    /// <summary>Provides utility methods for mod updates.</summary>
+    /// <remarks>Taken from Pathoschild</remarks>
     internal class UpdateHelper
     {
-        /*********
-        ** Public methods
-        *********/
-        /// <summary>Get the latest release from the GitHub repository.</summary>
-        /// <param name="url">The URL from which to fetch the release versions.</param>
-        public static async Task<IDictionary<string, string>> GetLatestReleasesAsync(string url = CommonConstants.UpdateUrl)
+        public static async Task<IDictionary<string, string>> GetLatestReleasesAsync(string url = ModConstants.UpdateUrl)
         {
             // build request
             // (avoid HttpClient for Mac compatibility)
@@ -42,7 +37,7 @@ namespace Pathoschild.Stardew.Common
         /// <param name="current">The current version.</param>
         /// <param name="key">The mod key in the update document.</param>
         /// <param name="url">The URL from which to fetch the release versions.</param>
-        public static async Task<ISemanticVersion> LogVersionCheck(IMonitor monitor, ISemanticVersion current, string key, string url = CommonConstants.UpdateUrl)
+        public static async Task<ISemanticVersion> LogVersionCheck(IMonitor monitor, ISemanticVersion current, string key = ModConstants.ModName, string url = ModConstants.UpdateUrl)
         {
             try
             {
