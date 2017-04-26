@@ -62,7 +62,8 @@ namespace Denifia.Stardew.SendItems.Services
 
             var items = new List<Item> { null };
             Game1.activeClickableMenu = new ComposeLetter(answer, items, 1, 1, null, HighlightOnlyGiftableItems);
-            //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange)); // TODO: Should I use this instead?
+            // TODO: Should I use this instead?
+            //Game1.activeClickableMenu = (IClickableMenu)new ComposeLetter(answer, items, 1, 1, new ComposeLetter.behaviorOnItemChange(onLetterChange)); 
         }
 
         private bool HighlightOnlyGiftableItems(Item i)

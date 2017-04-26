@@ -27,11 +27,12 @@ namespace Denifia.Stardew.SendItems
             //GameEvents.GameLoaded += GameEvents_GameLoaded;
             //SaveEvents.AfterLoad += SaveEvents_AfterLoad;
 
+            // TODO: Add another scan for "Detector"
             var builder = new ContainerBuilder();
             builder.RegisterInstance(this).As<IMod>();
             builder.RegisterInstance(helper).As<IModHelper>();
             builder.RegisterAssemblyTypes(typeof(SendItems).Assembly)
-                .Where(t => t.Name.EndsWith("Service")) // TODO: Add another scan for "Detector"
+                .Where(t => t.Name.EndsWith("Service")) 
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             
@@ -49,7 +50,7 @@ namespace Denifia.Stardew.SendItems
             );
         }
 
-        // TODO : Move the below methods into a VersionCheckService
+        // TODO: Move the below methods into a VersionCheckService
 
         /****
         ** Version Checking

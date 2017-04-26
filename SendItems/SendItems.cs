@@ -10,7 +10,8 @@ using Denifia.Stardew.SendItems.Events;
 
 namespace Denifia.Stardew.SendItems
 {
-    public class SendItems // TODO : Merge this with ModEntry
+    // TODO: Merge this with ModEntry
+    public class SendItems
     {
         private readonly IMod _mod;
         private readonly IConfigurationService _configService;
