@@ -98,17 +98,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void Temp(string[] args)
         {
-            using (var db = new LiteRepository(_configService.ConnectionString))
-            {
-                db.Insert(new Mail()
-                {
-                    ToFarmerId = "150965384",
-                    FromFarmerId = "150965384",
-                    Text = "Hi2",
-                    Status = MailStatus.Composed,
-                    CreatedDate = DateTime.Now
-                });
-            }
+            Repository.Instance.Test();
         }
 
         private void Me(string[] args)

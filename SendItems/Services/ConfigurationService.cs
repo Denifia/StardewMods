@@ -17,16 +17,22 @@ namespace Denifia.Stardew.SendItems.Services
 		List<SavedGame> GetSavedGames();
 	}
 
+    // TODO: Add private members for each of the public properties for performance
     public class ConfigurationService : IConfigurationService
     {
         private IModHelper _modHelper;
         private ModConfig _modConfig;
         private const string _databaseName = "data.db";
+        private string _connectionString = string.Empty;
 
         public string ConnectionString
         {
             get {
-                return Path.Combine(GetLocalPath(), _databaseName);
+                if (_connectionString.Equals(string.Empty))
+                {
+                    _connectionString = Path.Combine(GetLocalPath(), _databaseName);
+                }
+                return _connectionString;
             }
         }
 

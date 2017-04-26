@@ -60,6 +60,7 @@
     <Compile Include="Domain\Friend.cs" />
     <Compile Include="Domain\Mail.cs" />
     <Compile Include="Domain\MailStatus.cs" />
+    <Compile Include="Domain\Repository.cs" />
     <Compile Include="Domain\SavedGame.cs" />
     <Compile Include="Events\MailComposedEventArgs.cs" />
     <Compile Include="Events\MailReadEventArgs.cs" />

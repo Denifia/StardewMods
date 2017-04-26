@@ -2,6 +2,7 @@
 using Denifia.Stardew.SendItems.Services;
 using StardewModdingAPI;
 using Autofac;
+using Denifia.Stardew.SendItems.Domain;
 
 namespace Denifia.Stardew.SendItems
 {
@@ -23,9 +24,12 @@ namespace Denifia.Stardew.SendItems
                 .InstancePerLifetimeScope();
             var container = builder.Build();
 
+            // Init repo first!
+            Repository.Instance.Init(container.Resolve<IConfigurationService>());
+
             // Instance classes that do their own thing
             container.Resolve<VersionCheckService>();
-
+            
             var program = new SendItems(this,
                 container.Resolve<IConfigurationService>(),
                 container.Resolve<ICommandService>(),
