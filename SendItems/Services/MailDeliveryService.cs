@@ -47,7 +47,8 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void OnMailDeliverySchedule(object sender, EventArgs e)
         {
-            Task.Run(DeliverPostedMail);
+            // Run this in the background
+            Task.Factory.StartNew(DeliverPostedMail);
         }
 
         public async Task DeliverPostedMail()
