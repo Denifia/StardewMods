@@ -3,4 +3,5 @@ documentation and release notes:
 
 Note: I wrote these mods myself but took a lot of inspiration (and some helper code) from Pathoschild.
 
-* [SendLetters](sendletters) - Send letters and items to your other farms or other players
+* [Send Items](SendItems) - Send items to your other farms (saved games) or other players from around the world.
+* [Buy Recipes](BuyRecipes) - Purchase recipes you don't know from a magazine rack in Pierre's shop.

@@ -1,5 +1,5 @@
-﻿**SendLetters** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you send items to your
-other saved games or other players from around the world.
+﻿**Send Items** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you 
+send items to your other farms (saved games) or other players from around the world.
 
 Sending 5 stone to myself...
 ![](Screenshots/SendLetters-v0.1.3-Beta-Send.gif)
@@ -7,7 +7,7 @@ Sending 5 stone to myself...
 Receiving the 5 stone in the mail...
 ![](Screenshots/SendLetters-v0.1.3-Beta-Receive.gif)
 
-Compatible with Stardew Valley 1.1+ on Windows. I've not tested anything else yet.
+Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else yet.
 
 ## Contents
 * [Installation](#installation)
@@ -28,13 +28,13 @@ Compatible with Stardew Valley 1.1+ on Windows. I've not tested anything else ye
 3. Put an item (or stack) into the box
 4. Click ok
 
-* Mail is delivered between 8am and 6pm each day
+* Mail is delivered overnight
 
 ### Adding online friends
 Coming soon...
 
 ### Running the server locally
-Coming soon...
+See [Send Items API](..\SendItemsApi\readme.md)
 
 ## Configuration
 The mod will work fine out of the box, but you can tweak its settings by editing the `config.json`
@@ -51,3 +51,4 @@ See [release notes](release-notes.md).
 ## See also
 * [Nexus mod](http://www.nexusmods.com/stardewvalley/mods/1087)
 * [Discussion thread](http://community.playstarbound.com/threads/smapi-send-letters.132236/)
+* [My other mods](..\readme.md)

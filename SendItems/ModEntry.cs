@@ -16,7 +16,7 @@ namespace Denifia.Stardew.SendItems
         private ISemanticVersion NewRelease;
         private bool HasSeenUpdateWarning;
 
-        private string ModName = "SendItems";
+        private string ModName = "Send Items";
 
         public override void Entry(IModHelper helper)
         {

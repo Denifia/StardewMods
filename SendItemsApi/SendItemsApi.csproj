@@ -13,13 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
+    <Compile Remove="Screenshots\**" />
     <Compile Remove="wwwroot\**" />
-    <Content Remove="NewFolder\**" />
+    <Content Remove="Screenshots\**" />
     <Content Remove="wwwroot\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
+    <EmbeddedResource Remove="Screenshots\**" />
     <EmbeddedResource Remove="wwwroot\**" />
-    <None Remove="NewFolder\**" />
+    <None Remove="Screenshots\**" />
     <None Remove="wwwroot\**" />
   </ItemGroup>
 
