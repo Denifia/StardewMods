@@ -1,13 +1,10 @@
 ﻿using Denifia.Stardew.SendItems.Domain;
 using Denifia.Stardew.SendItems.Events;
-using LiteDB;
+using Denifia.Stardew.SendItems.Framework;
 using StardewValley;
 using StardewValley.Menus;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -21,8 +18,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class LetterboxService : ILetterboxService
     {
-        private const string _playerMailKey = "playerMail";
-        private const string _playerMailTitle = "Player Mail";
+        
 
         private readonly IConfigurationService _configService;
         private readonly IFarmerService _farmerService;
@@ -40,27 +36,21 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void PlayerUsingLetterbox(object sender, EventArgs e)
         {
-            Task.Run(() =>
+            var currentFarmerId = _farmerService.CurrentFarmer.Id;
+            var mail = Repository.Instance.FirstOrDefault<Mail>(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId);
+            if (mail != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
             {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    var currentFarmerId = _farmerService.CurrentFarmer.Id;
-                    var mail = db.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).FirstOrDefault();
-                    if (mail != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
-                    {
-                        ShowLetter(mail);
-                    }
-                }
-            });
+                ShowLetter(mail);
+            }
         }
 
         private void ShowLetter(Mail mail)
         {
             if (Game1.mailbox == null || !Game1.mailbox.Any()) return;
 
-            if (Game1.mailbox.Peek() == _playerMailKey)
+            if (Game1.mailbox.Peek() == ModConstants.PlayerMailKey)
             {
-                Game1.activeClickableMenu = new LetterViewerMenu(mail.Text, _playerMailTitle);
+                Game1.activeClickableMenu = new LetterViewerMenu(mail.Text, ModConstants.PlayerMailTitle);
                 if (Game1.mailbox.Any())
                 {
                     Game1.mailbox.Dequeue();
@@ -71,14 +61,8 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void MailRead(object sender, MailReadEventArgs e)
         {
-            Task.Run(() =>
-            {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    var currentFarmerId = _farmerService.CurrentFarmer.Id;
-                    db.Delete<Mail>(x => x.Id == e.Id);
-                }
-            });
+            var currentFarmerId = _farmerService.CurrentFarmer.Id;
+            Repository.Instance.Delete<Mail>(x => x.Id == e.Id);
         }
     }
 }
