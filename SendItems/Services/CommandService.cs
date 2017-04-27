@@ -16,7 +16,7 @@ namespace Denifia.Stardew.SendItems.Services
 
     public class CommandService : ICommandService
     {
-        private bool SavedGameLoaded = false;
+        private bool _savedGameLoaded = false;
 
         private readonly IMod _mod;
         private readonly IConfigurationService _configService;
@@ -47,8 +47,6 @@ namespace Denifia.Stardew.SendItems.Services
         private void RegisterCommands()
         {
             _mod.Helper.ConsoleCommands
-                // TODO: Remove before go live
-                .Add("temp", "", HandleCommand)
                 .Add(_meCommand, "Shows you the command that your friends need to type to add the current farmer as a friend. \n\nUsage: SendItems_Me", HandleCommand)
                 .Add(_listLocalFarmersCommand, "Lists all the local farmers (saved games). \n\nUsage: SendItems_ListLocalFarmers", HandleCommand)
                 .Add(_addAllLocalFarmersAsFriendsCommand, "Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: SendItems_AddAllLocalFarmersAsFriends", HandleCommand)
@@ -60,7 +58,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void HandleCommand(string command, string[] args)
         {
-            if (!SavedGameLoaded)
+            if (!_savedGameLoaded)
             {
                 _mod.Monitor.Log("Please load up a saved game first, then try again.", LogLevel.Warn);
                 return;
@@ -68,9 +66,6 @@ namespace Denifia.Stardew.SendItems.Services
 
             switch (command)
             {
-                case "temp":
-                    Temp(args);
-                    break;
                 case _meCommand:
                     Me(args);
                     break;
@@ -97,19 +92,6 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private void Temp(string[] args)
-        {
-            var mail = new Mail()
-            {
-                ToFarmerId = "150965384",
-                FromFarmerId = "150965384",
-                Text = "Hi2",
-                Status = MailStatus.Composed,
-                CreatedDate = DateTime.Now
-            };
-            Repository.Instance.Insert(mail);
-        }
-
         private void Me(string[] args)
         {
             _mod.Monitor.Log("Get your friends to paste this into the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
@@ -118,24 +100,55 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void ListLocalFarmers(string[] args)
         {
-
+            var farmers = Repository.Instance.Fetch<Domain.Farmer>();
+            if (farmers.Any())
+            {
+                _mod.Monitor.Log("Here are all the local farmers (saved games)...", LogLevel.Info);
+                _mod.Monitor.Log("<id> <name> <farm name>", LogLevel.Info);
+                foreach (var farmer in farmers)
+                {
+                    _mod.Monitor.Log($"{farmer.Id} {farmer.Name} {farmer.FarmName}", LogLevel.Info);
+                }
+            }
+            else
+            {
+                _mod.Monitor.Log("No farmers (saved games) found.", LogLevel.Warning);
+            }
         }
 
         private void AddAllLocalFarmersAsFriends(string[] args)
         {
-
+            var farmers = Repository.Instance.Fetch<Domain.Farmer>();
+            var count = 0;
+            foreach (var farmer in farmers)
+            {
+                if (!_farmerService.CurrentFarmer.Friends.Any(x => x.Id == farmer.Id))
+                {
+                    AddFriend(new Friend
+                    {
+                        Id = farmer.Id,
+                        Name = farmer.Name,
+                        FarmName = farmer.FarmName
+                    });
+                    count++;
+                }
+            }
+            if (count == 0)
+            {
+                _mod.Monitor.Log($"No local farmers were added. They may already be added.", LogLevel.Info);
+            }            
         }
 
         private void AddFriend(string[] args)
         {
             if (args.Length == 3)
             {
-                var name = args[0];
-                var farmName = args[1];
-                var id = args[2];
-                // TODO: Replace
-                //_farmerService.AddFriendToCurrentPlayer(name, farmName, id); 
-                _mod.Monitor.Log($"{name} ({farmName} Farm) was added with id {id}.", LogLevel.Info);
+                AddFriend(new Friend
+                {
+                    Id = args[0],
+                    Name = args[1],
+                    FarmName = args[2]
+                });
             }
             else
             {
@@ -145,19 +158,24 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void RemoveFriend(string[] args)
         {
-            if (args.Length == 2 && args[0].ToLower() == "-id")
+            if (args.Length == 1)
             {
-                var id = args[1];
-                var friend = _farmerService.CurrentFarmer.Friends.FirstOrDefault(x => x.Id == id);
+                var friend = _farmerService.CurrentFarmer.Friends.FirstOrDefault(x => x.Id == args[0]);
                 if (friend != null)
                 {
-                    // TODO: replace
-                    //_farmerService.RemoveFriendFromCurrentPlayer(id); 
-                    _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) was removed!", LogLevel.Info);
+                    var success = _farmerService.RemoveFriendFromCurrentPlayer(friend.Id); 
+                    if (success)
+                    {
+                        _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}] was removed!", LogLevel.Info);
+                    }
+                    else
+                    {
+                        _mod.Monitor.Log($"There was an issues removing {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warning);
+                    }
                 }
                 else
                 {
-                    _mod.Monitor.Log($"Couldn'd find a friend with that id.", LogLevel.Info);
+                    _mod.Monitor.Log($"Couldn'd find a friend with id {args[0]}.", LogLevel.Info);
                 }
             }
             else
@@ -168,7 +186,15 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void RemoveAllFriend(string[] args)
         {
-
+            var success = _farmerService.RemoveAllFriendFromCurrentPlayer();
+            if (success)
+            {
+                _mod.Monitor.Log($"Friends list successfully cleared!", LogLevel.Info);
+            }
+            else
+            {
+                _mod.Monitor.Log($"Friends list was not cleared. It may have already been cleared.", LogLevel.Info);
+            }
         }
 
         private void ListMyFriends(string[] args)
@@ -176,7 +202,7 @@ namespace Denifia.Stardew.SendItems.Services
             var friends = _farmerService.CurrentFarmer.Friends;
             if (friends.Any())
             {
-                _mod.Monitor.Log("Your friends for the currently loaded farmer are...", LogLevel.Info);
+                _mod.Monitor.Log("Your friends for the current farmer (saved game) are...", LogLevel.Info);
                 foreach (var friend in friends)
                 {
                     _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [ID: {friend.Id}]", LogLevel.Info);
@@ -184,19 +210,29 @@ namespace Denifia.Stardew.SendItems.Services
             }
             else
             {
-                _mod.Monitor.Log("The currently loaded farmer has no friends. How sad.", LogLevel.Info);
-                _mod.Monitor.Log("You can add friends with the sendletters_addfriend command.", LogLevel.Info);
+                _mod.Monitor.Log("The current farmer (saved game) has no friends. How sad :(", LogLevel.Info);
+                _mod.Monitor.Log($"You can add friends with the {_addFriendCommand} command.", LogLevel.Info);
+            }
+        }
+        
+        private void AddFriend(Friend friend)
+        {
+            var success = _farmerService.AddFriendToCurrentPlayer(friend);
+            if (success)
+            {
+                _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}] was removed.", LogLevel.Info);
+            }
+            else
+            {
+                _mod.Monitor.Log($"These was an issue adding {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warning);
             }
         }
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
-            SavedGameLoaded = true;
+            _savedGameLoaded = true;
         }
 
-        /****
-        ** Logging
-        ****/
         private void LogUsageError(string error, string command)
         {
             _mod.Monitor.Log($"{error} Type 'help {command}' for usage.", LogLevel.Error);

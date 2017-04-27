@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Denifia.Stardew.SendItems.Domain;
 using StardewValley;
+using System.Linq;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -9,6 +10,9 @@ namespace Denifia.Stardew.SendItems.Services
         Domain.Farmer CurrentFarmer { get; }
         LoadCurrentFarmer();
         List<Domain.Farmer> GetFarmers();
+        bool AddFriendToCurrentPlayer(Friend friend);
+        bool RemoveFriendFromCurrentPlayer(string id);
+        bool RemoveAllFriendFromCurrentPlayer();
     }
 
     public class FarmerService : IFarmerService
@@ -50,6 +54,31 @@ namespace Denifia.Stardew.SendItems.Services
         public List<Domain.Farmer> GetFarmers()
         {
             return Repository.Instance.Fetch<Domain.Farmer>();
+        }
+
+        public bool AddFriendToCurrentPlayer(Friend friend)
+        {
+            if (CurrentFarmer == null) throw new System.Exception("current farmer is unknown");
+
+            _currentFarmer.Friends.Add(friend);
+            return Repository.Instance.Update(_currentFarmer);
+        }
+
+        public bool RemoveFriendFromCurrentPlayer(string id)
+        {
+            if (CurrentFarmer == null) throw new System.Exception("current farmer is unknown");
+
+            var index = _currentFarmer.Friends.FindIndex(x => x.Id == id);
+            if (index < 0) return false;
+
+            _currentFarmer.Friends.RemoveAt(index);
+            return Repository.Instance.Update(_currentFarmer);
+        }
+
+        public bool RemoveAllFriendFromCurrentPlayer()
+        {
+            _currentFarmer.Friends.Clear();
+            return Repository.Instance.Update(_currentFarmer);
         }
 
         private void SaveFarmer(Domain.Farmer farmer)
