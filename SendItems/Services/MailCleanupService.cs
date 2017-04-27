@@ -19,6 +19,8 @@ namespace Denifia.Stardew.SendItems.Services
         private readonly IFarmerService _farmerService;
         private RestClient _restClient { get; set; }
 
+        // TODO: Flesh out MailCleanupService
+
         public MailCleanupService(IMod mod, IConfigurationService configService, IFarmerService farmerService)
         {
             _mod = mod;
@@ -29,6 +31,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         public void Init()
         {
+
         }
 
         // DeleteReadMail

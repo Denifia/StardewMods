@@ -27,7 +27,7 @@ namespace Denifia.Stardew.SendItems.Services
         private async void GameEvents_GameLoaded(object sender, EventArgs e)
         {
             // check for mod update
-            if (_config.CheckForUpdates)
+            if (_config.CheckForUpdates && !_config.Debug)
             {
                 try
                 {
