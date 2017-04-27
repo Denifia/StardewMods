@@ -8,6 +8,7 @@ using Denifia.Stardew.SendItemsApi.Models;
 
 namespace Denifia.Stardew.SendItemsApi.Controllers
 {
+    //TODO: Add a Singleton Thread-Safe Repository for db callss
     [Route("api/[controller]")]
     public class MailController : Controller
     {
