@@ -68,6 +68,8 @@ namespace Denifia.Stardew.SendItems.Services
                 mail.Status = MailStatus.Read;
                 Repository.Instance.Update(mail);
             }
+
+            // Consider: Should I just call the webapi now to delete this message? Raise an event for the cleanup service?
         }
     }
 }
