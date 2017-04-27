@@ -2,7 +2,6 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItems.Services
 {

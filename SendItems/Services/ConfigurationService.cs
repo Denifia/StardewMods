@@ -3,7 +3,6 @@ using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -15,7 +14,8 @@ namespace Denifia.Stardew.SendItems.Services
 		bool InDebugMode();
 		bool InLocalOnlyMode();
 		List<SavedGame> GetSavedGames();
-	}
+
+    }
 
     // TODO: Add private members for each of the public properties for performance
     public class ConfigurationService : IConfigurationService
@@ -101,6 +101,7 @@ namespace Denifia.Stardew.SendItems.Services
                     }
                     catch (Exception ex)
                     {
+                        throw new Exception($"error searching for saved games", ex);
                     }
                 }
             }

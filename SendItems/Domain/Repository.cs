@@ -1,5 +1,4 @@
-﻿using Denifia.Stardew.SendItems.Framework;
-using Denifia.Stardew.SendItems.Services;
+﻿using Denifia.Stardew.SendItems.Services;
 using LiteDB;
 using System;
 using System.Collections.Generic;

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using Denifia.Stardew.SendItems.Domain;
 using Denifia.Stardew.SendItems.Menus;
 using Denifia.Stardew.SendItems.Events;
-using System.Threading.Tasks;
-using LiteDB;
 using System;
 using Denifia.Stardew.SendItems.Framework;
 

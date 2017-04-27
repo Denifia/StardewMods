@@ -70,7 +70,7 @@
     <Compile Include="Menus\ComposeLetter.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Events\ModEvents.cs" />
-    <Compile Include="ModEntry.cs" />
+    <Compile Include="SendItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
@@ -85,6 +85,12 @@
     <Compile Include="Services\VersionCheckService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.online.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="config.localonly.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="manifest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

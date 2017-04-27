@@ -2,10 +2,13 @@
 using Denifia.Stardew.SendItems.Services;
 using Autofac;
 using Denifia.Stardew.SendItems.Domain;
+using StardewModdingAPI;
+using System;
+using StardewModdingAPI.Events;
 
 namespace Denifia.Stardew.SendItems
 {
-    public class ModEntry : Mod
+    public class SendItems : Mod
     {
         private IContainer _container;
         private IFarmerService _farmerService;
@@ -52,7 +55,7 @@ namespace Denifia.Stardew.SendItems
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
-            _farmerService.LoadCurrentFarmer();
+//            _farmerService.LoadCurrentFarmer();
             _postboxInteractionDetector.Init();
             _letterboxInteractionDetector.Init();
             _mailDeliveryService.Init();

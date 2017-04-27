@@ -8,7 +8,7 @@ namespace Denifia.Stardew.SendItems.Services
     public interface IFarmerService
     {
         Domain.Farmer CurrentFarmer { get; }
-        LoadCurrentFarmer();
+        void LoadCurrentFarmer();
         List<Domain.Farmer> GetFarmers();
         bool AddFriendToCurrentPlayer(Friend friend);
         bool RemoveFriendFromCurrentPlayer(string id);
@@ -21,7 +21,13 @@ namespace Denifia.Stardew.SendItems.Services
 
         private Domain.Farmer _currentFarmer;
         public Domain.Farmer CurrentFarmer {
-            get { return _currentFarmer; }
+            get {
+                if (_currentFarmer == null)
+                {
+                    LoadCurrentFarmer();
+                }
+                return _currentFarmer;
+            }
         }
 
         public FarmerService(IConfigurationService configService)
@@ -31,12 +37,16 @@ namespace Denifia.Stardew.SendItems.Services
 
         public void LoadCurrentFarmer()
         {
+            var saves = _configService.GetSavedGames();
+            var save = saves.FirstOrDefault(x => x.Name == Game1.player.Name && x.FarmName == Game1.player.farmName);
+            if (save == null) throw new System.Exception("error loading current farmer");
+
             var newFarmer = new Domain.Farmer()
             {
                 // TODO: Set the id to the save folder name
-                Id = SaveGame.loaded.uniqueIDForThisGame.ToString(),
-                Name = SaveGame.loaded.player.name,
-                FarmName = SaveGame.loaded.player.farmName
+                Id = save.Id,
+                Name = save.Name,
+                FarmName = save.FarmName
             };
 
             var existingFarmer = GetFarmerById(newFarmer.Id);
@@ -59,9 +69,12 @@ namespace Denifia.Stardew.SendItems.Services
         public bool AddFriendToCurrentPlayer(Friend friend)
         {
             if (CurrentFarmer == null) throw new System.Exception("current farmer is unknown");
-
-            _currentFarmer.Friends.Add(friend);
-            return Repository.Instance.Update(_currentFarmer);
+            if (!_currentFarmer.Friends.Contains(friend))
+            {
+                _currentFarmer.Friends.Add(friend);
+                return Repository.Instance.Update(_currentFarmer);
+            }
+            return false;            
         }
 
         public bool RemoveFriendFromCurrentPlayer(string id)
@@ -77,6 +90,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         public bool RemoveAllFriendFromCurrentPlayer()
         {
+            if (CurrentFarmer == null) throw new System.Exception("current farmer is unknown");
             _currentFarmer.Friends.Clear();
             return Repository.Instance.Update(_currentFarmer);
         }

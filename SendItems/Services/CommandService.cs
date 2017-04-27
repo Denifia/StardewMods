@@ -1,12 +1,8 @@
 ﻿using Denifia.Stardew.SendItems.Domain;
-using LiteDB;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -22,13 +18,13 @@ namespace Denifia.Stardew.SendItems.Services
         private readonly IConfigurationService _configService;
         private readonly IFarmerService _farmerService;
 
-        private const string _meCommand = "SendItems_Me";
-        private const string _listLocalFarmersCommand = "SendItems_ListLocalFarmers";
-        private const string _addAllLocalFarmersAsFriendsCommand = "SendItems_AddAllLocalFarmersAsFriends";
-        private const string _addFriendCommand = "SendItems_AddFriend";
-        private const string _removeFriendCommand = "SendItems_RemoveFriend";
-        private const string _removeAllFriendCommand = "SendItems_RemoveAllFriend";
-        private const string _listMyFriendsCommand = "SendItems_ListMyFriends";
+        private const string _meCommand = "si_me";
+        private const string _listLocalFarmersCommand = "si_listlocalfarmers";
+        private const string _addLocalFarmersAsFriendsCommand = "si_addlocalfarmersasfriends";
+        private const string _addFriendCommand = "si_addfriend";
+        private const string _removeFriendCommand = "si_removefriend";
+        private const string _removeAllFriendCommand = "si_removeallfriend";
+        private const string _listMyFriendsCommand = "si_listmyfriends";
 
         public CommandService(
             IMod mod, 
@@ -49,7 +45,7 @@ namespace Denifia.Stardew.SendItems.Services
             _mod.Helper.ConsoleCommands
                 .Add(_meCommand, "Shows you the command that your friends need to type to add the current farmer as a friend. \n\nUsage: SendItems_Me", HandleCommand)
                 .Add(_listLocalFarmersCommand, "Lists all the local farmers (saved games). \n\nUsage: SendItems_ListLocalFarmers", HandleCommand)
-                .Add(_addAllLocalFarmersAsFriendsCommand, "Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: SendItems_AddAllLocalFarmersAsFriends", HandleCommand)
+                .Add(_addLocalFarmersAsFriendsCommand, "Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: SendItems_AddAllLocalFarmersAsFriends", HandleCommand)
                 .Add(_addFriendCommand, "Adds a friend to the current farmer. \n\nUsage: SendItems_AddFriend <id> <name> <farmName> \n- id: the id of your friend.\n- name: the name of your friend.\n- farmName: the name of your friends farm.", HandleCommand)
                 .Add(_removeFriendCommand, "Removes a friend of the current farmer. \n\nUsage: SendItems_RemoveFriend <id> \n- id: id of your friend.", HandleCommand)
                 .Add(_removeAllFriendCommand, "Removes all the friends of the current farmer. \n\nUsage: SendItems_RemoveAllFriend", HandleCommand)
@@ -72,7 +68,7 @@ namespace Denifia.Stardew.SendItems.Services
                 case _listLocalFarmersCommand:
                     ListLocalFarmers(args);
                     break;
-                case _addAllLocalFarmersAsFriendsCommand:
+                case _addLocalFarmersAsFriendsCommand:
                     AddAllLocalFarmersAsFriends(args);
                     break;
                 case _addFriendCommand:
@@ -112,7 +108,7 @@ namespace Denifia.Stardew.SendItems.Services
             }
             else
             {
-                _mod.Monitor.Log("No farmers (saved games) found.", LogLevel.Warning);
+                _mod.Monitor.Log("No farmers (saved games) found.", LogLevel.Warn);
             }
         }
 
@@ -170,7 +166,7 @@ namespace Denifia.Stardew.SendItems.Services
                     }
                     else
                     {
-                        _mod.Monitor.Log($"There was an issues removing {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warning);
+                        _mod.Monitor.Log($"There was an issues removing {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warn);
                     }
                 }
                 else
@@ -220,11 +216,11 @@ namespace Denifia.Stardew.SendItems.Services
             var success = _farmerService.AddFriendToCurrentPlayer(friend);
             if (success)
             {
-                _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}] was removed.", LogLevel.Info);
+                _mod.Monitor.Log($"{friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}] was added.", LogLevel.Info);
             }
             else
             {
-                _mod.Monitor.Log($"These was an issue adding {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warning);
+                _mod.Monitor.Log($"These was an issue adding {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warn);
             }
         }
 

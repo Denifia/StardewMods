@@ -1,5 +1,4 @@
-﻿using LiteDB;
-using System;
+﻿using System;
 
 namespace Denifia.Stardew.SendItems.Events
 {
