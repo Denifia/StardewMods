@@ -24,19 +24,18 @@ namespace Denifia.Stardew.SendItems.Services
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
         }
 
-        private void GameEvents_GameLoaded(object sender, EventArgs e)
+        private async void GameEvents_GameLoaded(object sender, EventArgs e)
         {
             // check for mod update
             if (_config.CheckForUpdates)
             {
                 try
                 {
-                    Task.Factory.StartNew(() =>
+                    ISemanticVersion latest = await UpdateHelper.LogVersionCheck(_mod.Monitor, _mod.ModManifest.Version);
+                    if (latest.IsNewerThan(_currentVersion))
                     {
-                        ISemanticVersion latest = UpdateHelper.LogVersionCheck(_mod.Monitor, _mod.ModManifest.Version).Result;
-                        if (latest.IsNewerThan(_currentVersion))
-                            _newRelease = latest;
-                    });
+                        _newRelease = latest;
+                    }
                 }
                 catch (Exception ex)
                 {

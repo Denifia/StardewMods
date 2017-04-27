@@ -47,11 +47,11 @@ namespace Denifia.Stardew.SendItems.Services
             SendItemsModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
         }
 
-        private void OnMailDeliverySchedule(object sender, EventArgs e)
+        private async void OnMailDeliverySchedule(object sender, EventArgs e)
         {
             try
             {
-                Task.Factory.StartNew(DeliverPostedMail);
+                await DeliverPostedMail();
             }
             catch (Exception ex)
             {
