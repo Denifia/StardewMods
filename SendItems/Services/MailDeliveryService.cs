@@ -128,7 +128,7 @@ namespace Denifia.Stardew.SendItems.Services
 
                     var urlSegments = new Dictionary<string, string>();
                     var request = FormStandardRequest("mail", urlSegments, Method.GET);
-                    var response = _restClient.Execute<Guid>(request);
+                    var response = await _restClient.ExecuteTaskAsync<Guid>(request);
 
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -170,7 +170,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
 			var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
-            var response = _restClient.Execute<List<Mail>>(request);
+            var response = await _restClient.ExecuteTaskAsync<List<Mail>>(request);
 
             var mail = new List<Mail>();
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
