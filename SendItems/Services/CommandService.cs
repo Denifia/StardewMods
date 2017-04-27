@@ -19,12 +19,12 @@ namespace Denifia.Stardew.SendItems.Services
         private readonly IFarmerService _farmerService;
 
         private const string _meCommand = "si_me";
-        private const string _listLocalFarmersCommand = "si_listlocalfarmers";
-        private const string _addLocalFarmersAsFriendsCommand = "si_addlocalfarmersasfriends";
+        private const string _localFarmersCommand = "si_localfarmers";
+        private const string _addLocalFarmersCommand = "si_addlocalfarmers";
         private const string _addFriendCommand = "si_addfriend";
         private const string _removeFriendCommand = "si_removefriend";
-        private const string _removeAllFriendCommand = "si_removeallfriend";
-        private const string _listMyFriendsCommand = "si_listmyfriends";
+        private const string _removeAllFriendsCommand = "si_removeallfriends";
+        private const string _myFriendsCommand = "si_myfriends";
 
         public CommandService(
             IMod mod, 
@@ -43,13 +43,13 @@ namespace Denifia.Stardew.SendItems.Services
         private void RegisterCommands()
         {
             _mod.Helper.ConsoleCommands
-                .Add(_meCommand, "Shows you the command that your friends need to type to add the current farmer as a friend. \n\nUsage: SendItems_Me", HandleCommand)
-                .Add(_listLocalFarmersCommand, "Lists all the local farmers (saved games). \n\nUsage: SendItems_ListLocalFarmers", HandleCommand)
-                .Add(_addLocalFarmersAsFriendsCommand, "Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: SendItems_AddAllLocalFarmersAsFriends", HandleCommand)
-                .Add(_addFriendCommand, "Adds a friend to the current farmer. \n\nUsage: SendItems_AddFriend <id> <name> <farmName> \n- id: the id of your friend.\n- name: the name of your friend.\n- farmName: the name of your friends farm.", HandleCommand)
-                .Add(_removeFriendCommand, "Removes a friend of the current farmer. \n\nUsage: SendItems_RemoveFriend <id> \n- id: id of your friend.", HandleCommand)
-                .Add(_removeAllFriendCommand, "Removes all the friends of the current farmer. \n\nUsage: SendItems_RemoveAllFriend", HandleCommand)
-                .Add(_listMyFriendsCommand, "Lists all the friends of the current farmer. \n\nUsage: SendItems_ListLocalFarmers", HandleCommand);
+                .Add(_meCommand, $"Shows you the command that your friends need to type to add the current farmer as a friend. \n\nUsage: {_meCommand}", HandleCommand)
+                .Add(_localFarmersCommand, $"Lists all the local farmers (saved games). \n\nUsage: {_localFarmersCommand}", HandleCommand)
+                .Add(_addLocalFarmersCommand, $"Adds all the local farmers (saved games) as friends to the current farmer. \n\nUsage: {_addLocalFarmersCommand}", HandleCommand)
+                .Add(_addFriendCommand, $"Adds a friend to the current farmer. \n\nUsage: {_addFriendCommand} <id> <name> <farmName> \n- id: the id of your friend.\n- name: the name of your friend.\n- farmName: the name of your friends farm.", HandleCommand)
+                .Add(_removeFriendCommand, $"Removes a friend of the current farmer. \n\nUsage: {_removeFriendCommand} <id> \n- id: id of your friend.", HandleCommand)
+                .Add(_removeAllFriendsCommand, $"Removes all the friends of the current farmer. \n\nUsage: {_removeAllFriendsCommand}", HandleCommand)
+                .Add(_myFriendsCommand, $"Lists all the friends of the current farmer. \n\nUsage: {_myFriendsCommand}", HandleCommand);
         }
 
         private void HandleCommand(string command, string[] args)
@@ -63,13 +63,13 @@ namespace Denifia.Stardew.SendItems.Services
             switch (command)
             {
                 case _meCommand:
-                    Me(args);
+                    ShowMyDetails(args);
                     break;
-                case _listLocalFarmersCommand:
+                case _localFarmersCommand:
                     ListLocalFarmers(args);
                     break;
-                case _addLocalFarmersAsFriendsCommand:
-                    AddAllLocalFarmersAsFriends(args);
+                case _addLocalFarmersCommand:
+                    AddLocalFarmers(args);
                     break;
                 case _addFriendCommand:
                     AddFriend(args);
@@ -77,10 +77,10 @@ namespace Denifia.Stardew.SendItems.Services
                 case _removeFriendCommand:
                     RemoveFriend(args);
                     break;
-                case _removeAllFriendCommand:
-                    RemoveAllFriend(args);
+                case _removeAllFriendsCommand:
+                    RemoveAllFriends(args);
                     break;
-                case _listMyFriendsCommand:
+                case _myFriendsCommand:
                     ListMyFriends(args);
                     break;
                 default:
@@ -88,9 +88,9 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private void Me(string[] args)
+        private void ShowMyDetails(string[] args)
         {
-            _mod.Monitor.Log("Get your friends to paste this into the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
+            _mod.Monitor.Log("Get your friends to run this command in the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
             _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Info);
         }
 
@@ -112,7 +112,7 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private void AddAllLocalFarmersAsFriends(string[] args)
+        private void AddLocalFarmers(string[] args)
         {
             var farmers = Repository.Instance.Fetch<Domain.Farmer>();
             var count = 0;
@@ -180,7 +180,7 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private void RemoveAllFriend(string[] args)
+        private void RemoveAllFriends(string[] args)
         {
             var success = _farmerService.RemoveAllFriendFromCurrentPlayer();
             if (success)
@@ -220,13 +220,16 @@ namespace Denifia.Stardew.SendItems.Services
             }
             else
             {
-                _mod.Monitor.Log($"These was an issue adding {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}].", LogLevel.Warn);
+                _mod.Monitor.Log($"These was an issue adding {friend.Name} ({friend.FarmName} Farm) [id:{friend.Id}]. Maybe they already be added.", LogLevel.Warn);
             }
         }
 
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             _savedGameLoaded = true;
+            _mod.Monitor.Log($"Get your friends to run this command in the SMAPI console to add you as a friend...", LogLevel.Info);
+            _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Alert);
+            _mod.Monitor.Log($"They need to be using the Send Items mod too :)", LogLevel.Info);
         }
 
         private void LogUsageError(string error, string command)
