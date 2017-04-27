@@ -8,22 +8,16 @@ using Denifia.Stardew.SendItemsApi.Models;
 
 namespace Denifia.Stardew.SendItemsApi.Controllers
 {
-    //TODO: Add a Singleton Thread-Safe Repository for db callss
     [Route("api/[controller]")]
     public class MailController : Controller
     {
-        private const string connectionString = "data.db";
-
         // GET api/mail/{mailId}
         [HttpGet("{mailId}")]
         public async Task<Mail> Get(Guid mailId)
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
-                {
-                    return db.Query<Mail>().Where(x => x.Id == mailId).FirstOrDefault();
-                }
+                return Repository.Instance.FirstOrDefault<Mail>(x => x.Id == mailId);
             });
         }
 
@@ -33,10 +27,7 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
-                {
-                    return db.Query<Mail>().Where(x => x.ToFarmerId == farmerId).ToList();
-                }
+                return Repository.Instance.Fetch<Mail>(x => x.ToFarmerId == farmerId);
             });
         }
 
@@ -46,10 +37,7 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
-                {
-                    return db.Query<Mail>().Where(x => x.FromFarmerId == farmerId).ToList();
-                }
+                return Repository.Instance.Fetch<Mail>(x => x.FromFarmerId == farmerId);
             });
         }
 
@@ -59,10 +47,7 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
-                {
-                    return db.Query<Mail>().Count();
-                }
+                return Repository.Instance.Fetch<Mail>().Count;
             });
         }
 
@@ -72,21 +57,17 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
+                var mail = new Mail()
                 {
-                    var mail = new Mail()
-                    {
-                        Id = Guid.NewGuid(),
-                        Text = model.Text,
-                        ToFarmerId = model.ToFarmerId,
-                        FromFarmerId = model.FromFarmerId,
-                        CreatedDate = DateTime.Now
-                    };
+                    Id = Guid.NewGuid(),
+                    Text = model.Text,
+                    ToFarmerId = model.ToFarmerId,
+                    FromFarmerId = model.FromFarmerId,
+                    CreatedDate = DateTime.Now
+                };
 
-                    db.Insert(mail);
-
-                    return mail.Id;
-                }
+                Repository.Instance.Insert(mail);
+                return mail.Id;
             });
         }
 
@@ -96,11 +77,8 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                using (var db = new LiteRepository(connectionString))
-                {
-                    var deletedCount = db.Delete<Mail>(x => x.Id == mailId);
-                    return deletedCount > 0;
-                }
+                var deletedCount = Repository.Instance.Delete<Mail>(x => x.Id == mailId);
+                return deletedCount > 0;
             });
         }
     }
