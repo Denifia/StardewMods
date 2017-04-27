@@ -65,7 +65,8 @@ namespace Denifia.Stardew.SendItems.Services
             DeliverLocalMail();
             if (!_configService.InLocalOnlyMode())
             {
-                Task.WaitAll(DeliverLocalMailToCloud(), DeliverCloudMailLocally());
+                await DeliverLocalMailToCloud();
+                await DeliverCloudMailLocally();
             }
             DeliverMailToLetterBox();
         }
