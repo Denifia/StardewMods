@@ -49,7 +49,7 @@ namespace Denifia.Stardew.SendItems.Services
                 {
                     if (CanUseLetterbox())
                     {
-                        SendItemsModEvents.RaisePlayerUsingLetterbox(this, EventArgs.Empty);
+                        ModEvents.RaisePlayerUsingLetterbox(this, EventArgs.Empty);
                     }
                 }
             }

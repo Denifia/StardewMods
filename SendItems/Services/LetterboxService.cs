@@ -30,8 +30,8 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
-            SendItemsModEvents.PlayerUsingLetterbox += PlayerUsingLetterbox;
-            SendItemsModEvents.MailRead += MailRead;
+            ModEvents.PlayerUsingLetterbox += PlayerUsingLetterbox;
+            ModEvents.MailRead += MailRead;
         }
 
         private void PlayerUsingLetterbox(object sender, EventArgs e)
@@ -55,7 +55,7 @@ namespace Denifia.Stardew.SendItems.Services
                 {
                     Game1.mailbox.Dequeue();
                 }
-                SendItemsModEvents.RaiseMailRead(this, new MailReadEventArgs { Id = mail.Id });
+                ModEvents.RaiseMailRead(this, new MailReadEventArgs { Id = mail.Id });
             }
         }
 

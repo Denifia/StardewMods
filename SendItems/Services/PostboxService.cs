@@ -32,8 +32,8 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
-            SendItemsModEvents.PlayerUsingPostbox += PlayerUsingPostbox;
-            SendItemsModEvents.MailComposed += MailComposed;
+            ModEvents.PlayerUsingPostbox += PlayerUsingPostbox;
+            ModEvents.MailComposed += MailComposed;
         }
 
         private void PlayerUsingPostbox(object sender, EventArgs e)
@@ -51,7 +51,8 @@ namespace Denifia.Stardew.SendItems.Services
                 responseList.Add(new Response(friend.Id, friend.DisplayText));
             }
             responseList.Add(new Response(_leaveSelectionKeyAndValue, _leaveSelectionKeyAndValue));
-            Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), new GameLocation.afterQuestionBehavior(FriendSelectorAnswered), (NPC)null);
+
+            Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), FriendSelectorAnswered, (NPC)null);
             Game1.player.Halt();
         }
 

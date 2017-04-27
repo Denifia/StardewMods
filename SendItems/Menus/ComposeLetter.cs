@@ -99,7 +99,7 @@ namespace Denifia.Stardew.SendItems.Menus
                     Game1.exitActiveMenu();
                     if (ItemsToGrabMenu.inventory.Any())
                     {
-                        SendItemsModEvents.RaiseMailComposed(this, new MailComposedEventArgs()
+                        ModEvents.RaiseMailComposed(this, new MailComposedEventArgs()
                         {
                             ToFarmerId = toFarmerId,
                             Item = ItemsToGrabMenu.actualInventory[0]

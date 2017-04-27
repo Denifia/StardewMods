@@ -5,13 +5,20 @@ using System.Linq.Expressions;
 
 namespace Denifia.Stardew.SendItemsApi.Domain
 {
-    public sealed class Repository
+    public sealed class Repository : IDisposable
     {
         private static Repository instance = null;
+        private LiteRepository db;
         private const string connectionString = "data.db";
         // adding locking object
         private static readonly object syncRoot = new object();
-        private Repository() { }
+        private Repository(bool initDb)
+        {
+            if (initDb)
+            {
+                db = new LiteRepository(connectionString);
+            }
+        }
 
         public static Repository Instance
         {
@@ -23,23 +30,20 @@ namespace Denifia.Stardew.SendItemsApi.Domain
                     {
                         if (instance == null)
                         {
-                            instance = new Repository();
+                            instance = new Repository(true);
                         }
                     }
                 }
                 return instance;
             }
-        }  
+        }
 
         /// <summary>
         /// Insert a new document into collection. Document Id must be a new value in collection - Returns document Id
         /// </summary>
         public BsonValue Insert<T>(T entity, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Insert<T>(entity, collectionName);
-            }
+            return db.Insert<T>(entity, collectionName);
         }
 
         /// <summary>
@@ -47,10 +51,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public int Insert<T>(IEnumerable<T> entities, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Insert<T>(entities, collectionName);
-            }
+            return db.Insert<T>(entities, collectionName);
         }
 
         /// <summary>
@@ -58,10 +59,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public bool Update<T>(T entity, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Update<T>(entity, collectionName);
-            }
+            return db.Update<T>(entity, collectionName);
         }
 
         /// <summary>
@@ -69,10 +67,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public int Update<T>(IEnumerable<T> entities, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Update<T>(entities, collectionName);
-            }
+            return db.Update<T>(entities, collectionName);
         }
 
         /// <summary>
@@ -80,10 +75,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public bool Upsert<T>(T entity, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Upsert<T>(entity, collectionName);
-            }
+            return db.Upsert<T>(entity, collectionName);
         }
 
         /// <summary>
@@ -91,10 +83,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public int Upsert<T>(IEnumerable<T> entities, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Upsert<T>(entities, collectionName);
-            }
+            return db.Upsert<T>(entities, collectionName);
         }
 
         /// <summary>
@@ -102,10 +91,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public bool Delete<T>(BsonValue id, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Delete<T>(id, collectionName);
-            }
+            return db.Delete<T>(id, collectionName);
         }
 
         /// <summary>
@@ -113,10 +99,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public int Delete<T>(Query query, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Delete<T>(query, collectionName);
-            }
+            return db.Delete<T>(query, collectionName);
         }
 
         /// <summary>
@@ -124,10 +107,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public int Delete<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Delete<T>(predicate, collectionName);
-            }
+            return db.Delete<T>(predicate, collectionName);
         }
 
         /// <summary>
@@ -135,10 +115,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public LiteQueryable<T> Query<T>(string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Query<T>(collectionName);
-            }
+            return db.Query<T>(collectionName);
         }
 
         /// <summary>
@@ -146,10 +123,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T SingleById<T>(BsonValue id, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.SingleById<T>(id, collectionName);
-            }
+            return db.SingleById<T>(id, collectionName);
         }
 
         /// <summary>
@@ -157,10 +131,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public List<T> Fetch<T>(Query query = null, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Fetch<T>(query, collectionName);
-            }
+            return db.Fetch<T>(query, collectionName);
         }
 
         /// <summary>
@@ -168,10 +139,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public List<T> Fetch<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Fetch<T>(predicate, collectionName);
-            }
+            return db.Fetch<T>(predicate, collectionName);
         }
 
         /// <summary>
@@ -179,10 +147,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T First<T>(Query query = null, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.First<T>(query, collectionName);
-            }
+            return db.First<T>(query, collectionName);
         }
 
         /// <summary>
@@ -190,10 +155,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T First<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.First<T>(predicate, collectionName);
-            }
+            return db.First<T>(predicate, collectionName);
         }
 
         /// <summary>
@@ -201,10 +163,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T FirstOrDefault<T>(Query query = null, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.FirstOrDefault<T>(query, collectionName);
-            }
+            return db.FirstOrDefault<T>(query, collectionName);
         }
 
         /// <summary>
@@ -212,10 +171,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T FirstOrDefault<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.FirstOrDefault<T>(predicate, collectionName);
-            }
+            return db.FirstOrDefault<T>(predicate, collectionName);
         }
 
         /// <summary>
@@ -223,10 +179,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T Single<T>(Query query = null, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Single<T>(query, collectionName);
-            }
+            return db.Single<T>(query, collectionName);
         }
 
         /// <summary>
@@ -234,10 +187,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T Single<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.Single<T>(predicate, collectionName);
-            }
+            return db.Single<T>(predicate, collectionName);
         }
 
         /// <summary>
@@ -245,10 +195,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T SingleOrDefault<T>(Query query = null, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.SingleOrDefault<T>(query, collectionName);
-            }
+            return db.SingleOrDefault<T>(query, collectionName);
         }
 
         /// <summary>
@@ -256,11 +203,15 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         /// </summary>
         public T SingleOrDefault<T>(Expression<Func<T, bool>> predicate, string collectionName = null)
         {
-            using (var db = new LiteRepository(connectionString))
-            {
-                return db.SingleOrDefault<T>(predicate, collectionName);
-            }
+            return db.SingleOrDefault<T>(predicate, collectionName);
         }
 
+        public void Dispose()
+        {
+            if (db != null)
+            {
+                db.Dispose();
+            }
+        }
     }
 }

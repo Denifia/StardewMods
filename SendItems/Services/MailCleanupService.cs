@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using Denifia.Stardew.SendItems.Events;
+using RestSharp;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface IMailCleanupService
     {
-        void Init();
     }
 
     public class MailCleanupService : IMailCleanupService
@@ -28,13 +28,13 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
+
+            ModEvents.MailDelivered += MailDelivered;
         }
 
-        public void Init()
+        private void MailDelivered(object sender, EventArgs e)
         {
-
+            // Delete local and remote mail
         }
-
-        // DeleteReadMail
     }
 }

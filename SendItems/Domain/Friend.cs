@@ -10,7 +10,10 @@ namespace Denifia.Stardew.SendItems.Domain
 
         public string DisplayText
         {
-            get;
+            get
+            {
+                return $"{Name} ({FarmName} Farm)";
+            }
         }
 
         public bool Equals(Friend other)

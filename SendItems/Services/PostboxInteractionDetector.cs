@@ -48,7 +48,7 @@ namespace Denifia.Stardew.SendItems.Services
                 {
                     if (CanUsePostbox())
                     {
-                        SendItemsModEvents.RaisePlayerUsingPostbox(this, EventArgs.Empty);
+                        ModEvents.RaisePlayerUsingPostbox(this, EventArgs.Empty);
                     }
                 }
             }

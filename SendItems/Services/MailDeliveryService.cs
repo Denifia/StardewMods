@@ -15,7 +15,6 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface IMailDeliveryService
     {
-        void Init();
     }
 
     /// <summary>
@@ -34,16 +33,10 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
-        }
-
-        public void Init()
-        {
-            // TODO: Review what will kick off delivery when a new game is loaded
-            AfterDayStarted(this, EventArgs.Empty);
 
             TimeEvents.AfterDayStarted += AfterDayStarted;
             TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
-            SendItemsModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
+            ModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
         }
 
         private async void OnMailDeliverySchedule(object sender, EventArgs e)
@@ -105,6 +98,7 @@ namespace Denifia.Stardew.SendItems.Services
             }
 
             UpdateLocalMail(updatedLocalMail);
+            ModEvents.RaiseMailDelivered(this, EventArgs.Empty);
         }
 
         private async Task DeliverLocalMailToCloud()
@@ -142,19 +136,21 @@ namespace Denifia.Stardew.SendItems.Services
         {
             var remoteMail = await GetRemotelyPostedMailForCurrentFarmerAsync();
             if (!remoteMail.Any()) return;
-
+            
             var localFarmers = _farmerService.GetFarmers();
             if (!localFarmers.Any()) return;
 
             var localFarmer = localFarmers.FirstOrDefault(x => x.Id == remoteMail.First().ToFarmerId);
             if (localFarmer == null) return;
 
-            foreach (var mail in remoteMail)
+            var localMail = Repository.Instance.Fetch<Mail>(x => x.ToFarmerId == localFarmer.Id);
+            var mailNotLocal = remoteMail.Where(x => !localMail.Contains(x)).ToList();
+            foreach (var mail in mailNotLocal)
             {
                 mail.Status = MailStatus.Delivered;
             }
 
-            Repository.Instance.Insert(remoteMail.AsEnumerable());
+            Repository.Instance.Upsert(mailNotLocal.AsEnumerable());
         }
 
         private List<Mail> GetLocallyComposedMail()
@@ -186,7 +182,7 @@ namespace Denifia.Stardew.SendItems.Services
         private void AfterDayStarted(object sender, EventArgs e)
         {
             // Deliver mail each night
-            SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+            ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
         }
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
@@ -201,7 +197,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             if (timeToCheck || _configService.InDebugMode())
             {
-                SendItemsModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
+                ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
             }
         }
 
