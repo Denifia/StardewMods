@@ -6,10 +6,12 @@
     <AssemblyName>Denifia.Stardew.SendItemsApi</AssemblyName>
     <RootNamespace>Denifia.Stardew.SendItemsApi</RootNamespace>
     <Version>0.2.0</Version>
-    <Description>WebApi for the Stardew Valley mod SendItems.</Description>
+    <Description>Web Api for the Send Items mod for Stardew Valley</Description>
     <Authors>Denifia</Authors>
     <Company>Denifia</Company>
     <Product>Send Items Web Api</Product>
+    <ApplicationInsightsResourceId>/subscriptions/cbacbae4-49c5-47d0-b01e-fc7b99c57d79/resourcegroups/denifia-aue-rg/providers/microsoft.insights/components/denifia-use-appins</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/cbacbae4-49c5-47d0-b01e-fc7b99c57d79/resourcegroups/denifia-aue-rg/providers/microsoft.insights/components/denifia-use-appins</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,6 +47,9 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>

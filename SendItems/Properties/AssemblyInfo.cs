@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Send Items")]
-[assembly: AssemblyDescription("Mod for Stardew Valley")]
+[assembly: AssemblyTitle("Send Items mod for Stardew Valley")]
+[assembly: AssemblyDescription("Send Items is a Stardew Valley mod which lets you send items to your other farms (saved games) or other players from around the world.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Denifia")]
 [assembly: AssemblyProduct("Send Items")]
@@ -33,4 +33,4 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("0.2.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("0.2.0.0")]
