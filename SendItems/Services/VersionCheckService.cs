@@ -40,7 +40,7 @@ namespace Denifia.Stardew.SendItems.Services
                 }
                 catch (Exception ex)
                 {
-                    HandleError(ex, "checking for a new version");
+                    ModHelper.HandleError(_mod, ex, "checking for a new version");
                 }
             }
         }
@@ -57,15 +57,9 @@ namespace Denifia.Stardew.SendItems.Services
                 }
                 catch (Exception ex)
                 {
-                    HandleError(ex, "showing the new version available");
+                    ModHelper.HandleError(_mod, ex, "showing the new version available");
                 }
             }
-        }
-
-        private void HandleError(Exception ex, string verb)
-        {
-            _mod.Monitor.Log($"Something went wrong {verb}:\n{ex}", LogLevel.Error);
-            ModHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
         }
     }
 }

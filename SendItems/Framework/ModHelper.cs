@@ -11,6 +11,13 @@ namespace Denifia.Stardew.SendItems.Framework
     /// <remarks>Taken from Pathoschild</remarks>
     internal static class ModHelper
     {
+
+        public static void HandleError(IMod mod, Exception ex, string verb)
+        {
+            mod.Monitor.Log($"Something went wrong {verb}:\n{ex}", LogLevel.Error);
+            ModHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
+        }
+
         /// <summary>Show an informational message to the player.</summary>
         /// <param name="message">The message to show.</param>
         /// <param name="duration">The number of milliseconds during which to keep the message on the screen before it fades (or <c>null</c> for the default time).</param>

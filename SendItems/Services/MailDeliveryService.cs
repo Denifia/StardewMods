@@ -10,6 +10,7 @@ using Denifia.Stardew.SendItems.Events;
 using StardewModdingAPI.Events;
 using Denifia.Stardew.SendItems.Models;
 using StardewValley;
+using Denifia.Stardew.SendItems.Framework;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -25,12 +26,14 @@ namespace Denifia.Stardew.SendItems.Services
     public class MailDeliveryService : IMailDeliveryService
     {
         private const string _playerMailKey = "playerMail";
-        private IConfigurationService _configService;
-        private IFarmerService _farmerService;
+        private readonly IMod _mod;
+        private readonly IConfigurationService _configService;
+        private readonly IFarmerService _farmerService;
         private RestClient _restClient { get; set; }
 
-        public MailDeliveryService(IConfigurationService configService, IFarmerService farmerService)
+        public MailDeliveryService(IMod mod, IConfigurationService configService, IFarmerService farmerService)
         {
+            _mod = mod;
             _configService = configService;
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
@@ -47,52 +50,50 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void OnMailDeliverySchedule(object sender, EventArgs e)
         {
-            // Run this in the background
-            Task.Factory.StartNew(DeliverPostedMail);
+            try
+            {
+                Task.Factory.StartNew(DeliverPostedMail);
+            }
+            catch (Exception ex)
+            {
+                ModHelper.HandleError(_mod, ex, "delivering mail on schedule");
+            }
         }
 
         public async Task DeliverPostedMail()
         {
-            await DeliverLocalMail();
+            DeliverLocalMail();
             if (!_configService.InLocalOnlyMode())
             {
-                await DeliverLocalMailToCloud();
-                await DeliverCloudMailLocally();
+                Task.WaitAll(DeliverLocalMailToCloud(), DeliverCloudMailLocally());
             }
-            await DeliverMailToLetterBox();
+            DeliverMailToLetterBox();
         }
 
-        private async Task DeliverMailToLetterBox()
+        private void DeliverMailToLetterBox()
         {
             if (_farmerService.CurrentFarmer == null) return;
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
-            await Task.Run(() =>
+
+            var count = Repository.Instance.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count();
+            if (count > 0)
             {
-                var count = 0;
-                using (var db = new LiteRepository(_configService.ConnectionString))
+                while (Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey)
                 {
-                    count = db.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count();
+                    Game1.mailbox.Dequeue();
                 }
 
-                if (count > 0)
+                for (int i = 0; i < count; i++)
                 {
-                    while (Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey)
-                    {
-                        Game1.mailbox.Dequeue();
-                    }
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        Game1.mailbox.Enqueue(_playerMailKey);
-                    }
+                    Game1.mailbox.Enqueue(_playerMailKey);
                 }
-            });
+            }
         }
 
-        private async Task DeliverLocalMail()
+        private void DeliverLocalMail()
         {
-            var localMail = await GetLocallyComposedMail();
-            var localFarmers = await _farmerService.GetFarmersAsync();
+            var localMail = GetLocallyComposedMail();
+            var localFarmers = _farmerService.GetFarmers();
             var updatedLocalMail = new List<Mail>();
 
             foreach (var mail in localMail)
@@ -104,15 +105,16 @@ namespace Denifia.Stardew.SendItems.Services
 				}
             }
 
-            await UpdateLocalMail(updatedLocalMail);
+            UpdateLocalMail(updatedLocalMail);
         }
 
         private async Task DeliverLocalMailToCloud()
         {
-            var localMail = await GetLocallyComposedMail();
-            var localFarmers = await _farmerService.GetFarmersAsync();
+            var localMail = GetLocallyComposedMail();
+            var localFarmers = _farmerService.GetFarmers();
             var updatedLocalMail = new List<Mail>();
 
+            // Consider: Add an api method that takes a list of MailCreateModels
             foreach (var mail in localMail)
             {
                 if (!localFarmers.Any(x => x.Id == mail.ToFarmerId))
@@ -139,10 +141,10 @@ namespace Denifia.Stardew.SendItems.Services
 
         private async Task DeliverCloudMailLocally()
         {
-            var remoteMail = await GetRemotelyPostedMailForCurrentFarmer();
+            var remoteMail = await GetRemotelyPostedMailForCurrentFarmerAsync();
             if (!remoteMail.Any()) return;
 
-            var localFarmers = await _farmerService.GetFarmersAsync();
+            var localFarmers = _farmerService.GetFarmers();
             if (!localFarmers.Any()) return;
 
             var localFarmer = localFarmers.FirstOrDefault(x => x.Id == remoteMail.First().ToFarmerId);
@@ -153,44 +155,33 @@ namespace Denifia.Stardew.SendItems.Services
                 mail.Status = MailStatus.Delivered;
             }
 
-            using (var db = new LiteRepository(_configService.ConnectionString))
-            {
-                db.Insert(remoteMail.AsEnumerable());
-            }
+            Repository.Instance.Insert(remoteMail.AsEnumerable());
         }
 
-        private async Task<List<Mail>> GetLocallyComposedMail()
+        private List<Mail> GetLocallyComposedMail()
         {
-            return await Task.Run(() =>
-            {
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    return db.Query<Mail>().Where(x => x.Status == MailStatus.Composed).ToList();
-                }
-            });
+            return Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Composed);
         }
 
-        private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmer()
+        private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmerAsync()
         {
             if (_farmerService.CurrentFarmer == null) return new List<Mail>();
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
-            return await Task.Run(() =>
+
+            var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
+			var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
+            var response = _restClient.Execute<List<Mail>>(request);
+
+            var mail = new List<Mail>();
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
-				var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
-                var response = _restClient.Execute<List<Mail>>(request);
-
-                var mail = new List<Mail>();
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                if (response.Data != null && response.Data.GetType() == typeof(List<Mail>))
                 {
-                    if (response.Data != null && response.Data.GetType() == typeof(List<Mail>))
-                    {
-                        mail.AddRange(response.Data);
-                    }
+                    mail.AddRange(response.Data);
                 }
+            }
 
-                return mail;
-            });
+            return mail;
         }
 
         private void AfterDayStarted(object sender, EventArgs e)
@@ -215,16 +206,10 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private async Task UpdateLocalMail(List<Mail> mail)
+        private void UpdateLocalMail(List<Mail> mail)
         {
-            await Task.Run(() =>
-            {
-                if (!mail.Any()) return;
-                using (var db = new LiteRepository(_configService.ConnectionString))
-                {
-                    db.Update(mail.AsEnumerable());
-                }
-            });
+            if (!mail.Any()) return;
+            Repository.Instance.Update(mail.AsEnumerable());
         }
 
         private RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)

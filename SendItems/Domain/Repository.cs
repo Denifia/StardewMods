@@ -139,6 +139,17 @@ namespace Denifia.Stardew.SendItems.Domain
         }
 
         /// <summary>
+        /// Returns new instance of LiteQueryable that provides all method to query any entity inside collection. Use fluent API to apply filter/includes an than run any execute command, like ToList() or First()
+        /// </summary>
+        public LiteQueryable<T> Query<T>(string collectionName = null)
+        {
+            using (var db = new LiteRepository(_configService.ConnectionString))
+            {
+                return db.Query<T>(collectionName);
+            }
+        }
+
+        /// <summary>
         /// Search for a single instance of T by Id. Shortcut from Query.SingleById
         /// </summary>
         public T SingleById<T>(BsonValue id, string collectionName = null)
