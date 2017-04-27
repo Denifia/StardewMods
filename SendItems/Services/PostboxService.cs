@@ -5,6 +5,7 @@ using Denifia.Stardew.SendItems.Menus;
 using Denifia.Stardew.SendItems.Events;
 using System;
 using Denifia.Stardew.SendItems.Framework;
+using System.Linq;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -19,6 +20,7 @@ namespace Denifia.Stardew.SendItems.Services
     {
         // TODO: Move to ModConstants
         private const string _letterPostedNotification = "Letter Posted!";
+        private const string _noFriendsNotification = "You don't have anyone in your friends list to send items too.";
         private const string _leaveSelectionKeyAndValue = "(Leave)";
         private const string _messageFormat = "Hey there!^^  I thought you might like this... Take care! ^    -{0} %item object {1} {2} %%";
 
@@ -45,11 +47,18 @@ namespace Denifia.Stardew.SendItems.Services
         {
             if (Game1.activeClickableMenu != null) return;
             List<Response> responseList = new List<Response>();
-            var farmers = _farmerService.GetFarmers();
-            foreach (var friend in farmers)
+            var friends = _farmerService.CurrentFarmer.Friends;
+            foreach (var friend in friends)
             {
                 responseList.Add(new Response(friend.Id, friend.DisplayText));
             }
+
+            if (!responseList.Any())
+            {
+                ModHelper.ShowInfoMessage(_noFriendsNotification);
+                return;
+            }
+
             responseList.Add(new Response(_leaveSelectionKeyAndValue, _leaveSelectionKeyAndValue));
 
             Game1.currentLocation.createQuestionDialogue("Select Friend:", responseList.ToArray(), FriendSelectorAnswered, (NPC)null);

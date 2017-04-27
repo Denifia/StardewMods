@@ -62,7 +62,12 @@ namespace Denifia.Stardew.SendItems.Services
         private void MailRead(object sender, MailReadEventArgs e)
         {
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
-            Repository.Instance.Delete<Mail>(x => x.Id == e.Id);
+            var mail = Repository.Instance.FirstOrDefault<Mail>(x => x.Id == e.Id);
+            if (mail != null)
+            {
+                mail.Status = MailStatus.Read;
+                Repository.Instance.Update(mail);
+            }
         }
     }
 }
