@@ -74,7 +74,7 @@ namespace Denifia.Stardew.SendItems.Services
             if (_farmerService.CurrentFarmer == null) return;
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
 
-            var count = Repository.Instance.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count();
+            var count = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count;
             if (count > 0)
             {
                 while (Game1.mailbox.Any() && Game1.mailbox.Peek() == ModConstants.PlayerMailKey)
