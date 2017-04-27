@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Denifia.Stardew.SendItems.Services;
-using StardewModdingAPI;
 using Autofac;
 using Denifia.Stardew.SendItems.Domain;
 
@@ -8,6 +7,13 @@ namespace Denifia.Stardew.SendItems
 {
     public class ModEntry : Mod
     {
+        private IContainer _container;
+        private IFarmerService _farmerService;
+        private IPostboxInteractionDetector _postboxInteractionDetector;
+        private ILetterboxInteractionDetector _letterboxInteractionDetector;
+        private IMailDeliveryService _mailDeliveryService;
+        private IMailCleanupService _mailCleanupService;
+
         public override void Entry(IModHelper helper)
         {
             var builder = new ContainerBuilder();
@@ -22,24 +28,36 @@ namespace Denifia.Stardew.SendItems
                 .Where(t => t.Name.EndsWith("Detector"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
-            var container = builder.Build();
+
+            _container = builder.Build();
 
             // Init repo first!
-            Repository.Instance.Init(container.Resolve<IConfigurationService>());
+            Repository.Instance.Init(_container.Resolve<IConfigurationService>());
 
             // Instance classes that do their own thing
-            container.Resolve<VersionCheckService>();
-            
-            var program = new SendItems(this,
-                container.Resolve<IConfigurationService>(),
-                container.Resolve<ICommandService>(),
-                container.Resolve<IFarmerService>(),
-                container.Resolve<IPostboxService>(),
-                container.Resolve<IPostboxInteractionDetector>(),
-                container.Resolve<ILetterboxService>(),
-                container.Resolve<ILetterboxInteractionDetector>(),
-                container.Resolve<IMailDeliveryService>()
-            );
+            _container.Resolve<VersionCheckService>();
+            _container.Resolve<ICommandService>();
+            _container.Resolve<IPostboxService>();
+            _container.Resolve<ILetterboxService>();
+
+            // Instance classes to be used later
+            _farmerService = _container.Resolve<IFarmerService>();
+            _postboxInteractionDetector = _container.Resolve<IPostboxInteractionDetector>();
+            _letterboxInteractionDetector = _container.Resolve<ILetterboxInteractionDetector>();
+            _mailDeliveryService = _container.Resolve<IMailDeliveryService>();
+            _mailCleanupService = _container.Resolve<IMailCleanupService>();
+
+            SaveEvents.AfterLoad += AfterSavedGameLoad;
+        }
+
+        private void AfterSavedGameLoad(object sender, EventArgs e)
+        {
+            _farmerService.LoadCurrentFarmer();
+            _postboxInteractionDetector.Init();
+            _letterboxInteractionDetector.Init();
+            _mailDeliveryService.Init();
+
+            SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
     }
 }

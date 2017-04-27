@@ -12,7 +12,6 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface ICommandService
     {
-        void RegisterCommands();
     }
 
     public class CommandService : ICommandService
@@ -40,10 +39,12 @@ namespace Denifia.Stardew.SendItems.Services
             _configService = configService;
             _farmerService = farmerService;
 
+            RegisterCommands();
+
             SaveEvents.AfterLoad += AfterSavedGameLoad;
         }        
 
-        public void RegisterCommands()
+        private void RegisterCommands()
         {
             _mod.Helper.ConsoleCommands
                 // TODO: Remove before go live

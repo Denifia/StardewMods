@@ -71,7 +71,6 @@
     <Compile Include="ModConfig.cs" />
     <Compile Include="Events\ModEvents.cs" />
     <Compile Include="ModEntry.cs" />
-    <Compile Include="SendItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />

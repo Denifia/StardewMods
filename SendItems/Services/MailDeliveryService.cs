@@ -17,7 +17,6 @@ namespace Denifia.Stardew.SendItems.Services
     public interface IMailDeliveryService
     {
         void Init();
-        Task DeliverPostedMail();
     }
 
     /// <summary>
@@ -25,7 +24,6 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class MailDeliveryService : IMailDeliveryService
     {
-        private const string _playerMailKey = "playerMail";
         private readonly IMod _mod;
         private readonly IConfigurationService _configService;
         private readonly IFarmerService _farmerService;
@@ -41,6 +39,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         public void Init()
         {
+            // TODO: Review what will kick off delivery when a new game is loaded
             AfterDayStarted(this, EventArgs.Empty);
 
             TimeEvents.AfterDayStarted += AfterDayStarted;
@@ -60,7 +59,7 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        public async Task DeliverPostedMail()
+        private async Task DeliverPostedMail()
         {
             DeliverLocalMail();
             if (!_configService.InLocalOnlyMode())
@@ -79,14 +78,14 @@ namespace Denifia.Stardew.SendItems.Services
             var count = Repository.Instance.Query<Mail>().Where(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId).Count();
             if (count > 0)
             {
-                while (Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey)
+                while (Game1.mailbox.Any() && Game1.mailbox.Peek() == ModConstants.PlayerMailKey)
                 {
                     Game1.mailbox.Dequeue();
                 }
 
                 for (int i = 0; i < count; i++)
                 {
-                    Game1.mailbox.Enqueue(_playerMailKey);
+                    Game1.mailbox.Enqueue(ModConstants.PlayerMailKey);
                 }
             }
         }
