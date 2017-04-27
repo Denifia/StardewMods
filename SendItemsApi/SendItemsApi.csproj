@@ -12,17 +12,14 @@
     <Product>Send Items Web Api</Product>
     <ApplicationInsightsResourceId>/subscriptions/cbacbae4-49c5-47d0-b01e-fc7b99c57d79/resourcegroups/denifia-aue-rg/providers/microsoft.insights/components/denifia-use-appins</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/cbacbae4-49c5-47d0-b01e-fc7b99c57d79/resourcegroups/denifia-aue-rg/providers/microsoft.insights/components/denifia-use-appins</ApplicationInsightsAnnotationResourceId>
+    <ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Screenshots\**" />
-    <Compile Remove="wwwroot\**" />
     <Content Remove="Screenshots\**" />
-    <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="Screenshots\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="Screenshots\**" />
-    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,9 +44,15 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot/favicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>
