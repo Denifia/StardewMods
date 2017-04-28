@@ -11,6 +11,13 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
     [Route("api/[controller]")]
     public class MailController : Controller
     {
+        private readonly ITableStorageRepository _repository;
+
+        public MailController(ITableStorageRepository repository)
+        {
+            _repository = repository;
+        }
+
         // GET api/mail/{mailId}
         [HttpGet("{mailId}")]
         public async Task<Mail> Get(Guid mailId)
@@ -45,10 +52,11 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         [HttpGet("count")]
         public async Task<int> GetMailCount()
         {
-            return await Task.Run(() =>
-            {
-                return Repository.Instance.Fetch<Mail>().Count;
-            });
+            return await _repository.Count<Mail>();
+            //return await Task.Run(() =>
+            //{
+            //    return Repository.Instance.Fetch<Mail>().Count;
+            //});
         }
 
         // POST api/mail
@@ -57,17 +65,18 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             return await Task.Run(() =>
             {
-                var mail = new Mail()
-                {
-                    Id = Guid.NewGuid(),
-                    Text = model.Text,
-                    ToFarmerId = model.ToFarmerId,
-                    FromFarmerId = model.FromFarmerId,
-                    CreatedDate = DateTime.Now
-                };
+                //var mail = new Mail()
+                //{
+                //    Id = Guid.NewGuid(),
+                //    Text = model.Text,
+                //    ToFarmerId = model.ToFarmerId,
+                //    FromFarmerId = model.FromFarmerId,
+                //    CreatedDate = DateTime.Now
+                //};
 
-                Repository.Instance.Insert(mail);
-                return mail.Id;
+                //Repository.Instance.Insert(mail);
+                //return mail.Id;
+                return Guid.NewGuid();
             });
         }
 
