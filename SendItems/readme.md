@@ -1,4 +1,4 @@
-**Send Items** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you 
+﻿**Send Items** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you 
 send items to your other farms (saved games) or other players from around the world.
 
 Sending 5 stone to myself...
@@ -33,6 +33,13 @@ Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else ye
 * Each in-game night mail is delivered to receipent  
 _So when you go to sleep to save your game, the mail is actually "sent" to another farm_
 
+### Handing out your "friend command"
+**Note**: Please only hand out your friend code to people you trust to not abuse it.
+1. Run the game using SMAPI.
+2. Load a saved game.
+3. Copy your "friend command" from the SMAPI console.  
+  _It should appear in magenta automatically. If not, type in `si_me` and press enter_
+
 ### Adding online farmers (friends)
 1. Ask your friend to send you their "friend command".  
   _Shown when you load the game or when you run `si_me` in the SMAPI console_
@@ -42,7 +49,19 @@ _So when you go to sleep to save your game, the mail is actually "sent" to anoth
 4. Done! They will now show up as a farmer you can send to.
 
 ### Adding local farmers (saved games)
-Coming soon...
+You have two options here:  
+
+**Big Bang**  
+1. Run the game using SMAPI.
+2. Type in `si_addlocalfarmers` and press enter.  
+  _This will add all local farmers (including yourself) as friends_
+
+**One at a time**  
+1. Run the game using SMAPI.
+2. Type in `si_myfriends`  and press enter to list the local farmers.
+3. Pick a farmer (saved game) that you want to add.
+4. Type in `si_addfriend <id> <name> <farm name>` and press enter.  
+  _Replace `<id> <name> <farm name>` with the details of the farmer you want to add_
 
 ### Running the server locally
 See [Send Items API](../SendItemsApi/readme.md)
@@ -54,7 +73,7 @@ file if you want. These are the available settings:
 | setting           | what it affects
 | ----------------- | -------------------
 | `CheckForUpdates` | Default `true`. Whether the mod should check for a newer version when you load the game. If a new version is available, you'll see a small message at the bottom of the screen for a few seconds. This doesn't affect the load time even if your connection is offline or slow, because it happens in the background.
-| `ApiUrl`          | The URL to the server. If you want to use my public server set to "http://senditemsapi.azurewebsites.net/api"
+| `ApiUrl`          | Default `http://senditemsapi.azurewebsites.net/api`. The URL to the web api. This allows you to send items to friends online. If you want to run completely "local only" then just remove this setting from the config file.
 
 ## Versions
 See [release notes](release-notes.md).
