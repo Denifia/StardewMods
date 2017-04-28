@@ -98,10 +98,16 @@ namespace Denifia.Stardew.SendItems.Services
                 FromFarmerId = fromFarmer.Id,
                 Text = messageText,
                 CreatedDate = DateTime.Now.ToUniversalTime(),
-                Status = MailStatus.Composed
+                Status = MailStatus.Composed,
+                CreatedInGameDate = GetGameDayTime()
             };
             Repository.Instance.Insert(mail);
             ModHelper.ShowInfoMessage(_letterPostedNotification);
+        }
+
+        private GameDateTime GetGameDayTime()
+        {
+            return new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
         }
     }
 }

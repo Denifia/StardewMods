@@ -10,6 +10,7 @@ namespace Denifia.Stardew.SendItems.Domain
         public string Text { get; set; }
         public MailStatus Status { get; set; }
         public DateTime CreatedDate { get; set; }
+        public GameDateTime CreatedInGameDate { get; set; }
 
         public bool Equals(Mail other)
         {
