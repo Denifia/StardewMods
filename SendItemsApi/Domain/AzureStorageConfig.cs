@@ -8,5 +8,6 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         public string AccountKey { get; set; }
         public string EndpointSuffix { get; set; }
         public bool UseHttps { get; set; } = true;
+        public string TableName { get; set; }
     }
 }

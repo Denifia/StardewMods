@@ -32,6 +32,7 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             // Consider: Should this be moved in a MailService?
             var filter = TableQuery.GenerateFilterCondition("ToFarmerId", QueryComparisons.Equal, farmerId);
+            filter = TableQuery.CombineFilters(GetPartitionFilter(), TableOperators.And, filter);
             return await _repository.Query<Mail>(filter);
         }
 
@@ -41,6 +42,7 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             // Consider: Should this be moved in a MailService?
             var filter = TableQuery.GenerateFilterCondition("FromFarmerId", QueryComparisons.Equal, farmerId);
+            filter = TableQuery.CombineFilters(GetPartitionFilter(), TableOperators.And, filter);
             return await _repository.Query<Mail>(filter);
         }
 
@@ -48,7 +50,8 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         [HttpGet("count")]
         public async Task<int> GetMailCount()
         {
-            return await _repository.Count<Mail>();
+            var filter = GetPartitionFilter();
+            return await _repository.Count<Mail>(filter);
         }
 
         // PUT api/mail/{mailId}
@@ -73,6 +76,11 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         {
             var mail = new Mail(mailId);
             return await _repository.Delete(mail);
+        }
+
+        private string GetPartitionFilter()
+        {
+            return TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, Mail.EntityPartitionKey);
         }
     }
 }

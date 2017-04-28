@@ -12,7 +12,6 @@ namespace Denifia.Stardew.SendItemsApi.Domain
 
     public class AzureTableStorageRepository : ITableStorageRepository
     {
-        private const string _tableName = "MailTable";
         CloudStorageAccount _storageAccount;
         CloudTableClient _tableClient;
         CloudTable _mailTable;
@@ -24,7 +23,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             var storageCredentials = new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(_azureTableStorageConfig.AccountName, _azureTableStorageConfig.AccountKey);
             _storageAccount = new CloudStorageAccount(storageCredentials, _azureTableStorageConfig.EndpointSuffix, _azureTableStorageConfig.UseHttps);
             _tableClient = _storageAccount.CreateCloudTableClient();
-            _mailTable = _tableClient.GetTableReference(_tableName);
+            _mailTable = _tableClient.GetTableReference(_azureTableStorageConfig.TableName);
             _mailTable.CreateIfNotExistsAsync().Wait();
         }
 
@@ -86,22 +85,6 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             return false;
         }
 
-        public async Task<List<TEntity>> Query<TEntity>(string partitionKey, string filter) where TEntity : ITableEntity, new()
-        {
-            var query = new TableQuery<TEntity>().Where(filter);
-            var continuationToken = (TableContinuationToken)null;
-            var list = new List<TEntity>();
-            do
-            {
-                var segment = await _mailTable.ExecuteQuerySegmentedAsync(query, continuationToken);
-                continuationToken = segment.ContinuationToken;
-                list.AddRange(segment.Results);
-            }
-            while (continuationToken != null);
-
-            return list;
-        }
-
         public async Task<List<TEntity>> Query<TEntity>(string filter) where TEntity : ITableEntity, new()
         {
             var query = new TableQuery<TEntity>().Where(filter);
@@ -118,10 +101,10 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             return list;
         }
 
-        public async Task<int> Count<TEntity>() where TEntity : ITableEntity, new()
+        public async Task<int> Count<TEntity>(string filter) where TEntity : ITableEntity, new()
         {
             var columns = new List<string>() { "Id" };
-            var query = new TableQuery<TEntity>().Select(columns);
+            var query = new TableQuery<TEntity>().Where(filter).Select(columns);
             var continuationToken = (TableContinuationToken)null;
             var count = 0;
             do
