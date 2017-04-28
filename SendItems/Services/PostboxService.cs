@@ -93,10 +93,11 @@ namespace Denifia.Stardew.SendItems.Services
             // Consider: Moving this to own service
             var mail = new Mail()
             {
+                Id = Guid.NewGuid(),
                 ToFarmerId = toFarmerId,
                 FromFarmerId = fromFarmer.Id,
                 Text = messageText,
-                CreatedDate = DateTime.Now,
+                CreatedDate = DateTime.Now.ToUniversalTime(),
                 Status = MailStatus.Composed
             };
             Repository.Instance.Insert(mail);
