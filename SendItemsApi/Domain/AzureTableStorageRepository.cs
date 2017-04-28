@@ -14,7 +14,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
     {
         CloudStorageAccount _storageAccount;
         CloudTableClient _tableClient;
-        CloudTable _mailTable;
+        CloudTable _table;
         AzureStorageConfig _azureTableStorageConfig;
 
         public AzureTableStorageRepository(IOptions<AzureStorageConfig> azureTableStorageConfig)
@@ -23,8 +23,10 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             var storageCredentials = new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(_azureTableStorageConfig.AccountName, _azureTableStorageConfig.AccountKey);
             _storageAccount = new CloudStorageAccount(storageCredentials, _azureTableStorageConfig.EndpointSuffix, _azureTableStorageConfig.UseHttps);
             _tableClient = _storageAccount.CreateCloudTableClient();
-            _mailTable = _tableClient.GetTableReference(_azureTableStorageConfig.TableName);
-            _mailTable.CreateIfNotExistsAsync().Wait();
+
+            // Consider: Making a mail specific repo or passing the table name in during construction
+            _table = _tableClient.GetTableReference(_azureTableStorageConfig.TableName);
+            _table.CreateIfNotExistsAsync().Wait();
         }
 
         public async Task<bool> InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity
@@ -32,7 +34,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             try
             {
                 var insert = TableOperation.InsertOrReplace(entity);
-                var result = await _mailTable.ExecuteAsync(insert);
+                var result = await _table.ExecuteAsync(insert);
                 if (result.Result != null)
                 {
                     return true;
@@ -50,7 +52,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             try
             {
                 var retrieve = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
-                var result = await _mailTable.ExecuteAsync(retrieve);
+                var result = await _table.ExecuteAsync(retrieve);
                 if (result.Result != null)
                 {
                     return (TEntity)result.Result;
@@ -72,7 +74,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
                     entity.ETag = "*";
                 }
                 var delete = TableOperation.Delete(entity);
-                var result = await _mailTable.ExecuteAsync(delete);
+                var result = await _table.ExecuteAsync(delete);
                 if (result.Result != null)
                 {
                     return true;
@@ -92,7 +94,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             var list = new List<TEntity>();
             do
             {
-                var segment = await _mailTable.ExecuteQuerySegmentedAsync(query, continuationToken);
+                var segment = await _table.ExecuteQuerySegmentedAsync(query, continuationToken);
                 continuationToken = segment.ContinuationToken;
                 list.AddRange(segment.Results);
             }
@@ -109,7 +111,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             var count = 0;
             do
             {
-                var segment = await _mailTable.ExecuteQuerySegmentedAsync(query, continuationToken);
+                var segment = await _table.ExecuteQuerySegmentedAsync(query, continuationToken);
                 continuationToken = segment.ContinuationToken;
                 count += segment.Results.Count();
             }
