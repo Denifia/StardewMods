@@ -1,4 +1,6 @@
-﻿using Denifia.Stardew.SendItems.Events;
+﻿using Denifia.Stardew.SendItems.Domain;
+using Denifia.Stardew.SendItems.Events;
+using Denifia.Stardew.SendItems.Framework;
 using RestSharp;
 using StardewModdingAPI;
 using System;
@@ -20,8 +22,6 @@ namespace Denifia.Stardew.SendItems.Services
         private readonly IFarmerService _farmerService;
         private RestClient _restClient { get; set; }
 
-        // TODO: Flesh out MailCleanupService
-
         public MailCleanupService(IMod mod, IConfigurationService configService, IFarmerService farmerService)
         {
             _mod = mod;
@@ -35,14 +35,52 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void OnMailCleanup(object sender, EventArgs e)
         {
-            // Delete local and remote mail
+            DeleteFutureComposedMail();
+            UnreadFutureReadMail();
         }
 
-        private void MailDelivered(object sender, EventArgs e)
+        private void DeleteFutureComposedMail()
         {
-            // Delete local and remote mail
+            var localMail = Repository.Instance.Fetch<Mail>(x => 
+                x.Status == MailStatus.Composed && 
+                x.ToFarmerId == _farmerService.CurrentFarmer.Id
+            );
+            var currentGameDateTime = ModHelper.GetGameDayTime();
+            var futureMail = localMail.Where(x => x.CreatedInGameDate > currentGameDateTime).ToList();
+            Repository.Instance.Delete<Mail>(x => futureMail.Contains(x));
         }
 
-        // New async method
+        private void UnreadFutureReadMail()
+        {
+            var localMail = Repository.Instance.Fetch<Mail>(x =>
+                x.Status == MailStatus.Read &&
+                x.ToFarmerId == _farmerService.CurrentFarmer.Id
+            );
+            var currentGameDateTime = ModHelper.GetGameDayTime();
+            var futureMail = localMail.Where(x => x.ReadInGameDate > currentGameDateTime).ToList();
+            foreach (var mail in futureMail)
+            {
+                mail.Status = MailStatus.Delivered;
+                mail.ReadInGameDate = null;
+            }
+            Repository.Instance.Upsert(futureMail.AsEnumerable());
+        }
+
+        private async void MailDelivered(object sender, EventArgs e)
+        {
+            try
+            {
+                await DeleteDeliveredRemoteMail();
+            }
+            catch (Exception ex)
+            {
+                ModHelper.HandleError(_mod, ex, "delivering mail on schedule");
+            }
+        }
+
+        private async Task DeleteDeliveredRemoteMail()
+        {
+            var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
+        }
     }
 }

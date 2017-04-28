@@ -37,7 +37,10 @@ namespace Denifia.Stardew.SendItems.Services
         private void PlayerUsingLetterbox(object sender, EventArgs e)
         {
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
-            var mail = Repository.Instance.FirstOrDefault<Mail>(x => x.Status == MailStatus.Delivered && x.ToFarmerId == currentFarmerId);
+            var mail = Repository.Instance.FirstOrDefault<Mail>(x => 
+                x.Status == MailStatus.Delivered && 
+                x.ToFarmerId == currentFarmerId
+            );
             if (mail != null && !(Game1.mailbox == null || !Game1.mailbox.Any()))
             {
                 ShowLetter(mail);
@@ -66,10 +69,9 @@ namespace Denifia.Stardew.SendItems.Services
             if (mail != null)
             {
                 mail.Status = MailStatus.Read;
+                mail.ReadInGameDate = ModHelper.GetGameDayTime();
                 Repository.Instance.Update(mail);
             }
-
-            // Consider: Should I just call the webapi now to delete this message? Raise an event for the cleanup service?
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Denifia.Stardew.SendItems.Domain;
 using RestSharp;
 using Denifia.Stardew.SendItems.Events;
-using StardewModdingAPI.Events;
 using Denifia.Stardew.SendItems.Models;
 using StardewValley;
 using Denifia.Stardew.SendItems.Framework;

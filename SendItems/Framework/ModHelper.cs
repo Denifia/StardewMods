@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
+using Denifia.Stardew.SendItems.Domain;
 
 namespace Denifia.Stardew.SendItems.Framework
 {
@@ -75,6 +76,11 @@ namespace Denifia.Stardew.SendItems.Framework
             detailedVerb = detailedVerb ?? verb;
             monitor.Log($"Something went wrong {detailedVerb}:\n{ex}", LogLevel.Error);
             ModHelper.ShowErrorMessage($"Huh. Something went wrong {verb}. The error log has the technical details.");
+        }
+
+        public static GameDateTime GetGameDayTime()
+        {
+            return new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
         }
     }
 }
