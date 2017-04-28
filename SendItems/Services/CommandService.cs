@@ -90,7 +90,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void ShowMyDetails(string[] args)
         {
-            _mod.Monitor.Log("Get your friends to run this command in the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
+            _mod.Monitor.Log("This is your \"friend command\". Get your friends to run this command in the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
             _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Info);
         }
 
@@ -227,7 +227,7 @@ namespace Denifia.Stardew.SendItems.Services
         private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             _savedGameLoaded = true;
-            _mod.Monitor.Log($"Get your friends to run this command in the SMAPI console to add you as a friend...", LogLevel.Info);
+            _mod.Monitor.Log($"This is your \"friend command\". Get your friends to run this command in the SMAPI console to add you as a friend...", LogLevel.Info);
             _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Alert);
             _mod.Monitor.Log($"They need to be using the Send Items mod too :)", LogLevel.Info);
         }
