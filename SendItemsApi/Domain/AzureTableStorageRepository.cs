@@ -12,6 +12,8 @@ namespace Denifia.Stardew.SendItemsApi.Domain
     public interface ITableStorageRepository
     {
         Task<bool> InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity;
+        Task<TEntity> Retrieve<TEntity>(string partitionKey, string rowKey) where TEntity : ITableEntity;
+        Task<bool> Delete<TEntity>(TEntity entity) where TEntity : ITableEntity;
         Task<int> Count<TEntity>() where TEntity : ITableEntity, new();
     }
 
@@ -47,6 +49,46 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             catch (Exception ex)
             {
                 
+            }
+            return false;
+        }
+
+        public async Task<TEntity> Retrieve<TEntity>(string partitionKey, string rowKey) where TEntity : ITableEntity
+        {
+            try
+            {
+                var retrieve = TableOperation.Retrieve<TEntity>(partitionKey, rowKey);
+                var result = await _mailTable.ExecuteAsync(retrieve);
+                if (result.Result != null)
+                {
+                    return (TEntity)result.Result;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return default(TEntity);
+        }
+
+        public async Task<bool> Delete<TEntity>(TEntity entity) where TEntity : ITableEntity
+        {
+            try
+            {
+                if (entity.ETag == null || entity.ETag.Equals(string.Empty))
+                {
+                    entity.ETag = "*";
+                }
+                var delete = TableOperation.Delete(entity);
+                var result = await _mailTable.ExecuteAsync(delete);
+                if (result.Result != null)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
             return false;
         }

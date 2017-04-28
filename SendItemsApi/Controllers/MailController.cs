@@ -18,14 +18,11 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
             _repository = repository;
         }
 
-        // GET api/mail/{mailId}
-        [HttpGet("{mailId}")]
-        public async Task<Mail> Get(Guid mailId)
+        // GET api/mail/{toFarmerId}/{mailId}
+        [HttpGet("{toFarmerId}/{mailId}")]
+        public async Task<Mail> Get(string toFarmerId, string mailId)
         {
-            return await Task.Run(() =>
-            {
-                return Repository.Instance.FirstOrDefault<Mail>(x => x.Id == mailId);
-            });
+            return await _repository.Retrieve<Mail>(toFarmerId, mailId);
         }
 
         // GET api/mail/to/{farmerId}
@@ -53,36 +50,28 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
         public async Task<int> GetMailCount()
         {
             return await _repository.Count<Mail>();
-            //return await Task.Run(() =>
-            //{
-            //    return Repository.Instance.Fetch<Mail>().Count;
-            //});
         }
 
-        // PUT api/mail
-        [HttpPut]
-        public async Task<bool> Put([FromBody]CreateMailModel model)
+        // PUT api/mail/{toFarmerId}/{mailId}
+        [HttpPut("{toFarmerId}/{mailId}")]
+        public async Task<bool> Put(string toFarmerId, string mailId, [FromBody]CreateMailModel model)
         {
-            var mail = new Mail(model.Id, model.ToFarmerId)
+            var mail = new Mail(mailId, toFarmerId)
             {
                 Text = model.Text,
                 FromFarmerId = model.FromFarmerId,
                 ClientCreatedDate = model.CreatedDate,
                 ServerCreatedDate = DateTime.Now.ToUniversalTime()
             };
-
             return await _repository.InsertOrReplace(mail);
         }
 
-        // DELETE api/mail/{mailId}
-        [HttpDelete("{mailId}")]
-        public async Task<bool> Delete(Guid mailId)
+        // DELETE api/mail/{toFarmerId}/{mailId}
+        [HttpDelete("{toFarmerId}/{mailId}")]
+        public async Task<bool> Delete(string toFarmerId, string mailId)
         {
-            return await Task.Run(() =>
-            {
-                var deletedCount = Repository.Instance.Delete<Mail>(x => x.Id == mailId);
-                return deletedCount > 0;
-            });
+            var mail = new Mail(mailId, toFarmerId);
+            return await _repository.Delete(mail);
         }
     }
 }
