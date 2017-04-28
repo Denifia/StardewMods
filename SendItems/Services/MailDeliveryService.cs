@@ -118,7 +118,7 @@ namespace Denifia.Stardew.SendItems.Services
                     };
 
                     var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
-                    var request = FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
+                    var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
                     var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
                     if (response.Data)
@@ -151,18 +151,13 @@ namespace Denifia.Stardew.SendItems.Services
             Repository.Instance.Upsert(mailNotLocal.AsEnumerable());
         }
 
-        private List<Mail> GetLocallyComposedMail()
-        {
-            return Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Composed);
-        }
-
         private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmerAsync()
         {
             if (_farmerService.CurrentFarmer == null) return new List<Mail>();
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
 
             var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
-			var request = FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
+			var request = ModHelper.FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
             var response = await _restClient.ExecuteTaskAsync<List<Mail>>(request);
 
             var mail = new List<Mail>();
@@ -177,21 +172,15 @@ namespace Denifia.Stardew.SendItems.Services
             return mail;
         }
 
+        private List<Mail> GetLocallyComposedMail()
+        {
+            return Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Composed);
+        }
+
         private void UpdateLocalMail(List<Mail> mail)
         {
             if (!mail.Any()) return;
             Repository.Instance.Update(mail.AsEnumerable());
         }
-
-        private RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
-		{
-			var request = new RestRequest(resource, method);
-			request.AddHeader("Content-type", "application/json; charset=utf-8");
-			foreach (var urlSegment in urlSegments)
-			{
-				request.AddUrlSegment(urlSegment.Key, urlSegment.Value);
-			}
-			return request;
-		}
     }
 }

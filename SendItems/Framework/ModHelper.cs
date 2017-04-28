@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
 using Denifia.Stardew.SendItems.Domain;
+using RestSharp;
 
 namespace Denifia.Stardew.SendItems.Framework
 {
@@ -81,6 +82,17 @@ namespace Denifia.Stardew.SendItems.Framework
         public static GameDateTime GetGameDayTime()
         {
             return new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
+        }
+
+        public static RestRequest FormStandardRequest(string resource, Dictionary<string, string> urlSegments, Method method)
+        {
+            var request = new RestRequest(resource, method);
+            request.AddHeader("Content-type", "application/json; charset=utf-8");
+            foreach (var urlSegment in urlSegments)
+            {
+                request.AddUrlSegment(urlSegment.Key, urlSegment.Value);
+            }
+            return request;
         }
     }
 }

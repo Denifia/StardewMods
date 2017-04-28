@@ -74,13 +74,29 @@ namespace Denifia.Stardew.SendItems.Services
             }
             catch (Exception ex)
             {
-                ModHelper.HandleError(_mod, ex, "delivering mail on schedule");
+                ModHelper.HandleError(_mod, ex, "deleting mail from server");
             }
         }
 
         private async Task DeleteDeliveredRemoteMail()
         {
             var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
+            foreach (var mail in localMail)
+            {
+                await DeleteRemoteMail(mail);
+            }
+        }
+
+        private async Task DeleteRemoteMail(Mail mail)
+        {
+            var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
+            var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.DELETE);
+            var response = await _restClient.ExecuteTaskAsync<bool>(request);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                // all good :)
+            }
         }
     }
 }
