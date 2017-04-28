@@ -11,7 +11,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
 {
     public interface ITableStorageRepository
     {
-        Task InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity;
+        Task<bool> InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity;
         Task<int> Count<TEntity>() where TEntity : ITableEntity, new();
     }
 
@@ -33,10 +33,22 @@ namespace Denifia.Stardew.SendItemsApi.Domain
             _mailTable.CreateIfNotExistsAsync().Wait();
         }
 
-        public async Task InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity
+        public async Task<bool> InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity
         {
-            var insert = TableOperation.InsertOrReplace(entity);
-            await _mailTable.ExecuteAsync(insert);
+            try
+            {
+                var insert = TableOperation.InsertOrReplace(entity);
+                var result = await _mailTable.ExecuteAsync(insert);
+                if (result.Result != null)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return false;
         }
 
         public async Task<int> Count<TEntity>() where TEntity : ITableEntity, new()

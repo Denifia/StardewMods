@@ -22,6 +22,7 @@ namespace Denifia.Stardew.SendItemsApi.Domain
         public string ToFarmerId { get; private set; }
         public string FromFarmerId { get; set; }
         public string Text { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime ClientCreatedDate { get; set; }
+        public DateTime ServerCreatedDate { get; set; }
     }
 }

@@ -59,25 +59,19 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
             //});
         }
 
-        // POST api/mail
-        [HttpPost]
-        public async Task<Guid> Post([FromBody]CreateMailModel model)
+        // PUT api/mail
+        [HttpPut]
+        public async Task<bool> Put([FromBody]CreateMailModel model)
         {
-            return await Task.Run(() =>
+            var mail = new Mail(model.Id, model.ToFarmerId)
             {
-                //var mail = new Mail()
-                //{
-                //    Id = Guid.NewGuid(),
-                //    Text = model.Text,
-                //    ToFarmerId = model.ToFarmerId,
-                //    FromFarmerId = model.FromFarmerId,
-                //    CreatedDate = DateTime.Now
-                //};
+                Text = model.Text,
+                FromFarmerId = model.FromFarmerId,
+                ClientCreatedDate = model.CreatedDate,
+                ServerCreatedDate = DateTime.Now.ToUniversalTime()
+            };
 
-                //Repository.Instance.Insert(mail);
-                //return mail.Id;
-                return Guid.NewGuid();
-            });
+            return await _repository.InsertOrReplace(mail);
         }
 
         // DELETE api/mail/{mailId}
