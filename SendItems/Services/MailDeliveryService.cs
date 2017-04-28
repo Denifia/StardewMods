@@ -34,12 +34,10 @@ namespace Denifia.Stardew.SendItems.Services
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
 
-            TimeEvents.AfterDayStarted += AfterDayStarted;
-            TimeEvents.TimeOfDayChanged += TimeOfDayChanged;
-            ModEvents.OnMailDeliverySchedule += OnMailDeliverySchedule;
+            ModEvents.OnMailDelivery += OnMailDelivery;
         }
 
-        private async void OnMailDeliverySchedule(object sender, EventArgs e)
+        private async void OnMailDelivery(object sender, EventArgs e)
         {
             try
             {
@@ -178,28 +176,6 @@ namespace Denifia.Stardew.SendItems.Services
             }
 
             return mail;
-        }
-
-        private void AfterDayStarted(object sender, EventArgs e)
-        {
-            // Deliver mail each night
-            ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
-        }
-
-        private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
-        {
-            var timeToCheck = false;
-
-            // Deliver mail at lunch time
-            if (e.NewInt == 1200)
-            {
-                timeToCheck = true;
-            }
-
-            if (timeToCheck || _configService.InDebugMode())
-            {
-                ModEvents.RaiseOnMailDeliverySchedule(this, EventArgs.Empty);
-            }
         }
 
         private void UpdateLocalMail(List<Mail> mail)

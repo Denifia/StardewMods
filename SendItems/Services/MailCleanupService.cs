@@ -29,12 +29,20 @@ namespace Denifia.Stardew.SendItems.Services
             _farmerService = farmerService;
             _restClient = new RestClient(_configService.GetApiUri());
 
+            ModEvents.OnMailCleanup += OnMailCleanup;
             ModEvents.MailDelivered += MailDelivered;
+        }
+
+        private void OnMailCleanup(object sender, EventArgs e)
+        {
+            // Delete local and remote mail
         }
 
         private void MailDelivered(object sender, EventArgs e)
         {
             // Delete local and remote mail
         }
+
+        // New async method
     }
 }

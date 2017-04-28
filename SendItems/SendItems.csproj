@@ -76,6 +76,7 @@
     <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\FarmerService.cs" />
+    <Compile Include="Services\MailScheduleService.cs" />
     <Compile Include="Services\PostboxInteractionDetector.cs" />
     <Compile Include="Services\LetterboxInteractionDetector.cs" />
     <Compile Include="Services\LetterboxService.cs" />
