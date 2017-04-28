@@ -19,6 +19,8 @@ These instructions are for advanced users who want to run their own copy of the 
    _In the output, you should see `Now listening on: http://localhost:5000`_
 4. Ensure your [Send Items](http://www.nexusmods.com/stardewvalley/mods/1087) mod config file has an ApiUrl pointing to you copy of the API
 
+* Requires an Azure Storage account. Connection details are in [appsettings.json](appsettings.json)
+
 ## Usage
 See [Send Items Readme](../SendItems/readme.md)
 

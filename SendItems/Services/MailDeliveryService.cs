@@ -116,14 +116,15 @@ namespace Denifia.Stardew.SendItems.Services
                     {
                         ToFarmerId = mail.ToFarmerId,
                         FromFarmerId = mail.FromFarmerId,
-                        Text = mail.Text
+                        Text = mail.Text,
+                        CreatedDate = mail.CreatedDate
                     };
 
-                    var urlSegments = new Dictionary<string, string>();
-                    var request = FormStandardRequest("mail", urlSegments, Method.GET);
-                    var response = await _restClient.ExecuteTaskAsync<Guid>(request);
+                    var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
+                    var request = FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
+                    var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (response.Data)
                     {
                         mail.Status = MailStatus.Posted;
                         updatedLocalMail.Add(mail);

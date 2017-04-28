@@ -19,7 +19,7 @@
     "denifia.stardew.webapi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/mail/count",
+      "launchUrl": "api/health",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
