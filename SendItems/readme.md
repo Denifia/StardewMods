@@ -31,7 +31,7 @@ Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else ye
 
 * The item is taken out of your inventory right away and the "letter" is scheduled for delivery
 * Each in-game night mail is delivered to receipent  
-_So when you go to sleep to save your game, the mail is actually "sent" to another farm_
+_So when you go to sleep to save your game, the mail is actually "sent" to another farmer_
 
 ### Handing out your "friend command"
 **Note**: Please only hand out your friend code to people you trust to not abuse it.
@@ -40,28 +40,50 @@ _So when you go to sleep to save your game, the mail is actually "sent" to anoth
 3. Copy your "friend command" from the SMAPI console.  
   _It should appear in magenta automatically. If not, type in `si_me` and press enter_
 
+### List your friends
+1. Run the game using SMAPI.
+2. Load a saved game.
+3. Type in `si_myfriends` and press enter.  
+
 ### Adding online farmers (friends)
 1. Ask your friend to send you their "friend command".  
   _Shown when you load the game or when you run `si_me` in the SMAPI console_
 2. Run the game using SMAPI.
-3. Paste in the "friend command" from step 1.  
+3. Load a saved game.
+4. Paste in the "friend command" from step 1.  
   _This will be in the format of `si_addfriend <id> <name> <farm name>`_
-4. Done! They will now show up as a farmer you can send to.
+5. Done! They will now show up as a farmer you can send to.
 
-### Adding local farmers (saved games)
+### Adding local farmers (local saved games)
 You have two options here:  
 
 **Big Bang**  
 1. Run the game using SMAPI.
-2. Type in `si_addlocalfarmers` and press enter.  
+2. Load a saved game.
+3. Type in `si_addlocalfarmers` and press enter.  
   _This will add all local farmers (including yourself) as friends_
 
 **One at a time**  
 1. Run the game using SMAPI.
-2. Type in `si_myfriends`  and press enter to list the local farmers.
-3. Pick a farmer (saved game) that you want to add.
-4. Type in `si_addfriend <id> <name> <farm name>` and press enter.  
+2. Load a saved game.
+3. Type in `si_myfriends`  and press enter to list the local farmers.
+4. Pick a farmer (saved game) that you want to add.
+5. Type in `si_addfriend <id> <name> <farm name>` and press enter.  
   _Replace `<id> <name> <farm name>` with the details of the farmer you want to add_
+
+### Deleting farmers (friends or local saved games)
+Again, you have two options here: 
+
+**Big Bang**  
+1. Run the game using SMAPI.
+2. Load a saved game.
+3. Type in `si_removeallfriends` and press enter.  
+
+**One at a time**  
+1. Run the game using SMAPI.
+2. Load a saved game.
+3. Type in `si_removefriend <id>` and press enter.  
+  _Replace `<id>` with the id of the farmer you want to delete_
 
 ### Running the server locally
 See [Send Items API](../SendItemsApi/readme.md)
