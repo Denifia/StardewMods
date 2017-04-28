@@ -1,8 +1,0 @@
-{
-  "AzureStorage": {
-    "AccountName": "denifiaauestorage",
-    "AccountKey": "GNQ4EDMAW2OUXN2vBoG9EKRliHkGZBBCQyRq2aHSWASaadrsfENRieSmI+ae1z5CgvJBed3/IE7/7Q4Mv6qTdg==",
-    "EndpointSuffix": "core.windows.net",
-    "UseHttps": true
-  }
-}

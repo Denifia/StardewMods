@@ -15,7 +15,6 @@ namespace Denifia.Stardew.SendItemsApi
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddJsonFile("azurestorageconfig.json", optional: false)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
