@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using LiteDB;
 using Denifia.Stardew.SendItemsApi.Domain;
 using Denifia.Stardew.SendItemsApi.Models;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Denifia.Stardew.SendItemsApi.Controllers
 {
@@ -18,31 +19,29 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
             _repository = repository;
         }
 
-        // GET api/mail/{toFarmerId}/{mailId}
-        [HttpGet("{toFarmerId}/{mailId}")]
-        public async Task<Mail> Get(string toFarmerId, string mailId)
+        // GET api/mail/{mailId}
+        [HttpGet("{mailId}")]
+        public async Task<Mail> Get(string mailId)
         {
-            return await _repository.Retrieve<Mail>(toFarmerId, mailId);
+            return await _repository.Retrieve<Mail>(Mail.EntityPartitionKey, mailId);
         }
 
         // GET api/mail/to/{farmerId}
         [HttpGet("to/{farmerId}")]
         public async Task<List<Mail>> GetMailToFarmer(string farmerId)
         {
-            return await Task.Run(() =>
-            {
-                return Repository.Instance.Fetch<Mail>(x => x.ToFarmerId == farmerId);
-            });
+            // Consider: Should this be moved in a MailService?
+            var filter = TableQuery.GenerateFilterCondition("ToFarmerId", QueryComparisons.Equal, farmerId);
+            return await _repository.Query<Mail>(filter);
         }
 
         // GET api/mail/from/{farmerId}
         [HttpGet("from/{farmerId}")]
         public async Task<List<Mail>> GetMailFromFarmer(string farmerId)
         {
-            return await Task.Run(() =>
-            {
-                return Repository.Instance.Fetch<Mail>(x => x.FromFarmerId == farmerId);
-            });
+            // Consider: Should this be moved in a MailService?
+            var filter = TableQuery.GenerateFilterCondition("FromFarmerId", QueryComparisons.Equal, farmerId);
+            return await _repository.Query<Mail>(filter);
         }
 
         // GET api/mail/count
@@ -52,12 +51,14 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
             return await _repository.Count<Mail>();
         }
 
-        // PUT api/mail/{toFarmerId}/{mailId}
-        [HttpPut("{toFarmerId}/{mailId}")]
-        public async Task<bool> Put(string toFarmerId, string mailId, [FromBody]CreateMailModel model)
+        // PUT api/mail/{mailId}
+        [HttpPut("{mailId}")]
+        public async Task<bool> Put(string mailId, [FromBody]CreateMailModel model)
         {
-            var mail = new Mail(mailId, toFarmerId)
+            // Consider: Should this be moved in a MailService?
+            var mail = new Mail(mailId)
             {
+                ToFarmerId = model.ToFarmerId,
                 Text = model.Text,
                 FromFarmerId = model.FromFarmerId,
                 ClientCreatedDate = model.CreatedDate,
@@ -66,11 +67,11 @@ namespace Denifia.Stardew.SendItemsApi.Controllers
             return await _repository.InsertOrReplace(mail);
         }
 
-        // DELETE api/mail/{toFarmerId}/{mailId}
-        [HttpDelete("{toFarmerId}/{mailId}")]
-        public async Task<bool> Delete(string toFarmerId, string mailId)
+        // DELETE api/mail/{mailId}
+        [HttpDelete("{mailId}")]
+        public async Task<bool> Delete(string mailId)
         {
-            var mail = new Mail(mailId, toFarmerId);
+            var mail = new Mail(mailId);
             return await _repository.Delete(mail);
         }
     }

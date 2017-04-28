@@ -9,13 +9,6 @@ using System.Threading.Tasks;
 
 namespace Denifia.Stardew.SendItemsApi.Domain
 {
-    public interface ITableStorageRepository
-    {
-        Task<bool> InsertOrReplace<TEntity>(TEntity entity) where TEntity : ITableEntity;
-        Task<TEntity> Retrieve<TEntity>(string partitionKey, string rowKey) where TEntity : ITableEntity;
-        Task<bool> Delete<TEntity>(TEntity entity) where TEntity : ITableEntity;
-        Task<int> Count<TEntity>() where TEntity : ITableEntity, new();
-    }
 
     public class AzureTableStorageRepository : ITableStorageRepository
     {
@@ -91,6 +84,38 @@ namespace Denifia.Stardew.SendItemsApi.Domain
 
             }
             return false;
+        }
+
+        public async Task<List<TEntity>> Query<TEntity>(string partitionKey, string filter) where TEntity : ITableEntity, new()
+        {
+            var query = new TableQuery<TEntity>().Where(filter);
+            var continuationToken = (TableContinuationToken)null;
+            var list = new List<TEntity>();
+            do
+            {
+                var segment = await _mailTable.ExecuteQuerySegmentedAsync(query, continuationToken);
+                continuationToken = segment.ContinuationToken;
+                list.AddRange(segment.Results);
+            }
+            while (continuationToken != null);
+
+            return list;
+        }
+
+        public async Task<List<TEntity>> Query<TEntity>(string filter) where TEntity : ITableEntity, new()
+        {
+            var query = new TableQuery<TEntity>().Where(filter);
+            var continuationToken = (TableContinuationToken)null;
+            var list = new List<TEntity>();
+            do
+            {
+                var segment = await _mailTable.ExecuteQuerySegmentedAsync(query, continuationToken);
+                continuationToken = segment.ContinuationToken;
+                list.AddRange(segment.Results);
+            }
+            while (continuationToken != null);
+
+            return list;
         }
 
         public async Task<int> Count<TEntity>() where TEntity : ITableEntity, new()
