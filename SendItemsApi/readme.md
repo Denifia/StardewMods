@@ -15,7 +15,9 @@ Runs on Linux, Mac and Windows and can be cloud hosted.
 2. Open a command/terminal window to the directory with **Denifia.Stardew.SendItemsApi.dll**
 3. Run `dotnet Denifia.Stardew.SendItemsApi.dll`
    In the output, you should see `Now listening on: http://localhost:5000`
-4. Ensure your [Send Items](http://www.nexusmods.com/stardewvalley/mods/1087) mod config file has an ApiUrl pointing to you copy of the API
+4. Ensure your [Send Items](http://www.nexusmods.com/stardewvalley/mods/1087) mod config file has an ApiUrl pointing to your copy of the API
+
+* Requires an Azure Storage account. Connection details are in [appsettings.json](appsettings.json)
 
 ## Usage
 See [Send Items Readme](../SendItems/readme.md)
