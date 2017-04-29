@@ -64,7 +64,7 @@ namespace Denifia.Stardew.SendItems.Services
             );
             if (!localMail.Any()) return;
             var currentGameDateTime = ModHelper.GetGameDayTime();
-            var futureMail = localMail.Where(x => x.ReadInGameDate > currentGameDateTime).ToList();
+            var futureMail = localMail.Where(x => x.ReadInGameDate == null || x.ReadInGameDate > currentGameDateTime).ToList();
             foreach (var mail in futureMail)
             {
                 mail.Status = MailStatus.Delivered;

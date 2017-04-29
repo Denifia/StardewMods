@@ -109,7 +109,7 @@ namespace Denifia.Stardew.SendItems.Services
             {
                 if (!localFarmers.Any(x => x.Id == mail.ToFarmerId))
                 {
-                    var mailCreateModel = new MailCreateModel
+                    var createMailModel = new CreateMailModel
                     {
                         ToFarmerId = mail.ToFarmerId,
                         FromFarmerId = mail.FromFarmerId,
@@ -119,6 +119,7 @@ namespace Denifia.Stardew.SendItems.Services
 
                     var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
                     var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
+                    request.AddJsonBody(createMailModel);
                     var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
                     if (response.Data)
@@ -128,6 +129,8 @@ namespace Denifia.Stardew.SendItems.Services
                     }
                 }
             }
+
+            Repository.Instance.Upsert(updatedLocalMail.AsEnumerable());
         }
 
         private async Task DeliverCloudMailLocally()

@@ -2,7 +2,8 @@
 
 namespace Denifia.Stardew.SendItems.Models
 {
-    public class MailCreateModel
+    // Zoolander :)
+    public class CreateMailModel
     {
         public string ToFarmerId { get; set; }
         public string FromFarmerId { get; set; }
