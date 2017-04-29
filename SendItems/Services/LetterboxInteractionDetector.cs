@@ -1,4 +1,5 @@
 ﻿using Denifia.Stardew.SendItems.Events;
+using Denifia.Stardew.SendItems.Framework;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
@@ -9,7 +10,6 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface ILetterboxInteractionDetector
     {
-        void Init();
     }
 
     /// <summary>
@@ -18,9 +18,26 @@ namespace Denifia.Stardew.SendItems.Services
     public class LetterboxInteractionDetector : ILetterboxInteractionDetector
     {
         private const string _locationOfLetterbox = "Farm";
-        private const string _playerMailKey = "playerMail";
 
-        public void Init()
+        public LetterboxInteractionDetector()
+        {
+            SaveEvents.AfterLoad += AfterSavedGameLoad;
+            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+        }
+
+        private void AfterReturnToTitle(object sender, EventArgs e)
+        {
+            try
+            {
+                ControlEvents.MouseChanged -= MouseChanged;
+                LocationEvents.CurrentLocationChanged -= CurrentLocationChanged;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
         }
@@ -57,7 +74,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private bool CanUseLetterbox()
         {
-            return Game1.mailbox != null && Game1.mailbox.Any() && Game1.mailbox.Peek() == _playerMailKey;
+            return Game1.mailbox != null && Game1.mailbox.Any() && Game1.mailbox.Peek() == ModConstants.PlayerMailKey;
         }
     }
 }
