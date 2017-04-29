@@ -32,7 +32,11 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
         {
-            if (_configService.InDebugMode())
+            // Deliver mail every 30 mins
+            var timeString = e.NewInt.ToString();
+            var correctTime = timeString.EndsWith("30") || timeString.EndsWith("00");
+
+            if (_configService.InDebugMode() && e.NewInt != 600 && correctTime)
             {
                 ModEvents.RaiseOnMailCleanup(this, EventArgs.Empty);
             }
