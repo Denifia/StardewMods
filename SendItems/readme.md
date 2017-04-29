@@ -61,7 +61,8 @@ You have two options here:
 1. Run the game using SMAPI.
 2. Load a saved game.
 3. Type in `si_addlocalfarmers` and press enter.  
-  _This will add all local farmers (including yourself) as friends_
+  _This will add all local farmers (including yourself) as friends_  
+  _**Note**: Only saved games that you've loaded since using Send Items mod will show up_
 
 **One at a time**  
 1. Run the game using SMAPI.

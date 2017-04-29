@@ -5,7 +5,12 @@ using System;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public class MailScheduleService
+    public interface IMailScheduleService
+    {
+
+    }
+
+    public class MailScheduleService : IMailScheduleService
     {
         private readonly IMod _mod;
         private readonly IConfigurationService _configService;
@@ -21,23 +26,15 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void AfterDayStarted(object sender, EventArgs e)
         {
-            // Deliver mail each night
-            ModEvents.RaiseOnMailDelivery(this, EventArgs.Empty);
+            // Deliver mail each morning
+            ModEvents.RaiseOnMailCleanup(this, EventArgs.Empty);
         }
 
         private void TimeOfDayChanged(object sender, EventArgsIntChanged e)
         {
-            var timeToCheck = false;
-
-            // Deliver mail at lunch time
-            if (e.NewInt == 1200)
+            if (_configService.InDebugMode())
             {
-                timeToCheck = true;
-            }
-
-            if (timeToCheck || _configService.InDebugMode())
-            {
-                ModEvents.RaiseOnMailDelivery(this, EventArgs.Empty);
+                ModEvents.RaiseOnMailCleanup(this, EventArgs.Empty);
             }
         }
     }

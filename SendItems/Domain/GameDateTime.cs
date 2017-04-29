@@ -14,6 +14,11 @@ namespace Denifia.Stardew.SendItems.Domain
         public int Season { get; set; }
         public int Year { get; set; }
 
+        public GameDateTime()
+        {
+
+        }
+
         public GameDateTime(int timeOfDay, int dayOfMonth, string currentSeason, int year)
         {
             TimeOfDay = timeOfDay;

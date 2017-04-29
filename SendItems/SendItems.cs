@@ -42,6 +42,7 @@ namespace Denifia.Stardew.SendItems
             _container.Resolve<ICommandService>();
             _container.Resolve<IPostboxService>();
             _container.Resolve<ILetterboxService>();
+            _container.Resolve<IMailScheduleService>();
 
             // Instance classes to be used later
             _farmerService = _container.Resolve<IFarmerService>();

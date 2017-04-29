@@ -37,6 +37,8 @@ namespace Denifia.Stardew.SendItems.Services
         {
             DeleteFutureComposedMail();
             UnreadFutureReadMail();
+
+            ModEvents.RaiseOnMailDelivery(this, EventArgs.Empty);
         }
 
         private void DeleteFutureComposedMail()
@@ -45,9 +47,13 @@ namespace Denifia.Stardew.SendItems.Services
                 x.Status == MailStatus.Composed && 
                 x.ToFarmerId == _farmerService.CurrentFarmer.Id
             );
+            if (!localMail.Any()) return;
             var currentGameDateTime = ModHelper.GetGameDayTime();
             var futureMail = localMail.Where(x => x.CreatedInGameDate > currentGameDateTime).ToList();
-            Repository.Instance.Delete<Mail>(x => futureMail.Contains(x));
+            foreach (var mail in futureMail)
+            {
+                Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+            }
         }
 
         private void UnreadFutureReadMail()
@@ -56,6 +62,7 @@ namespace Denifia.Stardew.SendItems.Services
                 x.Status == MailStatus.Read &&
                 x.ToFarmerId == _farmerService.CurrentFarmer.Id
             );
+            if (!localMail.Any()) return;
             var currentGameDateTime = ModHelper.GetGameDayTime();
             var futureMail = localMail.Where(x => x.ReadInGameDate > currentGameDateTime).ToList();
             foreach (var mail in futureMail)
@@ -63,6 +70,8 @@ namespace Denifia.Stardew.SendItems.Services
                 mail.Status = MailStatus.Delivered;
                 mail.ReadInGameDate = null;
             }
+
+            if (!futureMail.Any()) return;
             Repository.Instance.Upsert(futureMail.AsEnumerable());
         }
 
