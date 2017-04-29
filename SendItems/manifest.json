@@ -2,13 +2,13 @@
   "Name": "Send Items",
   "Author": "Denifia",
   "Version": {
-    "MajorVersion": 0,
-    "MinorVersion": 2,
-    "PatchVersion": 0,
-    "Build": null
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 1,
+    "Build": "beta"
   },
   "MinimumApiVersion": "1.10",
-  "Description": "Send items to your other farms (saved games) and online friends",
+  "Description": "Send items to other farmer (saved games and online friends).",
   "UniqueID": "Denifia.SendItems",
   "EntryDll": "Denifia.Stardew.SendItems.dll"
 }

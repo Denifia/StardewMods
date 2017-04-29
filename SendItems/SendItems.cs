@@ -38,28 +38,16 @@ namespace Denifia.Stardew.SendItems
             Repository.Instance.Init(_container.Resolve<IConfigurationService>());
 
             // Instance classes that do their own thing
+            _container.Resolve<IFarmerService>();
             _container.Resolve<VersionCheckService>();
             _container.Resolve<ICommandService>();
             _container.Resolve<IPostboxService>();
             _container.Resolve<ILetterboxService>();
+            _container.Resolve<IPostboxInteractionDetector>();
+            _container.Resolve<ILetterboxInteractionDetector>();
+            _container.Resolve<IMailDeliveryService>();
+            _container.Resolve<IMailCleanupService>();
             _container.Resolve<IMailScheduleService>();
-
-            // Instance classes to be used later
-            _farmerService = _container.Resolve<IFarmerService>();
-            _postboxInteractionDetector = _container.Resolve<IPostboxInteractionDetector>();
-            _letterboxInteractionDetector = _container.Resolve<ILetterboxInteractionDetector>();
-            _mailDeliveryService = _container.Resolve<IMailDeliveryService>();
-            _mailCleanupService = _container.Resolve<IMailCleanupService>();
-
-            SaveEvents.AfterLoad += AfterSavedGameLoad;
-        }
-
-        private void AfterSavedGameLoad(object sender, EventArgs e)
-        {
-            _postboxInteractionDetector.Init();
-            _letterboxInteractionDetector.Init();
-
-            SaveEvents.AfterLoad -= AfterSavedGameLoad;
         }
     }
 }

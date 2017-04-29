@@ -1,7 +1,12 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
-## 0.2.0
+## 1.0.1-Beta
+* Fixed bug with returning to tile screen
+* Fixed bug with friend command extra spaces (issue #27)
+* Bumped version because of bad release
+
+## 1.0-Beta
 * **Renamed project from "SendLetters" to "Send Items" for clarity**
 * Moved local storage into LiteDb (stores data as binary json in the \Mods\SendItems directory)
 * Made all web requests run in the background so they don't interfere with the game

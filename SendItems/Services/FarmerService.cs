@@ -2,6 +2,8 @@
 using Denifia.Stardew.SendItems.Domain;
 using StardewValley;
 using System.Linq;
+using StardewModdingAPI.Events;
+using System;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -33,13 +35,25 @@ namespace Denifia.Stardew.SendItems.Services
         public FarmerService(IConfigurationService configService)
         {
             _configService = configService;
+            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+        }
+
+        private void AfterReturnToTitle(object sender, EventArgs e)
+        {
+            _currentFarmer = null;
         }
 
         public void LoadCurrentFarmer()
         {
             var saves = _configService.GetSavedGames();
             var save = saves.FirstOrDefault(x => x.Name == Game1.player.Name && x.FarmName == Game1.player.farmName);
-            if (save == null) throw new System.Exception("error loading current farmer");
+            if (save == null)
+            {
+                // Happens during a new game creation
+                return;
+                //throw new System.Exception("error loading current farmer");
+            }
+            
 
             var newFarmer = new Domain.Farmer()
             {

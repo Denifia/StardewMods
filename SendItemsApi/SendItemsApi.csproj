@@ -5,7 +5,7 @@
     <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
     <AssemblyName>Denifia.Stardew.SendItemsApi</AssemblyName>
     <RootNamespace>Denifia.Stardew.SendItemsApi</RootNamespace>
-    <Version>0.2.0</Version>
+    <Version>1.0.1</Version>
     <Description>Web Api for the Send Items mod for Stardew Valley</Description>
     <Authors>Denifia</Authors>
     <Company>Denifia</Company>

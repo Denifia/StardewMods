@@ -38,7 +38,13 @@ namespace Denifia.Stardew.SendItems.Services
             RegisterCommands();
 
             SaveEvents.AfterLoad += AfterSavedGameLoad;
-        }        
+            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+        }
+
+        private void AfterReturnToTitle(object sender, EventArgs e)
+        {
+            _savedGameLoaded = false;
+        }
 
         private void RegisterCommands()
         {
@@ -91,7 +97,7 @@ namespace Denifia.Stardew.SendItems.Services
         private void ShowMyDetails(string[] args)
         {
             _mod.Monitor.Log("This is your \"friend command\". Get your friends to run this command in the SMAPI console to add you as a friend. Each farmer (saved game) has it's own list of friends.", LogLevel.Info);
-            _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Info);
+            _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.ConsoleSafeName} {_farmerService.CurrentFarmer.ConsoleSaveFarmName}", LogLevel.Info);
         }
 
         private void ListLocalFarmers(string[] args)
@@ -103,7 +109,7 @@ namespace Denifia.Stardew.SendItems.Services
                 _mod.Monitor.Log("<id> <name> <farm name>", LogLevel.Info);
                 foreach (var farmer in farmers)
                 {
-                    _mod.Monitor.Log($"{farmer.Id} {farmer.Name} {farmer.FarmName}", LogLevel.Info);
+                    _mod.Monitor.Log($"{farmer.Id} {farmer.ConsoleSafeName} {farmer.ConsoleSaveFarmName}", LogLevel.Info);
                 }
             }
             else
@@ -228,7 +234,7 @@ namespace Denifia.Stardew.SendItems.Services
         {
             _savedGameLoaded = true;
             _mod.Monitor.Log($"This is your \"friend command\". Get your friends to run this command in the SMAPI console to add you as a friend...", LogLevel.Info);
-            _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.Name} {_farmerService.CurrentFarmer.FarmName}", LogLevel.Alert);
+            _mod.Monitor.Log($"{_addFriendCommand} {_farmerService.CurrentFarmer.Id} {_farmerService.CurrentFarmer.ConsoleSafeName} {_farmerService.CurrentFarmer.ConsoleSaveFarmName}", LogLevel.Alert);
             _mod.Monitor.Log($"They need to be using the Send Items mod too :)", LogLevel.Info);
         }
 

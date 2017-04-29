@@ -9,7 +9,7 @@ namespace Denifia.Stardew.SendItems.Services
 {
     public interface IPostboxInteractionDetector
     {
-        void Init();
+
     }
 
     /// <summary>
@@ -19,7 +19,25 @@ namespace Denifia.Stardew.SendItems.Services
     {
         private const string locationOfPostbox = "Farm";
 
-        public void Init()
+        public PostboxInteractionDetector()
+        {
+            SaveEvents.AfterLoad += AfterSavedGameLoad;
+            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+        }
+
+        private void AfterReturnToTitle(object sender, EventArgs e)
+        {
+            try
+            {
+                ControlEvents.MouseChanged -= MouseChanged;
+                LocationEvents.CurrentLocationChanged -= CurrentLocationChanged;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void AfterSavedGameLoad(object sender, EventArgs e)
         {
             LocationEvents.CurrentLocationChanged += CurrentLocationChanged;
         }
