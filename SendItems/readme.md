@@ -103,5 +103,5 @@ See [release notes](release-notes.md).
 
 ## See also
 * [Nexus mod](http://www.nexusmods.com/stardewvalley/mods/1087)
-* [Discussion thread](http://community.playstarbound.com/threads/smapi-send-letters.132236/)
+* [Discussion thread](http://community.playstarbound.com/threads/send-items-to-other-farmers.132617/)
 * [My other mods](../readme.md)
