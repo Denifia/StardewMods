@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Buy Recipes",
+  "Author": "Denifia",
+  "Version": {
+    "MajorVersion": 0,
+    "MinorVersion": 1,
+    "PatchVersion": 0,
+    "Build": null
+  },
+  "MinimumApiVersion": "1.10",
+  "Description": "Purchase recipes you don't know from a magazine rack in Pierre's shop",
+  "UniqueID": "Denifia.BuyRecipes",
+  "EntryDll": "Denifia.Stardew.BuyRecipes.dll"
+}

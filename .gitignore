@@ -259,6 +259,7 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/webapi/data.json
-/webapi/Properties/PublishProfiles/denifiastardewsendletters - Web Deploy.pubxml
-/webapi/data.message.json
+
+# Custom
+*.pubxml
+*.db
