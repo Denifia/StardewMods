@@ -1,4 +1,5 @@
 ﻿using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -11,18 +12,67 @@ namespace Denifia.Stardew.BuyRecipes
     public class BuyRecipes : Mod
     {
         private List<CookingRecipe> CookingRecipes;
-
-        public BuyRecipes()
+        private static List<GameItem> _gameObjects;
+        public static List<GameItem> GameObjects
         {
-
+            get
+            {
+                if (_gameObjects == null)
+                {
+                    DeserializeGameObjects();
+                }
+                return _gameObjects;
+            }
         }
 
         public override void Entry(IModHelper helper)
         {
+            SaveEvents.AfterLoad += SaveEvents_AfterLoad;
+            SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
+        }
+
+        private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
+        {
+            ResetRecipes();
+        }
+
+        private void ResetRecipes()
+        {
+            CookingRecipes = null;
+        }
+
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        {
+            DiscoverRecipes();
+        }
+
+        private void DiscoverRecipes()
+        {
+            var knownRecipes = Game1.player.cookingRecipes.Keys;
             CookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
-                CookingRecipes.Add(new CookingRecipe(recipe.Key, recipe.Value));
+                var cookingRecipe = new CookingRecipe(recipe.Key, recipe.Value);
+                if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
+                {
+                    cookingRecipe.IsKnown = true;
+                }
+                CookingRecipes.Add(cookingRecipe);
+            }
+
+            var unknownRecipeCount = CookingRecipes.Where(x => !x.IsKnown).Count();
+        }
+
+        private static void DeserializeGameObjects()
+        {
+            _gameObjects = new List<GameItem>();
+            foreach (var item in Game1.objectInformation)
+            {
+                _gameObjects.Add(new GameItem
+                {
+                    Id = item.Key,
+                    Name = item.Value.Split('/')[4]
+                });
             }
         }
     }
@@ -30,8 +80,9 @@ namespace Denifia.Stardew.BuyRecipes
     public class CookingRecipe
     {
         public string Name { get; set; }
-        public List<ItemWithQuantity> Ingredients { get; set; }
-        public ItemWithQuantity ResultingItem { get; set; }
+        public List<GameItemWithQuantity> Ingredients { get; set; }
+        public GameItemWithQuantity ResultingItem { get; set; }
+        public bool IsKnown { get; set; }
 
         public CookingRecipe(string name, string data)
         {
@@ -50,9 +101,9 @@ namespace Denifia.Stardew.BuyRecipes
             var aquisitionData = dataParts[3];
         }
 
-        private List<ItemWithQuantity> DeserializeIngredients(string data)
+        private List<GameItemWithQuantity> DeserializeIngredients(string data)
         {
-            var ingredients = new List<ItemWithQuantity>();
+            var ingredients = new List<GameItemWithQuantity>();
             var dataParts = data.Split(' ');
             for (int i = 0; i < dataParts.Count(); i++)
             {
@@ -70,7 +121,7 @@ namespace Denifia.Stardew.BuyRecipes
             return ingredients;
         }
 
-        private ItemWithQuantity DeserializeResultingItem(string data)
+        private GameItemWithQuantity DeserializeResultingItem(string data)
         {
             var dataParts = data.Split(' ');
             if (dataParts.Count() == 1)
@@ -81,30 +132,32 @@ namespace Denifia.Stardew.BuyRecipes
             return DeserializeItemWithQuantity(dataParts[0], dataParts[1]);
         }
 
-        private ItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
+        private GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
         {
-            var itemWithQuantity = new ItemWithQuantity
+            var itemWithQuantity = new GameItemWithQuantity
             {
                 Id = int.Parse(itemId),
                 Quantity = int.Parse(quantity),
             };
 
-            var objectData = string.Empty;
-            Game1.objectInformation.TryGetValue(itemWithQuantity.Id, out objectData);
-            if (objectData != string.Empty)
+            var gameItem = BuyRecipes.GameObjects.FirstOrDefault(x => x.Id == itemWithQuantity.Id);
+            if (gameItem != null)
             {
-                var name = objectData.Split('/')[4];
-                itemWithQuantity.Name = name;
+                itemWithQuantity.Name = gameItem.Name;
             }
 
             return itemWithQuantity;
         }
     }
 
-    public class ItemWithQuantity
+    public class GameItem
     {
         public string Name { get; set; }
         public int Id { get; set; }
+    }
+
+    public class GameItemWithQuantity : GameItem
+    {
         public int Quantity { get; set; }
     }
 }
