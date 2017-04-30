@@ -8,7 +8,7 @@
     "Build": null
   },
   "MinimumApiVersion": "1.10",
-  "Description": "Purchase recipes you don't know from a magazine rack in Pierre's shop",
+  "Description": "Buy recipes you don't know from a magazine rack in Pierre's shop",
   "UniqueID": "Denifia.BuyRecipes",
   "EntryDll": "Denifia.Stardew.BuyRecipes.dll"
 }
