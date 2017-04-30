@@ -20,7 +20,8 @@ Compatible with Stardew Valley 1.2+ on Windows and Mac. I've not tested on Linux
 1. [Install the latest version of SMAPI](http://canimod.com/guides/using-mods#installing-smapi).
 2. Install [this mod from Nexus mods](http://www.nexusmods.com/stardewvalley/mods/1087).
 3. Run the game using SMAPI.
-4. As the game loads, the SMAPI console will output your "friend command" so you can send it to others.
+4. Load a saved game.
+5. After your game loads, the SMAPI console will output your "friend command" so you can send it to others.
 
 ## Usage
 ### Sending items
