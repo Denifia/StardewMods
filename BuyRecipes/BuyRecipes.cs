@@ -35,7 +35,8 @@ namespace Denifia.Stardew.BuyRecipes
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
                 new FriendBasedRecipeAquisition(),
-                new SkillBasedRecipeAquisition()
+                new SkillBasedRecipeAquisition(),
+                new LevelBasedRecipeAquisition()
             };
 
             helper.ConsoleCommands.Add("buy", $"temp", HandleCommand);
@@ -305,9 +306,34 @@ namespace Denifia.Stardew.BuyRecipes
         }
     }
 
+    public class LevelBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
+    {
+        private int _playerLevel;
+        public int Cost => _playerLevel * 900;
+
+        public LevelBasedRecipeAquisition() { }
+
+        public LevelBasedRecipeAquisition(string data) : base(data)
+        {
+            var dataParts = data.Split(' ');
+            _playerLevel = int.Parse(dataParts[1]);
+        }
+
+        public bool AcceptsConditions(string condition)
+        {
+            return condition.StartsWith("l ");
+        }
+
+        private int GetCost()
+        {
+            if (_playerLevel == 100) return 1750;
+            return _playerLevel * 75;
+        }
+    }
+
     public class DefaultRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
     {
-        public int Cost => 500;
+        public int Cost => 1000;
 
         public DefaultRecipeAquisition() { }
 
