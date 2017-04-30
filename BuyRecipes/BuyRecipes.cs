@@ -16,6 +16,7 @@ namespace Denifia.Stardew.BuyRecipes
         private bool _savedGameLoaded = false;
         private List<CookingRecipe> _cookingRecipes;
         private List<CookingRecipe> _thisWeeksRecipes;
+        private int _seed;
         
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
@@ -23,6 +24,7 @@ namespace Denifia.Stardew.BuyRecipes
         {
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
+            TimeEvents.DayOfMonthChanged += TimeEvents_DayOfMonthChanged;
 
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
@@ -147,16 +149,23 @@ namespace Denifia.Stardew.BuyRecipes
         {
             _savedGameLoaded = true;
             DiscoverRecipes();
+            GenerateWeeklyRecipes();
+        }
 
-            //foreach (var item in _cookingRecipes.Where(x => !x.IsKnown).OrderBy(x => x.AquisitionConditions.Cost))
-            //{
-            //    Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
-            //}
+        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e)
+        {
+            GenerateWeeklyRecipes();
+        }
 
+        private void GenerateWeeklyRecipes()
+        {
             var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
             var startDayOfWeek = (((gameDateTime.DayOfMonth / 7) + 1) * 7) - 6;
             var seed = int.Parse($"{startDayOfWeek}{gameDateTime.Season}{gameDateTime.Year}");
             var random = new Random(seed);
+
+            if (_seed == seed) return;
+            _seed = seed;
 
             _thisWeeksRecipes = new List<CookingRecipe>();
             var maxNumberOfRecipesPerWeek = 5;
