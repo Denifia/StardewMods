@@ -1,5 +1,5 @@
 ﻿**Send Items** is a [Stardew Valley](http://stardewvalley.net/) mod which lets you 
-send items to your other farms (saved games) or other players from around the world.
+send items to your other farmers (saved games) or other farmers from around the world (online friends).
 
 Sending 5 stone to myself...
 ![](Screenshots/animation-send.gif)
@@ -7,7 +7,7 @@ Sending 5 stone to myself...
 Receiving the 5 stone in the mail...
 ![](Screenshots/animation-receive.gif)
 
-Compatible with Stardew Valley 1.2+ on Windows. I've not tested anything else yet.
+Compatible with Stardew Valley 1.2+ on Windows and Mac. I've not tested on Linux.
 
 ## Contents
 * [Installation](#installation)
@@ -103,5 +103,5 @@ See [release notes](release-notes.md).
 
 ## See also
 * [Nexus mod](http://www.nexusmods.com/stardewvalley/mods/1087)
-* [Discussion thread](http://community.playstarbound.com/threads/smapi-send-letters.132236/)
+* [Discussion thread](http://community.playstarbound.com/threads/send-items-to-other-farmers.132617/)
 * [My other mods](../readme.md)
