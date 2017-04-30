@@ -1,6 +1,9 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 0.3.0
+* Added version checking
+
 ## 0.2.0
 * console now outputs weekly recipes each sunday
 
