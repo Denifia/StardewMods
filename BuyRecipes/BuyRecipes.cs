@@ -24,11 +24,17 @@ namespace Denifia.Stardew.BuyRecipes
                 return _gameObjects;
             }
         }
+        public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
         public override void Entry(IModHelper helper)
         {
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
+
+            RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
+            {
+                new FriendBasedRecipeAquisition()
+            };
         }
 
         private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
@@ -44,6 +50,13 @@ namespace Denifia.Stardew.BuyRecipes
         private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             DiscoverRecipes();
+
+            foreach (var item in CookingRecipes.OrderBy(x => x.AquisitionConditions.Cost))
+            {
+                this.Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
+            }
+
+            //Game1.player.cookingRecipes.Add("name", 0);
         }
 
         private void DiscoverRecipes()
@@ -82,6 +95,7 @@ namespace Denifia.Stardew.BuyRecipes
         public string Name { get; set; }
         public List<GameItemWithQuantity> Ingredients { get; set; }
         public GameItemWithQuantity ResultingItem { get; set; }
+        public IRecipeAquisitionConditions AquisitionConditions { get; set; }
         public bool IsKnown { get; set; }
 
         public CookingRecipe(string name, string data)
@@ -99,6 +113,15 @@ namespace Denifia.Stardew.BuyRecipes
             ResultingItem = DeserializeResultingItem(resultingItemData);
 
             var aquisitionData = dataParts[3];
+            var aquisitionConditions = BuyRecipes.RecipeAquisitionConditions.FirstOrDefault(x => x.AcceptsConditions(aquisitionData));
+            if (aquisitionConditions == null)
+            {
+                AquisitionConditions = new DefaultRecipeAquisition(aquisitionData);
+            }
+            else
+            {
+                AquisitionConditions = (IRecipeAquisitionConditions)Activator.CreateInstance(aquisitionConditions.GetType(), new object[] { aquisitionData });
+            }
         }
 
         private List<GameItemWithQuantity> DeserializeIngredients(string data)
@@ -159,5 +182,57 @@ namespace Denifia.Stardew.BuyRecipes
     public class GameItemWithQuantity : GameItem
     {
         public int Quantity { get; set; }
+    }
+
+    public interface IRecipeAquisitionConditions
+    {
+        bool AcceptsConditions(string condition);
+        int Cost { get; }
+    }
+
+    public abstract class BaseRecipeAquisition
+    {
+        public BaseRecipeAquisition()
+        {
+        }
+
+        public BaseRecipeAquisition(string data)
+        {
+        }
+    }
+
+    public class FriendBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
+    {
+        private int _friendLevel;
+        private string _friend;
+        public int Cost => _friendLevel * 600;
+
+        public FriendBasedRecipeAquisition() { }
+
+        public FriendBasedRecipeAquisition(string data) : base(data)
+        {
+            var dataParts = data.Split(' ');
+            _friend = dataParts[1];
+            _friendLevel = int.Parse(dataParts[2]);
+        }
+
+        public bool AcceptsConditions(string condition)
+        {
+            return condition.StartsWith("f ");
+        }
+    }
+
+    public class DefaultRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
+    {
+        public int Cost => 500;
+
+        public DefaultRecipeAquisition() { }
+
+        public DefaultRecipeAquisition(string data) : base(data) { }
+
+        public bool AcceptsConditions(string condition)
+        {
+            return true;
+        }
     }
 }
