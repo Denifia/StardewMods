@@ -48,6 +48,7 @@
     <Compile Include="Domain\CookingRecipe.cs" />
     <Compile Include="Domain\DefaultRecipeAquisition.cs" />
     <Compile Include="Domain\FriendBasedRecipeAquisition.cs" />
+    <Compile Include="Domain\GameDateTime.cs" />
     <Compile Include="Domain\GameItem.cs" />
     <Compile Include="Domain\GameItemWithQuantity.cs" />
     <Compile Include="Domain\IRecipeAquisitionConditions.cs" />

@@ -3,7 +3,7 @@
     public class LevelBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
     {
         private int _playerLevel;
-        public int Cost => _playerLevel * 900;
+        public int Cost => GetCost();
 
         public LevelBasedRecipeAquisition() { }
 

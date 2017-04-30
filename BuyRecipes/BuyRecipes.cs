@@ -14,6 +14,7 @@ namespace Denifia.Stardew.BuyRecipes
     {
         private bool _savedGameLoaded = false;
         private List<CookingRecipe> _cookingRecipes;
+        private List<CookingRecipe> _thisWeeksRecipes;
         
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
@@ -70,6 +71,11 @@ namespace Denifia.Stardew.BuyRecipes
                     return;
                 }
 
+                if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipeName)))
+                {
+                    Monitor.Log("Recipe is not availble to buy this week", LogLevel.Info);
+                }
+
                 Game1.player.cookingRecipes.Add(recipeName, 0);
                 Game1.player.Money -= recipe.AquisitionConditions.Cost;
                 Monitor.Log($"{recipeName} bought for ${recipe.AquisitionConditions.Cost}!", LogLevel.Alert);
@@ -83,25 +89,43 @@ namespace Denifia.Stardew.BuyRecipes
         private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
         {
             _savedGameLoaded = false;
-            ResetRecipes();
-        }
-
-        private void ResetRecipes()
-        {
             _cookingRecipes = null;
+            _thisWeeksRecipes = null;
         }
-
+        
         private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             _savedGameLoaded = true;
             DiscoverRecipes();
 
-            #if DEBUG
-            foreach (var item in _cookingRecipes.Where(x => !x.IsKnown).OrderBy(x => x.AquisitionConditions.Cost))
+            //foreach (var item in _cookingRecipes.Where(x => !x.IsKnown).OrderBy(x => x.AquisitionConditions.Cost))
+            //{
+            //    Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
+            //}
+
+            var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
+            var startDayOfWeek = (((gameDateTime.DayOfMonth / 7) + 1) * 7) - 6;
+            var seed = int.Parse($"{startDayOfWeek}{gameDateTime.Season}{gameDateTime.Year}");
+            var random = new Random(seed);
+
+            _thisWeeksRecipes = new List<CookingRecipe>();
+            var maxNumberOfRecipesPerWeek = 5;
+            var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
+            var unknownRecipesCount = unknownRecipes.Count;
+            for (int i = 0; i < maxNumberOfRecipesPerWeek; i++)
+            {
+                var recipe = unknownRecipes[random.Next(unknownRecipesCount)];
+                if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipe.Name)))
+                {
+                    _thisWeeksRecipes.Add(recipe);
+                }
+            }
+
+            Monitor.Log($"This weeks recipes are:", LogLevel.Info);
+            foreach (var item in _thisWeeksRecipes)
             {
                 Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
             }
-            #endif
         }
 
         private void DiscoverRecipes()
