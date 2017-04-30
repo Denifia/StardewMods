@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using Denifia.Stardew.BuyRecipes.Domain;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
@@ -13,18 +14,7 @@ namespace Denifia.Stardew.BuyRecipes
     {
         private bool _savedGameLoaded = false;
         private List<CookingRecipe> _cookingRecipes;
-        private static List<GameItem> _gameObjects;
-        public static List<GameItem> GameObjects
-        {
-            get
-            {
-                if (_gameObjects == null)
-                {
-                    DeserializeGameObjects();
-                }
-                return _gameObjects;
-            }
-        }
+        
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
         public override void Entry(IModHelper helper)
@@ -58,16 +48,6 @@ namespace Denifia.Stardew.BuyRecipes
                 default:
                     throw new NotImplementedException($"Send Items received unknown command '{command}'.");
             }
-        }
-
-        private void LogUsageError(string error, string command)
-        {
-            Monitor.Log($"{error} Type 'help {command}' for usage.", LogLevel.Error);
-        }
-
-        private void LogArgumentsInvalid(string command)
-        {
-            LogUsageError("The arguments are invalid.", command);
         }
 
         private void BuyRecipe(string[] args)
@@ -116,10 +96,12 @@ namespace Denifia.Stardew.BuyRecipes
             _savedGameLoaded = true;
             DiscoverRecipes();
 
+            #if DEBUG
             foreach (var item in _cookingRecipes.Where(x => !x.IsKnown).OrderBy(x => x.AquisitionConditions.Cost))
             {
-                this.Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
+                Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
             }
+            #endif
         }
 
         private void DiscoverRecipes()
@@ -139,209 +121,14 @@ namespace Denifia.Stardew.BuyRecipes
             var unknownRecipeCount = _cookingRecipes.Where(x => !x.IsKnown).Count();
         }
 
-        private static void DeserializeGameObjects()
+        private void LogUsageError(string error, string command)
         {
-            _gameObjects = new List<GameItem>();
-            foreach (var item in Game1.objectInformation)
-            {
-                _gameObjects.Add(new GameItem
-                {
-                    Id = item.Key,
-                    Name = item.Value.Split('/')[4]
-                });
-            }
-        }
-    }
-
-    public class CookingRecipe
-    {
-        public string Name { get; set; }
-        public List<GameItemWithQuantity> Ingredients { get; set; }
-        public GameItemWithQuantity ResultingItem { get; set; }
-        public IRecipeAquisitionConditions AquisitionConditions { get; set; }
-        public bool IsKnown { get; set; }
-
-        public CookingRecipe(string name, string data)
-        {
-            Name = name;
-
-            var dataParts = data.Split('/');
-
-            var ingredientsData = dataParts[0];
-            Ingredients = DeserializeIngredients(ingredientsData);
-
-            var unknownData = dataParts[1];
-
-            var resultingItemData = dataParts[2];
-            ResultingItem = DeserializeResultingItem(resultingItemData);
-
-            var aquisitionData = dataParts[3];
-            var aquisitionConditions = BuyRecipes.RecipeAquisitionConditions.FirstOrDefault(x => x.AcceptsConditions(aquisitionData));
-            if (aquisitionConditions == null)
-            {
-                AquisitionConditions = new DefaultRecipeAquisition(aquisitionData);
-            }
-            else
-            {
-                AquisitionConditions = (IRecipeAquisitionConditions)Activator.CreateInstance(aquisitionConditions.GetType(), new object[] { aquisitionData });
-            }
+            Monitor.Log($"{error} Type 'help {command}' for usage.", LogLevel.Error);
         }
 
-        private List<GameItemWithQuantity> DeserializeIngredients(string data)
+        private void LogArgumentsInvalid(string command)
         {
-            var ingredients = new List<GameItemWithQuantity>();
-            var dataParts = data.Split(' ');
-            for (int i = 0; i < dataParts.Count(); i++)
-            {
-                try
-                {
-                    var ingredientData = DeserializeItemWithQuantity(dataParts[i], dataParts[i + 1]);
-                    ingredients.Add(ingredientData);
-
-                    i++; // Skip in pairs
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            return ingredients;
-        }
-
-        private GameItemWithQuantity DeserializeResultingItem(string data)
-        {
-            var dataParts = data.Split(' ');
-            if (dataParts.Count() == 1)
-            {
-                // Default amount of an item is 1
-                return DeserializeItemWithQuantity(dataParts[0], "1");
-            }
-            return DeserializeItemWithQuantity(dataParts[0], dataParts[1]);
-        }
-
-        private GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
-        {
-            var itemWithQuantity = new GameItemWithQuantity
-            {
-                Id = int.Parse(itemId),
-                Quantity = int.Parse(quantity),
-            };
-
-            var gameItem = BuyRecipes.GameObjects.FirstOrDefault(x => x.Id == itemWithQuantity.Id);
-            if (gameItem != null)
-            {
-                itemWithQuantity.Name = gameItem.Name;
-            }
-
-            return itemWithQuantity;
-        }
-    }
-
-    public class GameItem
-    {
-        public string Name { get; set; }
-        public int Id { get; set; }
-    }
-
-    public class GameItemWithQuantity : GameItem
-    {
-        public int Quantity { get; set; }
-    }
-
-    public interface IRecipeAquisitionConditions
-    {
-        bool AcceptsConditions(string condition);
-        int Cost { get; }
-    }
-
-    public abstract class BaseRecipeAquisition
-    {
-        public BaseRecipeAquisition()
-        {
-        }
-
-        public BaseRecipeAquisition(string data)
-        {
-        }
-    }
-
-    public class FriendBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
-    {
-        private int _friendLevel;
-        private string _friend;
-        public int Cost => _friendLevel * 600;
-
-        public FriendBasedRecipeAquisition() { }
-
-        public FriendBasedRecipeAquisition(string data) : base(data)
-        {
-            var dataParts = data.Split(' ');
-            _friend = dataParts[1];
-            _friendLevel = int.Parse(dataParts[2]);
-        }
-
-        public bool AcceptsConditions(string condition)
-        {
-            return condition.StartsWith("f ");
-        }
-    }
-
-    public class SkillBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
-    {
-        private int _skillLevel;
-        private string _skill;
-        public int Cost => _skillLevel * 900;
-
-        public SkillBasedRecipeAquisition() { }
-
-        public SkillBasedRecipeAquisition(string data) : base(data)
-        {
-            var dataParts = data.Split(' ');
-            _skill = dataParts[1];
-            _skillLevel = int.Parse(dataParts[2]);
-        }
-
-        public bool AcceptsConditions(string condition)
-        {
-            return condition.StartsWith("s ");
-        }
-    }
-
-    public class LevelBasedRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
-    {
-        private int _playerLevel;
-        public int Cost => _playerLevel * 900;
-
-        public LevelBasedRecipeAquisition() { }
-
-        public LevelBasedRecipeAquisition(string data) : base(data)
-        {
-            var dataParts = data.Split(' ');
-            _playerLevel = int.Parse(dataParts[1]);
-        }
-
-        public bool AcceptsConditions(string condition)
-        {
-            return condition.StartsWith("l ");
-        }
-
-        private int GetCost()
-        {
-            if (_playerLevel == 100) return 1750;
-            return _playerLevel * 75;
-        }
-    }
-
-    public class DefaultRecipeAquisition : BaseRecipeAquisition, IRecipeAquisitionConditions
-    {
-        public int Cost => 1000;
-
-        public DefaultRecipeAquisition() { }
-
-        public DefaultRecipeAquisition(string data) : base(data) { }
-
-        public bool AcceptsConditions(string condition)
-        {
-            return true;
+            LogUsageError("The arguments are invalid.", command);
         }
     }
 }
