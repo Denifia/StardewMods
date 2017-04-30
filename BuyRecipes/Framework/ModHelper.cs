@@ -35,5 +35,10 @@ namespace Denifia.Stardew.BuyRecipes.Framework
                 });
             }
         }
+
+        public static string GetMoneyAsString(int money)
+        {
+            return $"G{money.ToString("#,##0")}";
+        }
     }
 }

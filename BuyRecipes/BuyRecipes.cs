@@ -1,4 +1,5 @@
 ﻿using Denifia.Stardew.BuyRecipes.Domain;
+using Denifia.Stardew.BuyRecipes.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -30,11 +31,51 @@ namespace Denifia.Stardew.BuyRecipes
                 new LevelBasedRecipeAquisition()
             };
 
-            helper.ConsoleCommands.Add("buy", $"temp", HandleCommand);
+            helper.ConsoleCommands
+                .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
+                .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
         }
 
         private void HandleCommand(string command, string[] args)
         {
+            var newArgs = new List<string>();
+            var quote = "\"";
+            var temp = string.Empty;
+            var tempInt = -1;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i].StartsWith(quote))
+                {
+                    temp = args[i].TrimStart(quote.ToArray());
+                    tempInt = i;
+                }
+                if (args[i].EndsWith(quote))
+                {
+                    if (tempInt != i)
+                    {
+                        temp += " " + args[i];
+                    }
+                    temp = temp.TrimEnd(quote.ToArray());
+                    newArgs.Add(temp);
+                    temp = string.Empty;
+                    tempInt = -1;
+                    continue;
+                }
+                if (tempInt == (i - 1))
+                {
+                    temp += " " + args[i];
+                    tempInt = i;
+                    continue;
+                }
+
+                if (temp.Equals(string.Empty))
+                {
+                    newArgs.Add(args[i]);
+                }
+            }
+
+            args = newArgs.ToArray();
+
             if (!_savedGameLoaded)
             {
                 Monitor.Log("Please load up a saved game first, then try again.", LogLevel.Warn);
@@ -43,8 +84,11 @@ namespace Denifia.Stardew.BuyRecipes
 
             switch (command)
             {
-                case "buy":
+                case "buyrecipe":
                     BuyRecipe(args);
+                    break;
+                case "showrecipes":
+                    ShowWeeklyRecipes();
                     break;
                 default:
                     throw new NotImplementedException($"Send Items received unknown command '{command}'.");
@@ -53,7 +97,6 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void BuyRecipe(string[] args)
         {
-            
             if (args.Length == 1)
             {
                 var recipeName = args[0];
@@ -74,11 +117,18 @@ namespace Denifia.Stardew.BuyRecipes
                 if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipeName)))
                 {
                     Monitor.Log("Recipe is not availble to buy this week", LogLevel.Info);
+                    return;
+                }
+
+                if (Game1.player.Money < recipe.AquisitionConditions.Cost)
+                {
+                    Monitor.Log("You can't affort this recipe", LogLevel.Info);
+                    return;
                 }
 
                 Game1.player.cookingRecipes.Add(recipeName, 0);
                 Game1.player.Money -= recipe.AquisitionConditions.Cost;
-                Monitor.Log($"{recipeName} bought for ${recipe.AquisitionConditions.Cost}!", LogLevel.Alert);
+                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
             }
             else
             {
@@ -121,10 +171,15 @@ namespace Denifia.Stardew.BuyRecipes
                 }
             }
 
-            Monitor.Log($"This weeks recipes are:", LogLevel.Info);
+            ShowWeeklyRecipes();
+        }
+
+        private void ShowWeeklyRecipes()
+        {
+            Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
             foreach (var item in _thisWeeksRecipes)
             {
-                Monitor.Log($"{item.AquisitionConditions.Cost} - {item.Name}", LogLevel.Info);
+                Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info);
             }
         }
 
