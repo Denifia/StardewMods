@@ -1,5 +1,6 @@
 ﻿using Denifia.Stardew.BuyRecipes.Domain;
 using Denifia.Stardew.BuyRecipes.Framework;
+using Denifia.Stardew.BuyRecipes.Services;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -36,6 +37,9 @@ namespace Denifia.Stardew.BuyRecipes
             helper.ConsoleCommands
                 .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
                 .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
+
+            // Instance the Version Check Service
+            new VersionCheckService(this);
         }
 
         private void HandleCommand(string command, string[] args)
