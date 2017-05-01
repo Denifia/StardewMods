@@ -1,6 +1,9 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 0.3.1
+* Fixed issue with buying items with spaces in the name
+
 ## 0.3.0
 * Added version checking
 
