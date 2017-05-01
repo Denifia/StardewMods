@@ -44,43 +44,43 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void HandleCommand(string command, string[] args)
         {
-            var newArgs = new List<string>();
-            var quote = "\"";
-            var temp = string.Empty;
-            var tempInt = -1;
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (args[i].StartsWith(quote))
-                {
-                    temp = args[i].TrimStart(quote.ToArray());
-                    tempInt = i;
-                }
-                if (args[i].EndsWith(quote))
-                {
-                    if (tempInt != i)
-                    {
-                        temp += " " + args[i];
-                    }
-                    temp = temp.TrimEnd(quote.ToArray());
-                    newArgs.Add(temp);
-                    temp = string.Empty;
-                    tempInt = -1;
-                    continue;
-                }
-                if (tempInt == (i - 1))
-                {
-                    temp += " " + args[i];
-                    tempInt = i;
-                    continue;
-                }
+            //var newArgs = new List<string>();
+            //var quote = "\"";
+            //var temp = string.Empty;
+            //var tempInt = -1;
+            //for (int i = 0; i < args.Length; i++)
+            //{
+            //    if (args[i].StartsWith(quote))
+            //    {
+            //        temp = args[i].TrimStart(quote.ToArray());
+            //        tempInt = i;
+            //    }
+            //    if (args[i].EndsWith(quote))
+            //    {
+            //        if (tempInt != i)
+            //        {
+            //            temp += " " + args[i];
+            //        }
+            //        temp = temp.TrimEnd(quote.ToArray());
+            //        newArgs.Add(temp);
+            //        temp = string.Empty;
+            //        tempInt = -1;
+            //        continue;
+            //    }
+            //    if (tempInt == (i - 1))
+            //    {
+            //        temp += " " + args[i];
+            //        tempInt = i;
+            //        continue;
+            //    }
 
-                if (temp.Equals(string.Empty))
-                {
-                    newArgs.Add(args[i]);
-                }
-            }
+            //    if (temp.Equals(string.Empty))
+            //    {
+            //        newArgs.Add(args[i]);
+            //    }
+            //}
 
-            args = newArgs.ToArray();
+            args = new List<string>() { string.Join(" ", args) }.ToArray();
 
             if (!_savedGameLoaded)
             {
