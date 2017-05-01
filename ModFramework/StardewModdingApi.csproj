@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DFDFA9C4-A767-49C4-BC3D-B5701D5F70AC}</ProjectGuid>
+    <ProjectGuid>{8CEEBEF1-E5D3-4C7E-BECF-99580E1B8570}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Denifia.Stardew.TestableMod</RootNamespace>
-    <AssemblyName>Denifia.Stardew.TestableMod</AssemblyName>
+    <RootNamespace>ModFramework</RootNamespace>
+    <AssemblyName>ModFramework</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,14 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestableMod.cs" />
+    <Compile Include="IMonitor.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ModFramework\StardewModdingApi.csproj">
-      <Project>{8CEEBEF1-E5D3-4C7E-BECF-99580E1B8570}</Project>
-      <Name>StardewModdingApi</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
