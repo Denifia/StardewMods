@@ -106,12 +106,15 @@ namespace Denifia.Stardew.BuyRecipes
             if (args.Length == 1)
             {
                 var recipeName = args[0];
-                var recipe = _cookingRecipes.FirstOrDefault(x => x.Name == recipeName);
+                var recipe = _cookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
                 if (recipe == null)
                 {
                     Monitor.Log("Recipe not found", LogLevel.Info);
                     return;
                 }
+
+                // Use the explicit name
+                recipeName = recipe.Name;
 
                 if (recipe.IsKnown || Game1.player.cookingRecipes.ContainsKey(recipeName))
                 {
@@ -134,6 +137,7 @@ namespace Denifia.Stardew.BuyRecipes
 
                 Game1.player.cookingRecipes.Add(recipeName, 0);
                 Game1.player.Money -= recipe.AquisitionConditions.Cost;
+                recipe.IsKnown = true;
                 Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
             }
             else
