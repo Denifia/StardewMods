@@ -43,11 +43,5 @@
     <Compile Include="TestableMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ModFramework\StardewModdingApi.csproj">
-      <Project>{8CEEBEF1-E5D3-4C7E-BECF-99580E1B8570}</Project>
-      <Name>StardewModdingApi</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
