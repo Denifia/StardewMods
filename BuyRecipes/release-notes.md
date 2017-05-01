@@ -1,6 +1,11 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 0.3.2
+* Fixed issue where a bought recipe would show up in the weekly list
+* Removed caps sensitivity for commands
+* Fixed bug after you know all recipes
+
 ## 0.3.1
 * Fixed issue with buying items with spaces in the name
 
@@ -8,10 +13,10 @@
 * Added version checking
 
 ## 0.2.0
-* console now outputs weekly recipes each sunday
+* Console now outputs weekly recipes each sunday
 
 ## 0.1.0
-* initial cut
-* all access to the mod is via SMAPI console
-* up to 5 recipes are available each week
-* recipes will only be ones you don't know
+* Initial cut
+* All access to the mod is via SMAPI console
+* Up to 5 recipes are available each week
+* Recipes will only be ones you don't know

@@ -37,6 +37,7 @@ namespace Denifia.Stardew.BuyRecipes
             helper.ConsoleCommands
                 .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
                 .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
+                //.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
 
             // Instance the Version Check Service
             new VersionCheckService(this);
@@ -44,42 +45,6 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void HandleCommand(string command, string[] args)
         {
-            //var newArgs = new List<string>();
-            //var quote = "\"";
-            //var temp = string.Empty;
-            //var tempInt = -1;
-            //for (int i = 0; i < args.Length; i++)
-            //{
-            //    if (args[i].StartsWith(quote))
-            //    {
-            //        temp = args[i].TrimStart(quote.ToArray());
-            //        tempInt = i;
-            //    }
-            //    if (args[i].EndsWith(quote))
-            //    {
-            //        if (tempInt != i)
-            //        {
-            //            temp += " " + args[i];
-            //        }
-            //        temp = temp.TrimEnd(quote.ToArray());
-            //        newArgs.Add(temp);
-            //        temp = string.Empty;
-            //        tempInt = -1;
-            //        continue;
-            //    }
-            //    if (tempInt == (i - 1))
-            //    {
-            //        temp += " " + args[i];
-            //        tempInt = i;
-            //        continue;
-            //    }
-
-            //    if (temp.Equals(string.Empty))
-            //    {
-            //        newArgs.Add(args[i]);
-            //    }
-            //}
-
             args = new List<string>() { string.Join(" ", args) }.ToArray();
 
             if (!_savedGameLoaded)
@@ -96,12 +61,23 @@ namespace Denifia.Stardew.BuyRecipes
                 case "showrecipes":
                     ShowWeeklyRecipes();
                     break;
+                case "buyallrecipes":
+                    BuyAllRecipes();
+                    break;
                 default:
                     throw new NotImplementedException($"Send Items received unknown command '{command}'.");
             }
         }
 
-        private void BuyRecipe(string[] args)
+        private void BuyAllRecipes()
+        {
+            foreach (var recipe in _cookingRecipes.Where(x => !x.IsKnown).ToList())
+            {
+                BuyRecipe(new string[] { recipe.Name }, false);
+            }
+        }
+
+        private void BuyRecipe(string[] args, bool checkInWeeklyRecipes = true)
         {
             if (args.Length == 1)
             {
@@ -123,7 +99,7 @@ namespace Denifia.Stardew.BuyRecipes
                     return;
                 }
 
-                if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipeName)))
+                if (checkInWeeklyRecipes && !_thisWeeksRecipes.Any(x => x.Name.Equals(recipeName)))
                 {
                     Monitor.Log("Recipe is not availble to buy this week", LogLevel.Info);
                     return;
@@ -179,6 +155,13 @@ namespace Denifia.Stardew.BuyRecipes
             var maxNumberOfRecipesPerWeek = 5;
             var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
             var unknownRecipesCount = unknownRecipes.Count;
+
+            if (unknownRecipesCount == 0)
+            {
+                ShowNoRecipes();
+                return;
+            }
+
             for (int i = 0; i < maxNumberOfRecipesPerWeek; i++)
             {
                 var recipe = unknownRecipes[random.Next(unknownRecipesCount)];
@@ -191,8 +174,19 @@ namespace Denifia.Stardew.BuyRecipes
             ShowWeeklyRecipes();
         }
 
+        private void ShowNoRecipes()
+        {
+            Monitor.Log($"No recipes availabe. You know them all.", LogLevel.Info);
+        }
+
         private void ShowWeeklyRecipes()
         {
+            if (_thisWeeksRecipes.Count == 0)
+            {
+                ShowNoRecipes();
+                return;
+            }
+
             Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
             foreach (var item in _thisWeeksRecipes)
             {
