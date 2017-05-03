@@ -8,4 +8,4 @@ Note: I wrote these mods myself but took a lot of inspiration (and some helper c
   _Send items to other farmers (saved games or online friends)._
 
 * **[Buy Recipes](http://www.nexusmods.com/stardewvalley/mods/1126)** <small>([source](BuyRecipes))</small>  
-  _Purchase cooking recipes from the SMAPI console_
+  _Buy cooking recipes from the SMAPI console._
