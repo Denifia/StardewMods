@@ -1,6 +1,9 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 1.0.0
+* Fixed potential issue with wrapping item names in quotes
+
 ## 0.3.2
 * Fixed issue where a bought recipe would show up in the weekly list
 * Removed caps sensitivity for commands
