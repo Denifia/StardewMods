@@ -72,6 +72,7 @@
     <None Include="manifest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="nexusmods.md" />
     <None Include="packages.config" />
     <None Include="readme.md" />
     <None Include="release-notes.md" />

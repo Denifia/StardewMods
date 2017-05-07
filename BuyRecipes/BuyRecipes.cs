@@ -81,7 +81,7 @@ namespace Denifia.Stardew.BuyRecipes
         {
             if (args.Length == 1)
             {
-                var recipeName = args[0];
+                var recipeName = args[0].Trim('"');
                 var recipe = _cookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
                 if (recipe == null)
                 {
