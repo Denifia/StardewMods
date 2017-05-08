@@ -127,7 +127,7 @@ namespace Denifia.Stardew.SendItems.Services
             _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
-        private async Task DeleteRemoteMail(Mail mail, string logPrexix)
+        private async Task DeleteRemoteMail(Mail mail, string logPrefix)
         {
             var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
             var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.DELETE);
@@ -135,8 +135,13 @@ namespace Denifia.Stardew.SendItems.Services
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                _mod.Monitor.Log($"{logPrexix}..done", LogLevel.Debug);
+                _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
                 // all good :)
+            }
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
             }
         }
     }

@@ -135,6 +135,11 @@ namespace Denifia.Stardew.SendItems.Services
                             updatedLocalMail.Add(mail);
                             _mod.Monitor.Log($"{logPrefix}...done", LogLevel.Debug);
                         }
+
+                        if (!string.IsNullOrEmpty(response.ErrorMessage))
+                        {
+                            _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                        }
                     }
                 }
 
@@ -205,6 +210,12 @@ namespace Denifia.Stardew.SendItems.Services
                     mail.AddRange(response.Data);
                 }
             }
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+            }
+
             _mod.Monitor.Log($"{logPrefix}...done.", LogLevel.Debug);
             return mail;
         }
