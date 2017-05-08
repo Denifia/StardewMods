@@ -109,11 +109,11 @@ namespace Denifia.Stardew.SendItems.Services
             Repository.Instance.Upsert(futureMail.AsEnumerable());
         }
 
-        private async void MailDelivered(object sender, EventArgs e)
+        private void MailDelivered(object sender, EventArgs e)
         {
             try
             {
-                await DeletePostedRemoteMail();
+                Task.Run(() => DeletePostedRemoteMail());
             }
             catch (Exception ex)
             {
@@ -121,29 +121,25 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private async Task DeletePostedRemoteMail()
+        private void DeletePostedRemoteMail()
         {
             var localMail = Repository.Instance.Fetch<Mail>(x =>
                 x.Status == MailStatus.Posted &&
                 x.FromFarmerId == _farmerService.CurrentFarmer.Id
             );
+
             if (localMail.Any()) return;
 
             var logPrefix = "[CleanPosted] ";
-            _mod.Monitor.Log($"{logPrefix}Clean up posted cloud mail...", LogLevel.Debug);
-            _mod.Monitor.Log($"{logPrefix}.clearing {localMail.Count} posted mail...", LogLevel.Debug);
+            _mod.Monitor.Log($"{logPrefix}Clean up posted mail...", LogLevel.Debug);
             foreach (var mail in localMail)
             {
-                var deleted = await DeleteRemoteMail(mail, logPrefix);
-                if (deleted)
+                try
                 {
-                    try
-                    {
-                        var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
-                    }
-                    catch (Exception ex)
-                    {
-                    }
+                    var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+                }
+                catch (Exception ex)
+                {
                 }
             }
             
