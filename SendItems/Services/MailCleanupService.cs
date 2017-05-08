@@ -37,8 +37,42 @@ namespace Denifia.Stardew.SendItems.Services
         {
             DeleteFutureComposedMail();
             UnreadFutureReadMail();
+            Task.Run(DeleteReadMail);
 
             ModEvents.RaiseOnMailDelivery(this, EventArgs.Empty);
+        }
+
+        private async Task DeleteReadMail()
+        {
+            var localMail = Repository.Instance.Fetch<Mail>(x =>
+                x.Status == MailStatus.Read &&
+                x.ToFarmerId == _farmerService.CurrentFarmer.Id
+            );
+            if (!localMail.Any()) return;
+
+            var logPrefix = "[CleanRead] ";
+            _mod.Monitor.Log($"{logPrefix}Clean up read cloud mail...", LogLevel.Debug);
+            var currentGameDateTime = ModHelper.GetGameDayTime();
+            var readMail = localMail.Where(x => x.ReadInGameDate != null && x.ReadInGameDate <= currentGameDateTime.GetNightBefore()).ToList();
+            if (readMail.Any())
+            {
+                _mod.Monitor.Log($"{logPrefix}.clearing {readMail.Count} read mail...", LogLevel.Debug);
+                foreach (var mail in readMail)
+                {
+                    var deleted = await DeleteRemoteMail(mail, logPrefix);
+                    if (deleted)
+                    {
+                        try
+                        {
+                            var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                }
+            }
+            _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
         private void DeleteFutureComposedMail()
@@ -49,7 +83,7 @@ namespace Denifia.Stardew.SendItems.Services
             );
             if (!localMail.Any()) return;
             var currentGameDateTime = ModHelper.GetGameDayTime();
-            var futureMail = localMail.Where(x => x.CreatedInGameDate > currentGameDateTime).ToList();
+            var futureMail = localMail.Where(x => x.CreatedInGameDate > currentGameDateTime.GetNightBefore()).ToList();
             foreach (var mail in futureMail)
             {
                 Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
@@ -64,7 +98,7 @@ namespace Denifia.Stardew.SendItems.Services
             );
             if (!localMail.Any()) return;
             var currentGameDateTime = ModHelper.GetGameDayTime();
-            var futureMail = localMail.Where(x => x.ReadInGameDate == null || x.ReadInGameDate > currentGameDateTime).ToList();
+            var futureMail = localMail.Where(x => x.ReadInGameDate == null || x.ReadInGameDate > currentGameDateTime.GetNightBefore()).ToList();
             foreach (var mail in futureMail)
             {
                 mail.Status = MailStatus.Delivered;
@@ -75,11 +109,11 @@ namespace Denifia.Stardew.SendItems.Services
             Repository.Instance.Upsert(futureMail.AsEnumerable());
         }
 
-        private async void MailDelivered(object sender, EventArgs e)
+        private void MailDelivered(object sender, EventArgs e)
         {
             try
             {
-                await DeleteDeliveredRemoteMail();
+                Task.Run(() => DeletePostedRemoteMail());
             }
             catch (Exception ex)
             {
@@ -87,25 +121,50 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private async Task DeleteDeliveredRemoteMail()
+        private void DeletePostedRemoteMail()
         {
-            var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
+            var localMail = Repository.Instance.Fetch<Mail>(x =>
+                x.Status == MailStatus.Posted &&
+                x.FromFarmerId == _farmerService.CurrentFarmer.Id
+            );
+
+            if (localMail.Any()) return;
+
+            var logPrefix = "[CleanPosted] ";
+            _mod.Monitor.Log($"{logPrefix}Clean up posted mail...", LogLevel.Debug);
             foreach (var mail in localMail)
             {
-                await DeleteRemoteMail(mail);
+                try
+                {
+                    var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+                }
+                catch (Exception ex)
+                {
+                }
             }
+            
+            _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
-        private async Task DeleteRemoteMail(Mail mail)
+        private async Task<bool> DeleteRemoteMail(Mail mail, string logPrefix)
         {
             var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
             var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.DELETE);
             var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                return false;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                // all good :)
+                _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
+                return true;
             }
+
+            return false;
         }
     }
 }

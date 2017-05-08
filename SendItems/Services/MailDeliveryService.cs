@@ -21,6 +21,7 @@ namespace Denifia.Stardew.SendItems.Services
     /// </summary>
     public class MailDeliveryService : IMailDeliveryService
     {
+        private string logPrefix = "[MailDelivery] ";
         private readonly IMod _mod;
         private readonly IConfigurationService _configService;
         private readonly IFarmerService _farmerService;
@@ -50,6 +51,7 @@ namespace Denifia.Stardew.SendItems.Services
 
         private async Task DeliverPostedMail()
         {
+            _mod.Monitor.Log($"{logPrefix}Delivering mail...", LogLevel.Debug);
             DeliverLocalMail();
             if (!_configService.InLocalOnlyMode())
             {
@@ -57,6 +59,8 @@ namespace Denifia.Stardew.SendItems.Services
                 await DeliverCloudMailLocally();
             }
             DeliverMailToLetterBox();
+            _mod.Monitor.Log($"{logPrefix}.mail delivered, done!", LogLevel.Debug);
+            ModEvents.RaiseMailDelivered(this, EventArgs.Empty);
         }
 
         private void DeliverMailToLetterBox()
@@ -95,48 +99,71 @@ namespace Denifia.Stardew.SendItems.Services
             }
 
             UpdateLocalMail(updatedLocalMail);
-            ModEvents.RaiseMailDelivered(this, EventArgs.Empty);
         }
 
         private async Task DeliverLocalMailToCloud()
         {
+            _mod.Monitor.Log($"{logPrefix}.delivering local mail to cloud...", LogLevel.Debug);
             var localMail = GetLocallyComposedMail();
             var localFarmers = _farmerService.GetFarmers();
             var updatedLocalMail = new List<Mail>();
 
             // Consider: Add an api method that takes a list of MailCreateModels
-            foreach (var mail in localMail)
+            if (localMail.Any())
             {
-                if (!localFarmers.Any(x => x.Id == mail.ToFarmerId))
+                _mod.Monitor.Log($"{logPrefix}..uploading {localMail.Count} mail to cloud...", LogLevel.Debug);
+                foreach (var mail in localMail)
                 {
-                    var createMailModel = new CreateMailModel
+                    if (!localFarmers.Any(x => x.Id == mail.ToFarmerId))
                     {
-                        ToFarmerId = mail.ToFarmerId,
-                        FromFarmerId = mail.FromFarmerId,
-                        Text = mail.Text,
-                        CreatedDate = mail.CreatedDate
-                    };
+                        var createMailModel = new CreateMailModel
+                        {
+                            ToFarmerId = mail.ToFarmerId,
+                            FromFarmerId = mail.FromFarmerId,
+                            Text = mail.Text,
+                            CreatedDate = mail.CreatedDate
+                        };
 
-                    var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
-                    var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
-                    request.AddJsonBody(createMailModel);
-                    var response = await _restClient.ExecuteTaskAsync<bool>(request);
+                        var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
+                        var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.PUT);
+                        request.AddJsonBody(createMailModel);
+                        var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
-                    if (response.Data)
-                    {
-                        mail.Status = MailStatus.Posted;
-                        updatedLocalMail.Add(mail);
+                        if (!string.IsNullOrEmpty(response.ErrorMessage))
+                        {
+                            _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                            continue;
+                        }
+
+                        if (response.Data)
+                        {
+                            mail.Status = MailStatus.Posted;
+                            updatedLocalMail.Add(mail);
+                            _mod.Monitor.Log($"{logPrefix}...done", LogLevel.Debug);
+                        }
                     }
                 }
-            }
 
-            Repository.Instance.Upsert(updatedLocalMail.AsEnumerable());
+                Repository.Instance.Upsert(updatedLocalMail.AsEnumerable());
+            }
+            else
+            {
+                _mod.Monitor.Log($"{logPrefix}..no local mail to deliver to cloud", LogLevel.Debug);
+            }
+            _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
         }
 
         private async Task DeliverCloudMailLocally()
         {
+            _mod.Monitor.Log($"{logPrefix}.deliver cloud mail locally...", LogLevel.Debug);
+
             var remoteMail = await GetRemotelyPostedMailForCurrentFarmerAsync();
-            if (!remoteMail.Any()) return;
+            if (!remoteMail.Any())
+            {
+                _mod.Monitor.Log($"{logPrefix}..no cloud mail for current farmer", LogLevel.Debug);
+                _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
+                return;
+            }
             
             var localFarmers = _farmerService.GetFarmers();
             if (!localFarmers.Any()) return;
@@ -146,12 +173,23 @@ namespace Denifia.Stardew.SendItems.Services
 
             var localMail = Repository.Instance.Fetch<Mail>(x => x.ToFarmerId == localFarmer.Id);
             var mailNotLocal = remoteMail.Where(x => !localMail.Contains(x)).ToList();
-            foreach (var mail in mailNotLocal)
-            {
-                mail.Status = MailStatus.Delivered;
-            }
 
-            Repository.Instance.Upsert(mailNotLocal.AsEnumerable());
+            if (mailNotLocal.Any())
+            {
+                _mod.Monitor.Log($"{logPrefix}..saving {mailNotLocal.Count()} mail...", LogLevel.Debug);
+                foreach (var mail in mailNotLocal)
+                {
+                    mail.Status = MailStatus.Delivered;
+                    _mod.Monitor.Log($"{logPrefix}...done.", LogLevel.Debug);
+                }
+
+                Repository.Instance.Upsert(mailNotLocal.AsEnumerable());
+            }
+            else
+            {
+                _mod.Monitor.Log($"{logPrefix}..cloud mail already delivered locally", LogLevel.Debug);
+            }
+            _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
         }
 
         private async Task<List<Mail>> GetRemotelyPostedMailForCurrentFarmerAsync()
@@ -159,11 +197,20 @@ namespace Denifia.Stardew.SendItems.Services
             if (_farmerService.CurrentFarmer == null) return new List<Mail>();
             var currentFarmerId = _farmerService.CurrentFarmer.Id;
 
+            _mod.Monitor.Log($"{logPrefix}..downloading cloud mail...", LogLevel.Debug);
+
             var urlSegments = new Dictionary<string, string> { { "farmerId", currentFarmerId } };
 			var request = ModHelper.FormStandardRequest("mail/to/{farmerId}", urlSegments, Method.GET);
             var response = await _restClient.ExecuteTaskAsync<List<Mail>>(request);
 
             var mail = new List<Mail>();
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                return mail;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 if (response.Data != null && response.Data.GetType() == typeof(List<Mail>))
@@ -171,7 +218,8 @@ namespace Denifia.Stardew.SendItems.Services
                     mail.AddRange(response.Data);
                 }
             }
-
+            
+            _mod.Monitor.Log($"{logPrefix}...done.", LogLevel.Debug);
             return mail;
         }
 
