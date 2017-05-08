@@ -53,7 +53,7 @@ namespace Denifia.Stardew.SendItems.Services
             var logPrefix = "[CleanRead] ";
             _mod.Monitor.Log($"{logPrefix}Clean up read cloud mail...", LogLevel.Debug);
             var currentGameDateTime = ModHelper.GetGameDayTime();
-            var readMail = localMail.Where(x => x.ReadInGameDate != null && x.ReadInGameDate < currentGameDateTime.GetNightBefore()).ToList();
+            var readMail = localMail.Where(x => x.ReadInGameDate != null && x.ReadInGameDate <= currentGameDateTime.GetNightBefore()).ToList();
             if (readMail.Any())
             {
                 _mod.Monitor.Log($"{logPrefix}.clearing {readMail.Count} read mail...", LogLevel.Debug);
