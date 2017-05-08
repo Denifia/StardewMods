@@ -2,6 +2,7 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Denifia.Stardew.SendItems.Services
@@ -60,6 +61,41 @@ namespace Denifia.Stardew.SendItems.Services
 
         private void HandleCommand(string command, string[] args)
         {
+            var quote = "\"";
+            var newArgs = new List<string>();
+            var temp = string.Empty;
+            foreach (var arg in args)
+            {
+                if (arg.StartsWith(quote) && arg.EndsWith(quote))
+                {
+                    newArgs.Add(arg.Trim(quote.ToArray()));
+                    continue;
+                }
+
+                if (arg.StartsWith(quote))
+                {
+                    temp = arg.Trim(quote.ToArray());
+                    continue;
+                }
+
+                if (arg.EndsWith(quote))
+                {
+                    temp += " " + arg.Trim(quote.ToArray());
+                    newArgs.Add(temp);
+                    temp = string.Empty;
+                    continue;
+                }
+
+                if (temp.Equals(string.Empty))
+                {
+                    newArgs.Add(arg);
+                    continue;
+                }
+
+                temp += " " + arg;
+            }
+            args = newArgs.ToArray();
+
             if (!_savedGameLoaded)
             {
                 _mod.Monitor.Log("Please load up a saved game first, then try again.", LogLevel.Warn);
