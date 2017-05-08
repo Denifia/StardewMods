@@ -2,7 +2,11 @@
 
 # Release notes
 ## 1.0.2
-* Fixed quoting on smapi parameters
+* Fixed quoting issue on smapi parameters
+* Fixed issues with cleaning up old mail
+* Cleanup mail now filters correctly to yesterday
+* Fixed issue where some local mail wasn't being deleted
+* Added debug logging for mail delivery and cleanup
 
 ## 1.0.1-Beta
 * Fixed bug with returning to tile screen
