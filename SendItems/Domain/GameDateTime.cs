@@ -125,9 +125,17 @@ namespace Denifia.Stardew.SendItems.Domain
         {
             return (Compare(left, right) < 0);
         }
+        public static bool operator <=(GameDateTime left, GameDateTime right)
+        {
+            return (Compare(left, right) <= 0);
+        }
         public static bool operator >(GameDateTime left, GameDateTime right)
         {
             return (Compare(left, right) > 0);
+        }
+        public static bool operator >=(GameDateTime left, GameDateTime right)
+        {
+            return (Compare(left, right) >= 0);
         }
     }
 }
