@@ -88,6 +88,9 @@
     <Compile Include="Services\VersionCheckService.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="config.online.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

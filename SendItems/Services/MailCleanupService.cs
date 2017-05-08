@@ -59,7 +59,17 @@ namespace Denifia.Stardew.SendItems.Services
                 _mod.Monitor.Log($"{logPrefix}.clearing {readMail.Count} read mail...", LogLevel.Debug);
                 foreach (var mail in readMail)
                 {
-                    await DeleteRemoteMail(mail, logPrefix);
+                    var deleted = await DeleteRemoteMail(mail, logPrefix);
+                    if (deleted)
+                    {
+                        try
+                        {
+                            var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
                 }
             }
             _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
@@ -103,7 +113,7 @@ namespace Denifia.Stardew.SendItems.Services
         {
             try
             {
-                await DeleteDeliveredRemoteMail();
+                await DeletePostedRemoteMail();
             }
             catch (Exception ex)
             {
@@ -111,38 +121,54 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private async Task DeleteDeliveredRemoteMail()
+        private async Task DeletePostedRemoteMail()
         {
-            var logPrefix = "[CleanDelivered] ";
-            _mod.Monitor.Log($"{logPrefix}Clean up delivered cloud mail...", LogLevel.Debug);
-            var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
-            if (localMail.Any())
+            var localMail = Repository.Instance.Fetch<Mail>(x =>
+                x.Status == MailStatus.Posted &&
+                x.FromFarmerId == _farmerService.CurrentFarmer.Id
+            );
+            if (localMail.Any()) return;
+
+            var logPrefix = "[CleanPosted] ";
+            _mod.Monitor.Log($"{logPrefix}Clean up posted cloud mail...", LogLevel.Debug);
+            _mod.Monitor.Log($"{logPrefix}.clearing {localMail.Count} posted mail...", LogLevel.Debug);
+            foreach (var mail in localMail)
             {
-                _mod.Monitor.Log($"{logPrefix}.clearing {localMail.Count} delivered mail...", LogLevel.Debug);
-                foreach (var mail in localMail)
+                var deleted = await DeleteRemoteMail(mail, logPrefix);
+                if (deleted)
                 {
-                    await DeleteRemoteMail(mail, logPrefix);
+                    try
+                    {
+                        var i = Repository.Instance.Delete<Mail>(x => x.Id == mail.Id);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
             }
+            
             _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
-        private async Task DeleteRemoteMail(Mail mail, string logPrefix)
+        private async Task<bool> DeleteRemoteMail(Mail mail, string logPrefix)
         {
             var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
             var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.DELETE);
             var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
-                // all good :)
-            }
-
             if (!string.IsNullOrEmpty(response.ErrorMessage))
             {
                 _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                return false;
             }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                _mod.Monitor.Log($"{logPrefix}..done", LogLevel.Debug);
+                return true;
+            }
+
+            return false;
         }
     }
 }

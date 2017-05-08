@@ -129,16 +129,17 @@ namespace Denifia.Stardew.SendItems.Services
                         request.AddJsonBody(createMailModel);
                         var response = await _restClient.ExecuteTaskAsync<bool>(request);
 
+                        if (!string.IsNullOrEmpty(response.ErrorMessage))
+                        {
+                            _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                            continue;
+                        }
+
                         if (response.Data)
                         {
                             mail.Status = MailStatus.Posted;
                             updatedLocalMail.Add(mail);
                             _mod.Monitor.Log($"{logPrefix}...done", LogLevel.Debug);
-                        }
-
-                        if (!string.IsNullOrEmpty(response.ErrorMessage))
-                        {
-                            _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
                         }
                     }
                 }
@@ -203,6 +204,13 @@ namespace Denifia.Stardew.SendItems.Services
             var response = await _restClient.ExecuteTaskAsync<List<Mail>>(request);
 
             var mail = new List<Mail>();
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
+                return mail;
+            }
+
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 if (response.Data != null && response.Data.GetType() == typeof(List<Mail>))
@@ -210,12 +218,7 @@ namespace Denifia.Stardew.SendItems.Services
                     mail.AddRange(response.Data);
                 }
             }
-
-            if (!string.IsNullOrEmpty(response.ErrorMessage))
-            {
-                _mod.Monitor.Log($"{logPrefix}{response.ErrorMessage}", LogLevel.Warn);
-            }
-
+            
             _mod.Monitor.Log($"{logPrefix}...done.", LogLevel.Debug);
             return mail;
         }
