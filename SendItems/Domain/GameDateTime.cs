@@ -13,6 +13,8 @@ namespace Denifia.Stardew.SendItems.Domain
         public int DayOfMonth { get; set; }
         public int Season { get; set; }
         public int Year { get; set; }
+        private int FirstTimeOfDay = 600;
+        private int LastTimeOfDay = 2600;
 
         public GameDateTime()
         {
@@ -25,6 +27,19 @@ namespace Denifia.Stardew.SendItems.Domain
             DayOfMonth = dayOfMonth;
             Season = SeasonAsInt(currentSeason);
             Year = year;
+        }
+
+        private GameDateTime(int timeOfDay, int dayOfMonth, int currentSeason, int year)
+        {
+            TimeOfDay = timeOfDay;
+            DayOfMonth = dayOfMonth;
+            Season = currentSeason;
+            Year = year;
+        }
+
+        public GameDateTime NightBefore()
+        {
+            return new GameDateTime(LastTimeOfDay, DayOfMonth - 1, Season, Year);
         }
 
         private int SeasonAsInt(string season)
