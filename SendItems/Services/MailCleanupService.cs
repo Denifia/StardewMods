@@ -89,11 +89,17 @@ namespace Denifia.Stardew.SendItems.Services
 
         private async Task DeleteDeliveredRemoteMail()
         {
+            _mod.Monitor.Log($"Clean up cloud mail...", LogLevel.Debug);
             var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
-            foreach (var mail in localMail)
+            if (localMail.Any())
             {
-                await DeleteRemoteMail(mail);
+                _mod.Monitor.Log($".clearing {localMail.Count} delivered mail from cloud...", LogLevel.Debug);
+                foreach (var mail in localMail)
+                {
+                    await DeleteRemoteMail(mail);
+                }
             }
+            _mod.Monitor.Log($".done", LogLevel.Debug);
         }
 
         private async Task DeleteRemoteMail(Mail mail)
@@ -104,6 +110,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
+                _mod.Monitor.Log($"..done", LogLevel.Debug);
                 // all good :)
             }
         }
