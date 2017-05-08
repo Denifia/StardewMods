@@ -1,6 +1,6 @@
 ﻿Buy cooking recipes from the SMAPI console!
 
-If I get 10 or more endorsements, I'll development the ability to buy recipes from a magazine rack in Pierre's shop.
+Now that this mod has 10+ endorsements, I'll schedule in development to allow you to buy recipes from a magazine rack in Pierre's shop.
 
 Each week on Sunday a new set of up to five cooking recipes will be available to buy. These will be recipes that you do not already own. Prices are listed next to each item.
 
