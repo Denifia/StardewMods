@@ -37,8 +37,32 @@ namespace Denifia.Stardew.SendItems.Services
         {
             DeleteFutureComposedMail();
             UnreadFutureReadMail();
+            Task.Run(DeleteReadMail);
 
             ModEvents.RaiseOnMailDelivery(this, EventArgs.Empty);
+        }
+
+        private async Task DeleteReadMail()
+        {
+            var localMail = Repository.Instance.Fetch<Mail>(x =>
+                x.Status == MailStatus.Read &&
+                x.ToFarmerId == _farmerService.CurrentFarmer.Id
+            );
+            if (!localMail.Any()) return;
+
+            var logPrefix = "[CleanRead] ";
+            _mod.Monitor.Log($"{logPrefix}Clean up read cloud mail...", LogLevel.Debug);
+            var currentGameDateTime = ModHelper.GetGameDayTime();
+            var readMail = localMail.Where(x => x.ReadInGameDate != null && x.ReadInGameDate < currentGameDateTime).ToList();
+            if (readMail.Any())
+            {
+                _mod.Monitor.Log($"{logPrefix}.clearing {readMail.Count} read mail...", LogLevel.Debug);
+                foreach (var mail in readMail)
+                {
+                    await DeleteRemoteMail(mail, logPrefix);
+                }
+            }
+            _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
         private void DeleteFutureComposedMail()
@@ -89,20 +113,21 @@ namespace Denifia.Stardew.SendItems.Services
 
         private async Task DeleteDeliveredRemoteMail()
         {
-            _mod.Monitor.Log($"Clean up cloud mail...", LogLevel.Debug);
+            var logPrefix = "[CleanDelivered] ";
+            _mod.Monitor.Log($"{logPrefix}Clean up delivered cloud mail...", LogLevel.Debug);
             var localMail = Repository.Instance.Fetch<Mail>(x => x.Status == MailStatus.Delivered);
             if (localMail.Any())
             {
-                _mod.Monitor.Log($".clearing {localMail.Count} delivered mail from cloud...", LogLevel.Debug);
+                _mod.Monitor.Log($"{logPrefix}.clearing {localMail.Count} delivered mail...", LogLevel.Debug);
                 foreach (var mail in localMail)
                 {
-                    await DeleteRemoteMail(mail);
+                    await DeleteRemoteMail(mail, logPrefix);
                 }
             }
-            _mod.Monitor.Log($".done", LogLevel.Debug);
+            _mod.Monitor.Log($"{logPrefix}.done", LogLevel.Debug);
         }
 
-        private async Task DeleteRemoteMail(Mail mail)
+        private async Task DeleteRemoteMail(Mail mail, string logPrexix)
         {
             var urlSegments = new Dictionary<string, string> { { "mailId", mail.Id.ToString() } };
             var request = ModHelper.FormStandardRequest("mail/{mailId}", urlSegments, Method.DELETE);
@@ -110,7 +135,7 @@ namespace Denifia.Stardew.SendItems.Services
 
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                _mod.Monitor.Log($"..done", LogLevel.Debug);
+                _mod.Monitor.Log($"{logPrexix}..done", LogLevel.Debug);
                 // all good :)
             }
         }
