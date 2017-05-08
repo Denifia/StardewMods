@@ -1,6 +1,9 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 1.0.2
+* Fixed quoting on smapi parameters
+
 ## 1.0.1-Beta
 * Fixed bug with returning to tile screen
 * Fixed bug with friend command extra spaces (issue #27)
@@ -21,7 +24,7 @@
 * Fixed bug where player would see messages they sent to others
 * Fixed bug where sending a letter with no item would crash the game
 
-## 0.1.3-Beta
+## 0.1.3
 * Sending items to your other farms (saved games) works just fine. If you add your online friends to the json file, you can send to them too but right now that's a bit manual.
 * Added UI notification when a letter is sent
 * Filtered what you can send in a letter
