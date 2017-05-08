@@ -37,7 +37,7 @@ namespace Denifia.Stardew.SendItems.Domain
             Year = year;
         }
 
-        public GameDateTime NightBefore()
+        public GameDateTime GetNightBefore()
         {
             return new GameDateTime(LastTimeOfDay, DayOfMonth - 1, Season, Year);
         }
