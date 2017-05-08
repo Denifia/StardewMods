@@ -57,6 +57,7 @@
     <Compile Include="Domain\IRecipeAquisitionConditions.cs" />
     <Compile Include="Domain\LevelBasedRecipeAquisition.cs" />
     <Compile Include="Domain\SkillBasedRecipeAquisition.cs" />
+    <Compile Include="Framework\AquisitionFactory.cs" />
     <Compile Include="Framework\ModConstants.cs" />
     <Compile Include="Framework\ModHelper.cs" />
     <Compile Include="Framework\UpdateHelper.cs" />
@@ -71,6 +72,7 @@
     <None Include="manifest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="nexusmods.md" />
     <None Include="packages.config" />
     <None Include="readme.md" />
     <None Include="release-notes.md" />

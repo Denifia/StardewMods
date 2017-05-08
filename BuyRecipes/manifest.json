@@ -2,10 +2,10 @@
   "Name": "Buy Recipes",
   "Author": "Denifia",
   "Version": {
-    "MajorVersion": 0,
-    "MinorVersion": 3,
-    "PatchVersion": 2,
-    "Build": "beta"
+    "MajorVersion": 1,
+    "MinorVersion": 0,
+    "PatchVersion": 0,
+    "Build": null
   },
   "MinimumApiVersion": "1.10",
   "Description": "Buy recipes you don't know from the SMAPI console. Coming soon to a magazine rack in Pierre's shop.",
