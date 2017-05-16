@@ -86,17 +86,20 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets'))" />
   </Target>
-  <Target Name="AfterBuild" DependsOnTargets="AfterBuildDebug;AfterBuildRelease"/>
-  <Target Name="AfterBuildDebug" Condition=" '$(Configuration)' == 'Debug' ">
+  <Target Name="AfterBuild">
+    <CallTarget Targets="DeployMod" />
+    <CallTarget Targets="PackageMod" />
+  </Target>
+  <Target Name="DeployMod">
     <PropertyGroup>
       <ModPath>$(GamePath)\Mods\$(ModName)</ModPath>
     </PropertyGroup>
-        <ItemGroup>
+    <ItemGroup>
       <ReleaseFiles Include="bin\Debug\**\*.*"/>
     </ItemGroup>
     <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(ModPath)" />
   </Target>
-  <Target Name="AfterBuildRelease" Condition=" '$(Configuration)' == 'Release' ">
+  <Target Name="PackageMod" Condition=" '$(Configuration)' == 'Release' ">
     <PropertyGroup>
       <PackagePath>bin\Packages\$(ModName)-$(Version)</PackagePath>
     </PropertyGroup>
