@@ -14,6 +14,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <ModName>BuyRecipes</ModName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -86,14 +87,28 @@
     <Error Condition="!Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets'))" />
   </Target>
   <Target Name="AfterBuild">
+    <CallTarget Targets="DeployMod" />
+    <CallTarget Targets="PackageMod" />
+  </Target>
+  <Target Name="DeployMod">
     <PropertyGroup>
-      <ModPath>$(GamePath)\Mods\BuyRecipes</ModPath>
+      <ModPath>$(GamePath)\Mods\$(ModName)</ModPath>
     </PropertyGroup>
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />
-    <Copy SourceFiles="$(ProjectDir)manifest.json" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\Newtonsoft.Json.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\config.json" DestinationFolder="$(ModPath)" />
+    <ItemGroup>
+      <ReleaseFiles Include="bin\Debug\**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(ModPath)" />
+  </Target>
+  <Target Name="PackageMod" Condition=" '$(Configuration)' == 'Release' ">
+    <PropertyGroup>
+      <PackagePath>bin\Packages\$(ModName)-$(Version)</PackagePath>
+    </PropertyGroup>
+    <MakeDir Directories="$(PackagePath)"/>  
+    <ItemGroup>
+      <ReleaseFiles Include="bin\Release\**\*.*"/>
+      <PackageFiles Include="$(PackagePath)\**\*.*"/>
+    </ItemGroup>
+    <Delete Files="@(PackageFiles)" />
+    <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(PackagePath)" />
   </Target>
 </Project>

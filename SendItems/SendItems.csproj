@@ -14,6 +14,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <ModName>SendItems</ModName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,8 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.5.0\lib\net45\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.6.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.0\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.3.1.0\lib\net35\LiteDB.dll</HintPath>
@@ -110,19 +111,27 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <PropertyGroup>
-      <ModPath>$(GamePath)\Mods\SendItems</ModPath>
-    </PropertyGroup>
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\RestSharp.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\Autofac.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\Newtonsoft.Json.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\LiteDB.dll" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\config.json" DestinationFolder="$(ModPath)" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).pdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).pdb')" />
-    <Copy SourceFiles="$(TargetDir)\$(TargetName).dll.mdb" DestinationFolder="$(ModPath)" Condition="Exists('$(TargetDir)\$(TargetName).dll.mdb')" />
-    <Copy SourceFiles="$(ProjectDir)manifest.json" DestinationFolder="$(ModPath)" />
-  </Target>
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
+  <Target Name="AfterBuild" DependsOnTargets="AfterBuildDebug;AfterBuildRelease" />
+  <Target Name="AfterBuildDebug" Condition=" '$(Configuration)' == 'Debug' ">
+    <PropertyGroup>
+      <ModPath>$(GamePath)\Mods\$(ModName)</ModPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <ReleaseFiles Include="bin\Debug\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(ModPath)" />
+  </Target>
+  <Target Name="AfterBuildRelease" Condition=" '$(Configuration)' == 'Release' ">
+    <PropertyGroup>
+      <PackagePath>bin\Packages\$(ModName)-$(Version)</PackagePath>
+    </PropertyGroup>
+    <MakeDir Directories="$(PackagePath)" />
+    <ItemGroup>
+      <ReleaseFiles Include="bin\Release\**\*.*" />
+      <PackageFiles Include="$(PackagePath)\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(PackageFiles)" />
+    <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(PackagePath)" />
+  </Target>
 </Project>
