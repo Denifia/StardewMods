@@ -16,13 +16,16 @@ namespace Denifia.Stardew.BuyRecipes
     {
         private bool _savedGameLoaded = false;
         private List<CookingRecipe> _cookingRecipes;
-        private List<CookingRecipe> _thisWeeksRecipes;
+        private List<CookingRecipe> _thisWeeksRecipes = new List<CookingRecipe>();
         private int _seed;
-        
+        private ModConfig _config;
+
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
         public override void Entry(IModHelper helper)
         {
+            _config = helper.ReadConfig<ModConfig>();
+
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
             TimeEvents.DayOfMonthChanged += TimeEvents_DayOfMonthChanged;
@@ -143,31 +146,36 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void GenerateWeeklyRecipes()
         {
-            var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
-            var startDayOfWeek = (((gameDateTime.DayOfMonth / 7) + 1) * 7) - 6;
-            var seed = int.Parse($"{startDayOfWeek}{gameDateTime.Season}{gameDateTime.Year}");
-            var random = new Random(seed);
-
-            if (_seed == seed) return;
-            _seed = seed;
-
-            _thisWeeksRecipes = new List<CookingRecipe>();
-            var maxNumberOfRecipesPerWeek = 5;
-            var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
-            var unknownRecipesCount = unknownRecipes.Count;
-
-            if (unknownRecipesCount == 0)
+            // Check if it's time for a new weekly week
             {
-                ShowNoRecipes();
-                return;
+                var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
+                var startDayOfWeek = (((gameDateTime.DayOfMonth / 7) + 1) * 7) - 6;
+                var seed = int.Parse($"{startDayOfWeek}{gameDateTime.Season}{gameDateTime.Year}");
+                if (_seed == seed) return;
+                _seed = seed;
             }
 
-            for (int i = 0; i < maxNumberOfRecipesPerWeek; i++)
+            var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
+
+            // Check if there is any unknown recipes
             {
-                var recipe = unknownRecipes[random.Next(unknownRecipesCount)];
-                if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipe.Name)))
+                if (unknownRecipes.Count == 0)
                 {
-                    _thisWeeksRecipes.Add(recipe);
+                    ShowNoRecipes();
+                    return;
+                }
+            }
+
+            // Find up to 5 random recipes
+            {
+                var random = new Random(_seed);
+                for (int i = 0; i < _config.MaxNumberOfRecipesPerWeek; i++)
+                {
+                    var recipe = unknownRecipes[random.Next(unknownRecipes.Count)];
+                    if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipe.Name)))
+                    {
+                        _thisWeeksRecipes.Add(recipe);
+                    }
                 }
             }
 
