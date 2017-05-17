@@ -162,7 +162,7 @@ namespace Denifia.Stardew.BuyRecipes
         {
             // Check if it's time for a new weekly week
             {
-                var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
+                var gameDateTime = GameDateTime.Create(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
                 var startDayOfWeek = (((gameDateTime.DayOfMonth / 7) + 1) * 7) - 6;
                 var seed = int.Parse($"{startDayOfWeek}{gameDateTime.Season}{gameDateTime.Year}");
                 if (_seed == seed) return;

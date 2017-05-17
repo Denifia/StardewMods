@@ -3,7 +3,7 @@
     /// <summary>
     /// Immutable Game Item with a quantity.
     /// </summary>
-    public class GameItemWithQuantity : GameItem
+    internal class GameItemWithQuantity : GameItem
     {
         private int _quantity;
         public int Quantity => _quantity;

@@ -4,39 +4,23 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.BuyRecipes.Framework
 {
-    public static class ModHelper
+    internal static class ModHelper
     {
-        private static List<GameItem> _gameObjects;
-        public static List<GameItem> GameObjects
-        {
-            get
-            {
-                if (_gameObjects == null)
-                {
-                    DeserializeGameObjects();
-                }
-                return _gameObjects;
-            }
-        }
+        private static List<GameItem> _gameObjects = new List<GameItem>();
+        public static List<GameItem> GameObjects => _gameObjects ?? (_gameObjects = DeserializeGameObjects().ToList());
 
-        private static void DeserializeGameObjects()
+        private static IEnumerable<GameItem> DeserializeGameObjects()
         {
-            _gameObjects = new List<GameItem>();
             foreach (var item in Game1.objectInformation)
             {
-                _gameObjects.Add(new GameItem(id: item.Key, name: item.Value.Split('/')[4]));
+                yield return new GameItem(id: item.Key, name: item.Value.Split('/')[4]);
             }
         }
 
-        public static string GetMoneyAsString(int money)
-        {
-            return $"G{money.ToString("#,##0")}";
-        }
+        public static string GetMoneyAsString(int money) => $"G{money.ToString("#,##0")}";
 
         public static void HandleError(IMod mod, Exception ex, string verb)
         {

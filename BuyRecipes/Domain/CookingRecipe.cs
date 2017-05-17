@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
-    public class CookingRecipe
+    internal class CookingRecipe
     {
         private string _name;
         public string Name => _name;

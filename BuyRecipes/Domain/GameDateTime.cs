@@ -7,28 +7,30 @@ using System.Threading.Tasks;
 
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
-    public class GameDateTime : IComparable<GameDateTime>
+    internal class GameDateTime : IComparable<GameDateTime>
     {
-
         public int TimeOfDay { get; set; }
         public int DayOfMonth { get; set; }
         public int Season { get; set; }
         public int Year { get; set; }
 
-        public GameDateTime()
+        public static GameDateTime Create(int timeOfDay, int dayOfMonth, string currentSeason, int year)
+        {
+            return new GameDateTime()
+            {
+                TimeOfDay = timeOfDay,
+                DayOfMonth = dayOfMonth,
+                Season = SeasonAsInt(currentSeason),
+                Year = year
+            };
+        }
+
+        private GameDateTime()
         {
 
         }
 
-        public GameDateTime(int timeOfDay, int dayOfMonth, string currentSeason, int year)
-        {
-            TimeOfDay = timeOfDay;
-            DayOfMonth = dayOfMonth;
-            Season = SeasonAsInt(currentSeason);
-            Year = year;
-        }
-
-        private int SeasonAsInt(string season)
+        private static int SeasonAsInt(string season)
         {
             var seasonInt = 0;
             switch (season)

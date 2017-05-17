@@ -3,7 +3,7 @@
     /// <summary>
     /// Immutable Game Item.
     /// </summary>
-    public class GameItem
+    internal class GameItem
     {
         private int _id;
         public int Id => _id;
