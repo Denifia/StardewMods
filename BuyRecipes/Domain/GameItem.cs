@@ -1,8 +1,20 @@
 ﻿namespace Denifia.Stardew.BuyRecipes.Domain
 {
+    /// <summary>
+    /// Immutable Game Item.
+    /// </summary>
     public class GameItem
     {
-        public string Name { get; set; }
-        public int Id { get; set; }
+        private int _id;
+        public int Id => _id;
+
+        private string _name;
+        public string Name => _name;
+
+        public GameItem(int id, string name)
+        {
+            _id = id;
+            _name = name;
+        }
     }
 }

@@ -57,7 +57,7 @@
     <Compile Include="Framework\RecipeAcquisition\IRecipeAquisition.cs" />
     <Compile Include="Framework\RecipeAcquisition\LevelBasedRecipeAcquisition.cs" />
     <Compile Include="Framework\RecipeAcquisition\SkillBasedRecipeAcquisition.cs" />
-    <Compile Include="Framework\AquisitionFactory.cs" />
+    <Compile Include="Framework\AcquisitionFactory.cs" />
     <Compile Include="Framework\ModConstants.cs" />
     <Compile Include="Framework\ModHelper.cs" />
     <Compile Include="Framework\UpdateHelper.cs" />

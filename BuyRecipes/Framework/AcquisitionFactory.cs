@@ -5,17 +5,17 @@ using System.Linq;
 
 namespace Denifia.Stardew.BuyRecipes.Framework
 {
-    public class AquisitionFactory
+    public class AcquisitionFactory
     {
         /*********
         ** Singleton
         *********/
      
-        private static AquisitionFactory _instance;
-        private AquisitionFactory() { }
-        public static AquisitionFactory Instance
+        private static AcquisitionFactory _instance;
+        private AcquisitionFactory() { }
+        public static AcquisitionFactory Instance
         {
-            get => _instance ?? (_instance = new AquisitionFactory());
+            get => _instance ?? (_instance = new AcquisitionFactory());
         }
 
 
@@ -23,7 +23,7 @@ namespace Denifia.Stardew.BuyRecipes.Framework
         ** Properties
         *********/
 
-        /// <summary>Collection of ways that recipes can be aquired.</summary>
+        /// <summary>Collection of ways that recipes can be acquired.</summary>
         private readonly List<IRecipeAcquisition> _conditions = new List<IRecipeAcquisition>()
         {
             new FriendBasedRecipeAcquisition(),

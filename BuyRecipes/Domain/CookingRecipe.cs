@@ -33,7 +33,7 @@ namespace Denifia.Stardew.BuyRecipes.Domain
                 _name = name,
                 _ingredients = DeserializeIngredients(ingredientsData),
                 _resultingItem = DeserializeResultingItem(resultingItemData),
-                _acquisitionConditions = AquisitionFactory.Instance.GetAquisitionImplementation(acquisitionData)
+                _acquisitionConditions = AcquisitionFactory.Instance.GetAquisitionImplementation(acquisitionData)
             };
         }
 
@@ -72,19 +72,14 @@ namespace Denifia.Stardew.BuyRecipes.Domain
 
         private static GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
         {
-            var itemWithQuantity = new GameItemWithQuantity
-            {
-                Id = int.Parse(itemId),
-                Quantity = int.Parse(quantity),
-            };
+            if (!int.TryParse(itemId, out int id)) return null;
+            var gameItem = ModHelper.GameObjects.FirstOrDefault(x => x.Id == id);
+            if (gameItem == null) return null;
 
-            var gameItem = ModHelper.GameObjects.FirstOrDefault(x => x.Id == itemWithQuantity.Id);
-            if (gameItem != null)
-            {
-                itemWithQuantity.Name = gameItem.Name;
-            }
-
-            return itemWithQuantity;
+            return new GameItemWithQuantity(
+                id: int.Parse(itemId),
+                name: gameItem.Name,
+                quantity: int.Parse(quantity));
         }
     }
 }

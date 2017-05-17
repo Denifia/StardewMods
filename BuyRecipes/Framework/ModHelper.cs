@@ -29,11 +29,7 @@ namespace Denifia.Stardew.BuyRecipes.Framework
             _gameObjects = new List<GameItem>();
             foreach (var item in Game1.objectInformation)
             {
-                _gameObjects.Add(new GameItem
-                {
-                    Id = item.Key,
-                    Name = item.Value.Split('/')[4]
-                });
+                _gameObjects.Add(new GameItem(id: item.Key, name: item.Value.Split('/')[4]));
             }
         }
 
