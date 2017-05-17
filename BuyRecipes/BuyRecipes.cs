@@ -15,8 +15,8 @@ namespace Denifia.Stardew.BuyRecipes
     public class BuyRecipes : Mod
     {
         private bool _savedGameLoaded = false;
-        private List<CookingRecipe> _cookingRecipes;
-        private List<CookingRecipe> _thisWeeksRecipes = new List<CookingRecipe>();
+        private List<CookingRecipe> _unknownCookingRecipes;
+        private List<CookingRecipe> _thisWeeksRecipes;
         private int _seed;
         private ModConfig _config;
 
@@ -62,21 +62,13 @@ namespace Denifia.Stardew.BuyRecipes
                     BuyRecipe(args);
                     break;
                 case "showrecipes":
-                    ShowWeeklyRecipes();
+                    TryShowWeeklyRecipes();
                     break;
                 case "buyallrecipes":
-                    BuyAllRecipes();
+                    _unknownCookingRecipes.ForEach(recipe => BuyRecipe(new string[] { recipe.Name }, false));
                     break;
                 default:
                     throw new NotImplementedException($"Send Items received unknown command '{command}'.");
-            }
-        }
-
-        private void BuyAllRecipes()
-        {
-            foreach (var recipe in _cookingRecipes.Where(x => !x.IsKnown).ToList())
-            {
-                BuyRecipe(new string[] { recipe.Name }, false);
             }
         }
 
@@ -85,7 +77,7 @@ namespace Denifia.Stardew.BuyRecipes
             if (args.Length == 1)
             {
                 var recipeName = args[0].Trim('"');
-                var recipe = _cookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
+                var recipe = _unknownCookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
                 if (recipe == null)
                 {
                     Monitor.Log("Recipe not found", LogLevel.Info);
@@ -128,21 +120,18 @@ namespace Denifia.Stardew.BuyRecipes
         private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
         {
             _savedGameLoaded = false;
-            _cookingRecipes = null;
+            _unknownCookingRecipes = null;
             _thisWeeksRecipes = null;
         }
         
         private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             _savedGameLoaded = true;
-            DiscoverRecipes();
+            FindUnknownRecipes();
             GenerateWeeklyRecipes();
         }
 
-        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e)
-        {
-            GenerateWeeklyRecipes();
-        }
+        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e) => GenerateWeeklyRecipes();
 
         private void GenerateWeeklyRecipes()
         {
@@ -155,68 +144,58 @@ namespace Denifia.Stardew.BuyRecipes
                 _seed = seed;
             }
 
-            var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
+            // Reset the current recipe list
+            _thisWeeksRecipes = new List<CookingRecipe>();
 
             // Check if there is any unknown recipes
-            {
-                if (unknownRecipes.Count == 0)
-                {
-                    ShowNoRecipes();
-                    return;
-                }
-            }
+            if (TryShowNoRecipes()) return;
 
             // Find up to 5 random recipes
             {
                 var random = new Random(_seed);
                 for (int i = 0; i < _config.MaxNumberOfRecipesPerWeek; i++)
                 {
-                    var recipe = unknownRecipes[random.Next(unknownRecipes.Count)];
+                    var recipe = _unknownCookingRecipes[random.Next(_unknownCookingRecipes.Count)];
+
+                    // If recipe is not already in the list, add it
                     if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipe.Name)))
-                    {
                         _thisWeeksRecipes.Add(recipe);
-                    }
                 }
             }
 
-            ShowWeeklyRecipes();
+            TryShowWeeklyRecipes();
         }
 
-        private void ShowNoRecipes()
+        private bool TryShowNoRecipes()
         {
+            if (_thisWeeksRecipes.Any()) return true;
+
             Monitor.Log($"No recipes availabe. You know them all.", LogLevel.Info);
+            return false;
         }
 
-        private void ShowWeeklyRecipes()
+        /// <summary>Shows the weekly recipes or a No Recipes message.</summary>
+        private bool TryShowWeeklyRecipes()
         {
-            if (_thisWeeksRecipes.Count == 0)
-            {
-                ShowNoRecipes();
-                return;
-            }
+            // Check if there is any unknown recipes 
+            if (TryShowNoRecipes()) return false;
 
+            // Print out the weekly recipes to the console
             Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
-            foreach (var item in _thisWeeksRecipes)
-            {
-                Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info);
-            }
+            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
+            return true;
         }
 
-        private void DiscoverRecipes()
+        /// <summary>Find all the unknown recipes for the player.</summary>
+        private void FindUnknownRecipes()
         {
-            var knownRecipes = Game1.player.cookingRecipes.Keys;
-            _cookingRecipes = new List<CookingRecipe>();
+            _unknownCookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
                 var cookingRecipe = new CookingRecipe(recipe.Key, recipe.Value);
                 if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
-                {
-                    cookingRecipe.IsKnown = true;
-                }
-                _cookingRecipes.Add(cookingRecipe);
+                    _unknownCookingRecipes.Add(cookingRecipe);
             }
-
-            var unknownRecipeCount = _cookingRecipes.Where(x => !x.IsKnown).Count();
         }
 
         private void LogUsageError(string error, string command)
