@@ -19,9 +19,17 @@ namespace Denifia.Stardew.BuyRecipes
         private List<CookingRecipe> _thisWeeksRecipes;
         private int _seed;
         private ModConfig _config;
+        private static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
-        public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
+        /*********
+        ** Public methods
+        *********/
+
+        /// <summary>
+        /// Entry point for the mod.
+        /// </summary>
+        /// <param name="helper">The SMAPI injected mod helper.</param>
         public override void Entry(IModHelper helper)
         {
             _config = helper.ReadConfig<ModConfig>();
@@ -40,11 +48,40 @@ namespace Denifia.Stardew.BuyRecipes
             helper.ConsoleCommands
                 .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
                 .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
-                //.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
+
+#if (DEBUG)
+            helper.ConsoleCommands.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
+#endif
+
 
             // Instance the Version Check Service
             new VersionCheckService(this);
         }
+
+        /*********
+        ** Event methods
+        *********/
+
+        private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
+        {
+            _savedGameLoaded = false;
+            _unknownCookingRecipes = null;
+            _thisWeeksRecipes = null;
+        }
+        
+        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        {
+            _savedGameLoaded = true;
+            FindUnknownRecipes();
+            TryGenerateWeeklyRecipes();
+        }
+
+        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e) => TryGenerateWeeklyRecipes();
+
+
+        /*********
+        ** Private methods
+        *********/
 
         private void HandleCommand(string command, string[] args)
         {
@@ -117,23 +154,8 @@ namespace Denifia.Stardew.BuyRecipes
             }
         }
 
-        private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
-        {
-            _savedGameLoaded = false;
-            _unknownCookingRecipes = null;
-            _thisWeeksRecipes = null;
-        }
-        
-        private void SaveEvents_AfterLoad(object sender, EventArgs e)
-        {
-            _savedGameLoaded = true;
-            FindUnknownRecipes();
-            GenerateWeeklyRecipes();
-        }
-
-        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e) => GenerateWeeklyRecipes();
-
-        private void GenerateWeeklyRecipes()
+        /// <summary>Generate a new set of weekly recipes if it's a new week.</summary>
+        private void TryGenerateWeeklyRecipes()
         {
             // Check if it's time for a new weekly week
             {
@@ -148,7 +170,7 @@ namespace Denifia.Stardew.BuyRecipes
             _thisWeeksRecipes = new List<CookingRecipe>();
 
             // Check if there is any unknown recipes
-            if (TryShowNoRecipes()) return;
+            if (!TryShowNoRecipes()) return;
 
             // Find up to 5 random recipes
             {
@@ -166,26 +188,6 @@ namespace Denifia.Stardew.BuyRecipes
             TryShowWeeklyRecipes();
         }
 
-        private bool TryShowNoRecipes()
-        {
-            if (_thisWeeksRecipes.Any()) return true;
-
-            Monitor.Log($"No recipes availabe. You know them all.", LogLevel.Info);
-            return false;
-        }
-
-        /// <summary>Shows the weekly recipes or a No Recipes message.</summary>
-        private bool TryShowWeeklyRecipes()
-        {
-            // Check if there is any unknown recipes 
-            if (TryShowNoRecipes()) return false;
-
-            // Print out the weekly recipes to the console
-            Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
-            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
-            return true;
-        }
-
         /// <summary>Find all the unknown recipes for the player.</summary>
         private void FindUnknownRecipes()
         {
@@ -196,6 +198,29 @@ namespace Denifia.Stardew.BuyRecipes
                 if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
                     _unknownCookingRecipes.Add(cookingRecipe);
             }
+        }
+
+        /// <summary>Writes the weekly recipes or a No Recipes message to the console.</summary>
+        /// <returns>True if the weekly recipes are written to the console.</returns>
+        private bool TryShowWeeklyRecipes()
+        {
+            // Check if there is any unknown recipes 
+            if (!TryShowNoRecipes()) return false;
+
+            // Print out the weekly recipes to the console
+            Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
+            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
+            return true;
+        }
+
+        /// <summary>Writes a No Recipes message to the console if no recipes are found.</summary>
+        /// <returns>True if no recipes are found and the message is written to the console.</returns>      
+        private bool TryShowNoRecipes()
+        {
+            if (_thisWeeksRecipes.Any()) return false;
+
+            Monitor.Log($"No recipes availabe. You know them all.", LogLevel.Info);
+            return true;
         }
 
         private void LogUsageError(string error, string command)
