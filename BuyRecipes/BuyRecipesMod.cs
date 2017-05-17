@@ -12,14 +12,25 @@ using System.Threading.Tasks;
 
 namespace Denifia.Stardew.BuyRecipes
 {
-    public class BuyRecipes : Mod
+    /// <summary>The mod entry point.</summary>
+    public class BuyRecipesMod : Mod
     {
+        /*********
+        ** Properties
+        *********/
+
+        /// <summary>The mod configuration.</summary>
+        private ModConfig _config;
+
+        /*********
+        ** State
+        *********/
         private bool _savedGameLoaded = false;
         private List<CookingRecipe> _unknownCookingRecipes;
         private List<CookingRecipe> _thisWeeksRecipes;
         private int _seed;
-        private ModConfig _config;
-        private static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
+        
+        
 
 
         /*********
@@ -37,13 +48,6 @@ namespace Denifia.Stardew.BuyRecipes
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
             TimeEvents.DayOfMonthChanged += TimeEvents_DayOfMonthChanged;
-
-            RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
-            {
-                new FriendBasedRecipeAquisition(),
-                new SkillBasedRecipeAquisition(),
-                new LevelBasedRecipeAquisition()
-            };
 
             helper.ConsoleCommands
                 .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
@@ -124,9 +128,8 @@ namespace Denifia.Stardew.BuyRecipes
                 // Use the explicit name
                 recipeName = recipe.Name;
 
-                if (recipe.IsKnown || Game1.player.cookingRecipes.ContainsKey(recipeName))
+                if (Game1.player.cookingRecipes.ContainsKey(recipeName))
                 {
-                    recipe.IsKnown = true;
                     Monitor.Log("Recipe already known", LogLevel.Info);
                     return;
                 }
@@ -137,16 +140,16 @@ namespace Denifia.Stardew.BuyRecipes
                     return;
                 }
 
-                if (Game1.player.Money < recipe.AquisitionConditions.Cost)
+                if (Game1.player.Money < recipe.AcquisitionConditions.Cost)
                 {
                     Monitor.Log("You can't affort this recipe", LogLevel.Info);
                     return;
                 }
 
                 Game1.player.cookingRecipes.Add(recipeName, 0);
-                Game1.player.Money -= recipe.AquisitionConditions.Cost;
-                recipe.IsKnown = true;
-                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
+                Game1.player.Money -= recipe.AcquisitionConditions.Cost;
+                _unknownCookingRecipes.Remove(recipe);
+                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AcquisitionConditions.Cost)}!", LogLevel.Alert);
             }
             else
             {
@@ -194,7 +197,7 @@ namespace Denifia.Stardew.BuyRecipes
             _unknownCookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
-                var cookingRecipe = new CookingRecipe(recipe.Key, recipe.Value);
+                var cookingRecipe = CookingRecipe.Create(recipe.Key, recipe.Value);
                 if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
                     _unknownCookingRecipes.Add(cookingRecipe);
             }
@@ -209,7 +212,7 @@ namespace Denifia.Stardew.BuyRecipes
 
             // Print out the weekly recipes to the console
             Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
-            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
+            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AcquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
             return true;
         }
 

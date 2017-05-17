@@ -1,4 +1,5 @@
 ﻿using Denifia.Stardew.BuyRecipes.Framework;
+using Denifia.Stardew.BuyRecipes.Framework.RecipeAcquisition;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,39 +8,38 @@ namespace Denifia.Stardew.BuyRecipes.Domain
 {
     public class CookingRecipe
     {
-        public string Name { get; set; }
-        public List<GameItemWithQuantity> Ingredients { get; set; }
-        public GameItemWithQuantity ResultingItem { get; set; }
-        public IRecipeAquisitionConditions AquisitionConditions { get; set; }
-        public bool IsKnown { get; set; }
+        private string _name;
+        public string Name => _name;
 
-        public CookingRecipe(string name, string data)
+        private List<GameItemWithQuantity> _ingredients;
+        public List<GameItemWithQuantity> Ingredients => _ingredients;
+
+        private GameItemWithQuantity _resultingItem;
+        public GameItemWithQuantity ResultingItem => _resultingItem;
+
+        private IRecipeAcquisition _acquisitionConditions;
+        public IRecipeAcquisition AcquisitionConditions => _acquisitionConditions;
+
+        public static CookingRecipe Create(string name, string data)
         {
-            Name = name;
-
             var dataParts = data.Split('/');
-
             var ingredientsData = dataParts[0];
-            Ingredients = DeserializeIngredients(ingredientsData);
-
             var unknownData = dataParts[1];
-
             var resultingItemData = dataParts[2];
-            ResultingItem = DeserializeResultingItem(resultingItemData);
+            var acquisitionData = dataParts[3];
 
-            var aquisitionData = dataParts[3];
-            var aquisitionConditions = BuyRecipes.RecipeAquisitionConditions.FirstOrDefault(x => x.AcceptsConditions(aquisitionData));
-            if (aquisitionConditions == null)
+            return new CookingRecipe
             {
-                AquisitionConditions = new DefaultRecipeAquisition(aquisitionData);
-            }
-            else
-            {
-                AquisitionConditions = (IRecipeAquisitionConditions)Activator.CreateInstance(aquisitionConditions.GetType(), new object[] { aquisitionData });
-            }
+                _name = name,
+                _ingredients = DeserializeIngredients(ingredientsData),
+                _resultingItem = DeserializeResultingItem(resultingItemData),
+                _acquisitionConditions = AquisitionFactory.Instance.GetAquisitionImplementation(acquisitionData)
+            };
         }
 
-        private List<GameItemWithQuantity> DeserializeIngredients(string data)
+        private CookingRecipe() { }
+
+        private static List<GameItemWithQuantity> DeserializeIngredients(string data)
         {
             var ingredients = new List<GameItemWithQuantity>();
             var dataParts = data.Split(' ');
@@ -59,7 +59,7 @@ namespace Denifia.Stardew.BuyRecipes.Domain
             return ingredients;
         }
 
-        private GameItemWithQuantity DeserializeResultingItem(string data)
+        private static GameItemWithQuantity DeserializeResultingItem(string data)
         {
             var dataParts = data.Split(' ');
             if (dataParts.Count() == 1)
@@ -70,7 +70,7 @@ namespace Denifia.Stardew.BuyRecipes.Domain
             return DeserializeItemWithQuantity(dataParts[0], dataParts[1]);
         }
 
-        private GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
+        private static GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
         {
             var itemWithQuantity = new GameItemWithQuantity
             {
