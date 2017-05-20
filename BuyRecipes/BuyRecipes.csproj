@@ -48,16 +48,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BuyRecipesMod.cs" />
-    <Compile Include="Framework\RecipeAcquisition\BaseRecipeAcquisition.cs" />
+    <Compile Include="Domain\CookingRecipeData.cs" />
+    <Compile Include="Domain\IngredientFactory.cs" />
+    <Compile Include="Domain\RecipeCostFactory.cs" />
+    <Compile Include="Framework\RecipePricing\BaseRecipePricing.cs" />
     <Compile Include="Domain\CookingRecipe.cs" />
-    <Compile Include="Framework\RecipeAcquisition\FriendBasedRecipeAcquisition.cs" />
+    <Compile Include="Framework\RecipePricing\FriendBasedRecipeAcquisition.cs" />
     <Compile Include="Domain\GameDateTime.cs" />
     <Compile Include="Domain\GameItem.cs" />
     <Compile Include="Domain\GameItemWithQuantity.cs" />
-    <Compile Include="Framework\RecipeAcquisition\IRecipeAquisition.cs" />
-    <Compile Include="Framework\RecipeAcquisition\LevelBasedRecipeAcquisition.cs" />
-    <Compile Include="Framework\RecipeAcquisition\SkillBasedRecipeAcquisition.cs" />
-    <Compile Include="Framework\AcquisitionFactory.cs" />
+    <Compile Include="Framework\RecipePricing\LevelBasedRecipeAcquisition.cs" />
+    <Compile Include="Framework\RecipePricing\SkillBasedRecipeAcquisition.cs" />
     <Compile Include="Framework\ModConstants.cs" />
     <Compile Include="Framework\ModHelper.cs" />
     <Compile Include="Framework\UpdateHelper.cs" />

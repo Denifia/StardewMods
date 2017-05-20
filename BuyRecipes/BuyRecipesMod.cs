@@ -140,16 +140,16 @@ namespace Denifia.Stardew.BuyRecipes
                     return;
                 }
 
-                if (Game1.player.Money < recipe.AcquisitionConditions.Cost)
+                if (Game1.player.Money < recipe.Cost)
                 {
                     Monitor.Log("You can't affort this recipe", LogLevel.Info);
                     return;
                 }
 
                 Game1.player.cookingRecipes.Add(recipeName, 0);
-                Game1.player.Money -= recipe.AcquisitionConditions.Cost;
+                Game1.player.Money -= recipe.Cost;
                 _unknownCookingRecipes.Remove(recipe);
-                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AcquisitionConditions.Cost)}!", LogLevel.Alert);
+                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.Cost)}!", LogLevel.Alert);
             }
             else
             {
@@ -197,7 +197,7 @@ namespace Denifia.Stardew.BuyRecipes
             _unknownCookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
-                var cookingRecipe = CookingRecipe.Create(recipe.Key, recipe.Value);
+                var cookingRecipe = CookingRecipe.Deserialise(recipe.Key, recipe.Value);
                 if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
                     _unknownCookingRecipes.Add(cookingRecipe);
             }
@@ -212,7 +212,7 @@ namespace Denifia.Stardew.BuyRecipes
 
             // Print out the weekly recipes to the console
             Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
-            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.AcquisitionConditions.Cost)} - {item.Name}", LogLevel.Info));
+            _thisWeeksRecipes.ForEach(item => Monitor.Log($"{ModHelper.GetMoneyAsString(item.Cost)} - {item.Name}", LogLevel.Info));
             return true;
         }
 

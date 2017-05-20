@@ -1,85 +1,41 @@
 ﻿using Denifia.Stardew.BuyRecipes.Framework;
-using Denifia.Stardew.BuyRecipes.Framework.RecipeAcquisition;
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
     internal class CookingRecipe
     {
         private string _name;
-        public string Name => _name;
-
-        private List<GameItemWithQuantity> _ingredients;
-        public List<GameItemWithQuantity> Ingredients => _ingredients;
-
+        private IEnumerable<GameItemWithQuantity> _ingredients;
         private GameItemWithQuantity _resultingItem;
+        private int _cost;
+
+        public string Name => _name;
+        public IEnumerable<GameItemWithQuantity> Ingredients => _ingredients;
         public GameItemWithQuantity ResultingItem => _resultingItem;
+        public int Cost => _cost;
 
-        private IRecipeAcquisition _acquisitionConditions;
-        public IRecipeAcquisition AcquisitionConditions => _acquisitionConditions;
-
-        public static CookingRecipe Create(string name, string data)
+        public static CookingRecipe Deserialise(string name, string data)
         {
-            var dataParts = data.Split('/');
-            var ingredientsData = dataParts[0];
-            var unknownData = dataParts[1];
-            var resultingItemData = dataParts[2];
-            var acquisitionData = dataParts[3];
-
-            return new CookingRecipe
-            {
-                _name = name,
-                _ingredients = DeserializeIngredients(ingredientsData),
-                _resultingItem = DeserializeResultingItem(resultingItemData),
-                _acquisitionConditions = AcquisitionFactory.Instance.GetAquisitionImplementation(acquisitionData)
-            };
+            var cookingRecipeData = CookingRecipeData.Deserialise(data);
+            var ingredients = IngredientFactory.DeserializeIngredients(cookingRecipeData.IngredientsData);
+            var resultingItem = IngredientFactory.DeserializeIngredient(cookingRecipeData.ResultingItemData);
+            var cost = RecipePricingFactory.CalculatePrice(cookingRecipeData.AcquisitionData);
+            return new CookingRecipe(name, ingredients, resultingItem, cost);
         }
 
-        private CookingRecipe() { }
-
-        private static List<GameItemWithQuantity> DeserializeIngredients(string data)
+        public CookingRecipe(string name, 
+            IEnumerable<GameItemWithQuantity> ingredients, 
+            GameItemWithQuantity resultingItem,
+            int cost)
         {
-            var ingredients = new List<GameItemWithQuantity>();
-            var dataParts = data.Split(' ');
-            for (int i = 0; i < dataParts.Count(); i++)
-            {
-                try
-                {
-                    var ingredientData = DeserializeItemWithQuantity(dataParts[i], dataParts[i + 1]);
-                    ingredients.Add(ingredientData);
-
-                    i++; // Skip in pairs
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-            return ingredients;
-        }
-
-        private static GameItemWithQuantity DeserializeResultingItem(string data)
-        {
-            var dataParts = data.Split(' ');
-            if (dataParts.Count() == 1)
-            {
-                // Default amount of an item is 1
-                return DeserializeItemWithQuantity(dataParts[0], "1");
-            }
-            return DeserializeItemWithQuantity(dataParts[0], dataParts[1]);
-        }
-
-        private static GameItemWithQuantity DeserializeItemWithQuantity(string itemId, string quantity)
-        {
-            if (!int.TryParse(itemId, out int id)) return null;
-            var gameItem = ModHelper.GameObjects.FirstOrDefault(x => x.Id == id);
-            if (gameItem == null) return null;
-
-            return new GameItemWithQuantity(
-                id: int.Parse(itemId),
-                name: gameItem.Name,
-                quantity: int.Parse(quantity));
+            _name = name;
+            _ingredients = ingredients;
+            _resultingItem = resultingItem;
+            _cost = cost;
         }
     }
+
+    
 }
