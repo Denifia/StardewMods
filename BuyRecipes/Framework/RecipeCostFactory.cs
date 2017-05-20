@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Denifia.Stardew.BuyRecipes.Domain
+namespace Denifia.Stardew.BuyRecipes.Framework
 {
     internal static class RecipePricingFactory
     {

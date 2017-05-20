@@ -1,57 +1,70 @@
-﻿using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
     internal class GameDateTime : IComparable<GameDateTime>
     {
-        public int TimeOfDay { get; set; }
-        public int DayOfMonth { get; set; }
-        public int Season { get; set; }
-        public int Year { get; set; }
-
-        public static GameDateTime Create(int timeOfDay, int dayOfMonth, string currentSeason, int year)
+        /// <summary>
+        /// Deserialise a GameDateTime from its individual components.
+        /// </summary>
+        /// <param name="timeOfDay">Time of day.</param>
+        /// <param name="dayOfMonth">Day of the month.</param>
+        /// <param name="currentSeason">String representation of the Season.</param>
+        /// <param name="year">Year.</param>
+        /// <returns>GameDateTime representing an in game DateTime.</returns>
+        public static GameDateTime Deserialise(int timeOfDay, int dayOfMonth, string currentSeason, int year)
         {
-            return new GameDateTime()
-            {
-                TimeOfDay = timeOfDay,
-                DayOfMonth = dayOfMonth,
-                Season = SeasonAsInt(currentSeason),
-                Year = year
-            };
+            return new GameDateTime(timeOfDay, dayOfMonth, SeasonAsInt(currentSeason), year);
         }
 
-        private GameDateTime()
-        {
+        private int _timeOfDay;
+        private int _dayOfMonth;
+        private int _season;
+        private int _year;
 
+        public int TimeOfDay { get => _timeOfDay; }
+        public int DayOfMonth { get => _dayOfMonth; }
+        public int Season { get => _season; }
+        public int Year { get => _year; }
+
+        public GameDateTime(int timeOfDay, int dayOfMonth, int season, int year)
+        {
+            _timeOfDay = timeOfDay;
+            _dayOfMonth = dayOfMonth;
+            _season = season;
+            _year = year;
+        }
+
+        /// <summary>
+        /// Gets the start of the current week.
+        /// </summary>
+        /// <returns>The start of the current week (sunday).</returns>
+        public GameDateTime GetStartOfWeek()
+        {
+            var startDayOfWeek = (((_dayOfMonth / 7) + 1) * 7) - 6;
+            return new GameDateTime(_timeOfDay, startDayOfWeek, _season, _year);
         }
 
         private static int SeasonAsInt(string season)
         {
-            var seasonInt = 0;
             switch (season)
             {
                 case "spring":
-                    seasonInt = 1;
-                    break;
+                    return 1;
                 case "summer":
-                    seasonInt = 2;
-                    break;
+                    return 2;
                 case "fall":
-                    seasonInt = 3;
-                    break;
+                    return 3;
                 case "winter":
-                    seasonInt = 4;
-                    break;
+                    return 4;
                 default:
-                    break;
+                    return 0;
             }
-            return seasonInt;
         }
+
+        /****
+         * IComparable<GameDateTime>
+         ****/
 
         public int CompareTo(GameDateTime other)
         {

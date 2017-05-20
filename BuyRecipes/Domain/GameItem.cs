@@ -4,27 +4,15 @@ using System.Linq;
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
     /// <summary>
-    /// Immutable Game Item.
+    /// Immutable GameItem.
     /// </summary>
     internal class GameItem
     {
-        private int _id;
-        private string _name;
-
-        public int Id => _id;
-        public string Name => _name;
-
-        public GameItem(int id, string name)
-        {
-            _id = id;
-            _name = name;
-        }
-
         /// <summary>
-        /// Deserialises a Game Item from a string.
+        /// Deserialises a GameItem from a string.
         /// </summary>
-        /// <param name="data">The serialised Game Item.</param>
-        /// <returns></returns>
+        /// <param name="data">The serialised GameItem.</param>
+        /// <returns>The deserialised GameItem.</returns>
         public static GameItem Deserialise(string data)
         {
             var dataParts = data.Split(' ');
@@ -35,6 +23,18 @@ namespace Denifia.Stardew.BuyRecipes.Domain
             if (gameItem == null) return null;
 
             return new GameItem(id, gameItem.Name);
+        }
+
+        private int _id;
+        private string _name;
+
+        public int Id => _id;
+        public string Name => _name;
+
+        public GameItem(int id, string name)
+        {
+            _id = id;
+            _name = name;
         }
     }
 }

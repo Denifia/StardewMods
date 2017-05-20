@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Denifia.Stardew.BuyRecipes.Domain;
+using System.Collections.Generic;
 
-namespace Denifia.Stardew.BuyRecipes.Domain
+namespace Denifia.Stardew.BuyRecipes.Framework
 {
     internal static class IngredientFactory
     {
