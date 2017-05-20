@@ -47,18 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuyRecipes.cs" />
-    <Compile Include="Domain\BaseRecipeAquisition.cs" />
+    <Compile Include="BuyRecipesMod.cs" />
+    <Compile Include="Domain\CookingRecipeData.cs" />
+    <Compile Include="Framework\IngredientFactory.cs" />
+    <Compile Include="Framework\RecipeCostFactory.cs" />
+    <Compile Include="Framework\RecipePricing\BaseRecipePricing.cs" />
     <Compile Include="Domain\CookingRecipe.cs" />
-    <Compile Include="Domain\DefaultRecipeAquisition.cs" />
-    <Compile Include="Domain\FriendBasedRecipeAquisition.cs" />
+    <Compile Include="Framework\RecipePricing\FriendBasedRecipeAcquisition.cs" />
     <Compile Include="Domain\GameDateTime.cs" />
     <Compile Include="Domain\GameItem.cs" />
     <Compile Include="Domain\GameItemWithQuantity.cs" />
-    <Compile Include="Domain\IRecipeAquisitionConditions.cs" />
-    <Compile Include="Domain\LevelBasedRecipeAquisition.cs" />
-    <Compile Include="Domain\SkillBasedRecipeAquisition.cs" />
-    <Compile Include="Framework\AquisitionFactory.cs" />
+    <Compile Include="Framework\RecipePricing\LevelBasedRecipeAcquisition.cs" />
+    <Compile Include="Framework\RecipePricing\SkillBasedRecipeAcquisition.cs" />
     <Compile Include="Framework\ModConstants.cs" />
     <Compile Include="Framework\ModHelper.cs" />
     <Compile Include="Framework\UpdateHelper.cs" />
@@ -78,6 +78,7 @@
     <None Include="readme.md" />
     <None Include="release-notes.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.1.5.0\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -95,7 +96,7 @@
       <ModPath>$(GamePath)\Mods\$(ModName)</ModPath>
     </PropertyGroup>
     <ItemGroup>
-      <ReleaseFiles Include="bin\Debug\**\*.*"/>
+      <ReleaseFiles Include="bin\Debug\**\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(ModPath)" />
   </Target>
@@ -103,10 +104,10 @@
     <PropertyGroup>
       <PackagePath>bin\Packages\$(ModName)-$(Version)</PackagePath>
     </PropertyGroup>
-    <MakeDir Directories="$(PackagePath)"/>  
+    <MakeDir Directories="$(PackagePath)" />
     <ItemGroup>
-      <ReleaseFiles Include="bin\Release\**\*.*"/>
-      <PackageFiles Include="$(PackagePath)\**\*.*"/>
+      <ReleaseFiles Include="bin\Release\**\*.*" />
+      <PackageFiles Include="$(PackagePath)\**\*.*" />
     </ItemGroup>
     <Delete Files="@(PackageFiles)" />
     <Copy SourceFiles="@(ReleaseFiles)" DestinationFolder="$(PackagePath)" />
