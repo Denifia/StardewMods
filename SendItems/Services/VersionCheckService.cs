@@ -19,11 +19,12 @@ namespace Denifia.Stardew.SendItems.Services
             _config = mod.Helper.ReadConfig<ModConfig>();
             _currentVersion = mod.ModManifest.Version;
 
-            GameEvents.GameLoaded += GameEvents_GameLoaded;
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
+
+            CheckForUpdateAsync();
         }
 
-        private async void GameEvents_GameLoaded(object sender, EventArgs e)
+        private async void CheckForUpdateAsync()
         {
             // check for mod update
             if (_config.CheckForUpdates && !_config.Debug)
