@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using Denifia.Stardew.SendItems.Services;
+﻿using Denifia.Stardew.SendItems.Services;
 using Autofac;
 using Denifia.Stardew.SendItems.Domain;
 using StardewModdingAPI;
-using System;
-using StardewModdingAPI.Events;
 
 namespace Denifia.Stardew.SendItems
 {
@@ -22,7 +19,6 @@ namespace Denifia.Stardew.SendItems
             var builder = new ContainerBuilder();
             builder.RegisterInstance(this).As<IMod>();
             builder.RegisterInstance(helper).As<IModHelper>();
-            builder.Register(c => new VersionCheckService(c.Resolve<IMod>()));
             builder.RegisterAssemblyTypes(typeof(SendItems).Assembly)
                 .Where(t => t.Name.EndsWith("Service")) 
                 .AsImplementedInterfaces()
@@ -39,7 +35,6 @@ namespace Denifia.Stardew.SendItems
 
             // Instance classes that do their own thing
             _container.Resolve<IFarmerService>();
-            _container.Resolve<VersionCheckService>();
             _container.Resolve<ICommandService>();
             _container.Resolve<IPostboxService>();
             _container.Resolve<ILetterboxService>();

@@ -10,5 +10,6 @@
   "MinimumApiVersion": "1.10",
   "Description": "Send items to other farmers (saved games and online friends).",
   "UniqueID": "Denifia.SendItems",
-  "EntryDll": "Denifia.Stardew.SendItems.dll"
+  "EntryDll": "Denifia.Stardew.SendItems.dll",
+  "UpdateKeys": [ "Nexus:1087" ]
 }

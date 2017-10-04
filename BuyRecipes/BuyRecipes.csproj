@@ -53,10 +53,8 @@
     <Compile Include="Framework\AquisitionFactory.cs" />
     <Compile Include="Framework\ModConstants.cs" />
     <Compile Include="Framework\ModHelper.cs" />
-    <Compile Include="Framework\UpdateHelper.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\VersionCheckService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json">

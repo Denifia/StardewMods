@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace Denifia.Stardew.BuyRecipes
+﻿namespace Denifia.Stardew.BuyRecipes
 {
     public class ModConfig
     {
         public bool Debug { get; set; }
-        public bool CheckForUpdates { get; set; } = true;
     }
 }
