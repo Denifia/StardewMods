@@ -7,8 +7,6 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.BuyRecipes
 {
@@ -25,7 +23,7 @@ namespace Denifia.Stardew.BuyRecipes
         {
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
-            TimeEvents.DayOfMonthChanged += TimeEvents_DayOfMonthChanged;
+            TimeEvents.AfterDayStarted += TimeEvents_AfterDayStarted;
 
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
@@ -136,7 +134,7 @@ namespace Denifia.Stardew.BuyRecipes
             GenerateWeeklyRecipes();
         }
 
-        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e)
+        private void TimeEvents_AfterDayStarted(object sender, EventArgs e)
         {
             GenerateWeeklyRecipes();
         }
