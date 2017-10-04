@@ -1,14 +1,11 @@
 ﻿using Denifia.Stardew.BuyRecipes.Domain;
 using Denifia.Stardew.BuyRecipes.Framework;
-using Denifia.Stardew.BuyRecipes.Services;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Denifia.Stardew.BuyRecipes
 {
@@ -25,7 +22,7 @@ namespace Denifia.Stardew.BuyRecipes
         {
             SaveEvents.AfterLoad += SaveEvents_AfterLoad;
             SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
-            TimeEvents.DayOfMonthChanged += TimeEvents_DayOfMonthChanged;
+            TimeEvents.AfterDayStarted += TimeEvents_AfterDayStarted;
 
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
@@ -38,9 +35,6 @@ namespace Denifia.Stardew.BuyRecipes
                 .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
                 .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
                 //.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
-
-            // Instance the Version Check Service
-            new VersionCheckService(this);
         }
 
         private void HandleCommand(string command, string[] args)
@@ -136,7 +130,7 @@ namespace Denifia.Stardew.BuyRecipes
             GenerateWeeklyRecipes();
         }
 
-        private void TimeEvents_DayOfMonthChanged(object sender, EventArgsIntChanged e)
+        private void TimeEvents_AfterDayStarted(object sender, EventArgs e)
         {
             GenerateWeeklyRecipes();
         }
