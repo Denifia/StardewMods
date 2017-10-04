@@ -3,6 +3,7 @@
 # Release notes
 ## 1.0.3
 * Updated for SMAPI 2.0.
+* Replaced update checks with SMAPI's new update-check service.
 
 ## 1.0.2
 * Fixed quoting issue on smapi parameters

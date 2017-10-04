@@ -3,6 +3,7 @@
 # Release notes
 ## 1.0.1
 * Updated for SMAPI 2.0.
+* Replaced update checks with SMAPI's new update-check service.
 
 ## 1.0.0
 * Fixed potential issue with wrapping item names in quotes
