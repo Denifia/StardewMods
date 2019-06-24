@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Denifia.Stardew.SendItems.Framework;
 
 namespace Denifia.Stardew.SendItems.Services
 {
@@ -22,7 +23,7 @@ namespace Denifia.Stardew.SendItems.Services
     {
         private IModHelper _modHelper;
         private ModConfig _modConfig;
-        private const string _databaseName = "data.db";
+        private const string _databaseName = ModConstants.DatabaseName;
         private string _connectionString = string.Empty;
 
         public string ConnectionString
