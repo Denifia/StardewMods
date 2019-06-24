@@ -1,17 +1,12 @@
-﻿using Denifia.Stardew.SendItems.Events;
+﻿using System;
+using System.Linq;
+using Denifia.Stardew.SendItems.Events;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System;
-using System.Linq;
 using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface IPostboxInteractionDetector
-    {
-
-    }
-
     /// <summary>
     /// Detects when the player is interacting with the postbox
     /// </summary>
@@ -54,7 +49,7 @@ namespace Denifia.Stardew.SendItems.Services
                 ControlEvents.MouseChanged -= MouseChanged;
             }
         }
-        
+
         private void MouseChanged(object sender, EventArgsMouseStateChanged e)
         {
             if (e.NewState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)

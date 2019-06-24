@@ -1,29 +1,21 @@
-﻿using System.Collections.Generic;
-using Denifia.Stardew.SendItems.Domain;
-using StardewValley;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Denifia.Stardew.SendItems.Domain;
 using StardewModdingAPI.Events;
-using System;
+using StardewValley;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface IFarmerService
-    {
-        Domain.Farmer CurrentFarmer { get; }
-        void LoadCurrentFarmer();
-        List<Domain.Farmer> GetFarmers();
-        bool AddFriendToCurrentPlayer(Friend friend);
-        bool RemoveFriendFromCurrentPlayer(string id);
-        bool RemoveAllFriendFromCurrentPlayer();
-    }
-
     public class FarmerService : IFarmerService
     {
         private readonly IConfigurationService _configService;
 
         private Domain.Farmer _currentFarmer;
-        public Domain.Farmer CurrentFarmer {
-            get {
+        public Domain.Farmer CurrentFarmer
+        {
+            get
+            {
                 if (_currentFarmer == null)
                 {
                     LoadCurrentFarmer();
@@ -53,7 +45,7 @@ namespace Denifia.Stardew.SendItems.Services
                 return;
                 //throw new System.Exception("error loading current farmer");
             }
-            
+
 
             var newFarmer = new Domain.Farmer()
             {
@@ -88,7 +80,7 @@ namespace Denifia.Stardew.SendItems.Services
                 _currentFarmer.Friends.Add(friend);
                 return Repository.Instance.Update(_currentFarmer);
             }
-            return false;            
+            return false;
         }
 
         public bool RemoveFriendFromCurrentPlayer(string id)
@@ -124,6 +116,6 @@ namespace Denifia.Stardew.SendItems.Services
             var name = Game1.player.Name;
             var farmName = Game1.player.farmName;
             _currentFarmer = Repository.Instance.FirstOrDefault<Domain.Farmer>(x => x.Name == name && x.FarmName == farmName);
-		}
+        }
     }
 }

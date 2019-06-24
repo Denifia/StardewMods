@@ -1,23 +1,12 @@
-﻿using Denifia.Stardew.SendItems.Domain;
-using StardewModdingAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Denifia.Stardew.SendItems.Domain;
 using Denifia.Stardew.SendItems.Framework;
+using StardewModdingAPI;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-	public interface IConfigurationService
-	{
-        string ConnectionString { get; }
-		Uri GetApiUri();
-		string GetLocalPath();
-		bool InDebugMode();
-		bool InLocalOnlyMode();
-		List<SavedGame> GetSavedGames();
-
-    }
-
     // TODO: Add private members for each of the public properties for performance
     public class ConfigurationService : IConfigurationService
     {
@@ -28,7 +17,8 @@ namespace Denifia.Stardew.SendItems.Services
 
         public string ConnectionString
         {
-            get {
+            get
+            {
                 if (_connectionString.Equals(string.Empty))
                 {
                     _connectionString = Path.Combine(GetLocalPath(), _databaseName);
@@ -91,7 +81,8 @@ namespace Denifia.Stardew.SendItems.Services
                             var farmNameNodeEnd = fileContents.IndexOf("</farmName>");
                             var farmName = fileContents.Substring(farmNameNodeStart, farmNameNodeEnd - farmNameNodeStart);
 
-                            var savedGame = new SavedGame {
+                            var savedGame = new SavedGame
+                            {
                                 Id = saveGameFolder,
                                 Name = playerName,
                                 FarmName = farmName

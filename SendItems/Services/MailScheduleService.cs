@@ -1,15 +1,10 @@
-﻿using Denifia.Stardew.SendItems.Events;
+﻿using System;
+using Denifia.Stardew.SendItems.Events;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using System;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface IMailScheduleService
-    {
-
-    }
-
     public class MailScheduleService : IMailScheduleService
     {
         private readonly IMod _mod;

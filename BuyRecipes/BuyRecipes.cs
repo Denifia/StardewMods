@@ -1,11 +1,11 @@
-﻿using Denifia.Stardew.BuyRecipes.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Denifia.Stardew.BuyRecipes.Domain;
 using Denifia.Stardew.BuyRecipes.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Denifia.Stardew.BuyRecipes
 {
@@ -15,7 +15,7 @@ namespace Denifia.Stardew.BuyRecipes
         private List<CookingRecipe> _cookingRecipes;
         private List<CookingRecipe> _thisWeeksRecipes;
         private int _seed;
-        
+
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
         public override void Entry(IModHelper helper)
@@ -39,7 +39,7 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void HandleCommand(string command, string[] args)
         {
-            args = new List<string>() { string.Join(" ", args) }.ToArray();
+            args = new List<string> { string.Join(" ", args) }.ToArray();
 
             if (!_savedGameLoaded)
             {
@@ -122,7 +122,7 @@ namespace Denifia.Stardew.BuyRecipes
             _cookingRecipes = null;
             _thisWeeksRecipes = null;
         }
-        
+
         private void SaveEvents_AfterLoad(object sender, EventArgs e)
         {
             _savedGameLoaded = true;
@@ -190,7 +190,6 @@ namespace Denifia.Stardew.BuyRecipes
 
         private void DiscoverRecipes()
         {
-            var knownRecipes = Game1.player.cookingRecipes.Keys;
             _cookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
@@ -201,8 +200,6 @@ namespace Denifia.Stardew.BuyRecipes
                 }
                 _cookingRecipes.Add(cookingRecipe);
             }
-
-            var unknownRecipeCount = _cookingRecipes.Where(x => !x.IsKnown).Count();
         }
 
         private void LogUsageError(string error, string command)

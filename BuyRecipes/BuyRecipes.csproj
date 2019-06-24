@@ -52,15 +52,11 @@
     <Compile Include="Domain\IRecipeAquisitionConditions.cs" />
     <Compile Include="Domain\LevelBasedRecipeAquisition.cs" />
     <Compile Include="Domain\SkillBasedRecipeAquisition.cs" />
-    <Compile Include="Framework\AquisitionFactory.cs" />
     <Compile Include="Framework\ModHelper.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="manifest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

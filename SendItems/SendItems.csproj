@@ -70,6 +70,16 @@
     <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\ConfigurationService.cs" />
     <Compile Include="Services\FarmerService.cs" />
+    <Compile Include="Services\ICommandService.cs" />
+    <Compile Include="Services\IConfigurationService.cs" />
+    <Compile Include="Services\IFarmerService.cs" />
+    <Compile Include="Services\ILetterboxInteractionDetector.cs" />
+    <Compile Include="Services\ILetterboxService.cs" />
+    <Compile Include="Services\IMailCleanupService.cs" />
+    <Compile Include="Services\IMailDeliveryService.cs" />
+    <Compile Include="Services\IMailScheduleService.cs" />
+    <Compile Include="Services\IPostboxInteractionDetector.cs" />
+    <Compile Include="Services\IPostboxService.cs" />
     <Compile Include="Services\MailScheduleService.cs" />
     <Compile Include="Services\PostboxInteractionDetector.cs" />
     <Compile Include="Services\LetterboxInteractionDetector.cs" />

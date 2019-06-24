@@ -1,17 +1,13 @@
-﻿using Denifia.Stardew.SendItems.Events;
+﻿using System;
+using System.Linq;
+using Denifia.Stardew.SendItems.Events;
 using Denifia.Stardew.SendItems.Framework;
 using StardewModdingAPI.Events;
 using StardewValley;
-using System;
-using System.Linq;
 using xTile.Dimensions;
 
 namespace Denifia.Stardew.SendItems.Services
 {
-    public interface ILetterboxInteractionDetector
-    {
-    }
-
     /// <summary>
     /// Detects when the player is interacting with the letterbox
     /// </summary>
