@@ -1,40 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D74FB037-CC7C-4047-8384-2C2E37999A7A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Denifia.Stardew.SendItems</RootNamespace>
     <AssemblyName>Denifia.Stardew.SendItems</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <RootNamespace>Denifia.Stardew.SendItems</RootNamespace>
+    <Version>2.0.0</Version>
+    <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.8.1" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
@@ -42,46 +14,7 @@
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.4" />
     <PackageReference Include="RestSharp" Version="105.2.3" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Domain\BasePerson.cs" />
-    <Compile Include="Domain\Farmer.cs" />
-    <Compile Include="Domain\Friend.cs" />
-    <Compile Include="Domain\GameDateTime.cs" />
-    <Compile Include="Domain\Mail.cs" />
-    <Compile Include="Domain\MailStatus.cs" />
-    <Compile Include="Domain\Repository.cs" />
-    <Compile Include="Domain\SavedGame.cs" />
-    <Compile Include="Events\MailComposedEventArgs.cs" />
-    <Compile Include="Events\MailReadEventArgs.cs" />
-    <Compile Include="Framework\ModConstants.cs" />
-    <Compile Include="Framework\ModHelper.cs" />
-    <Compile Include="Menus\ComposeLetter.cs" />
-    <Compile Include="ModConfig.cs" />
-    <Compile Include="Events\ModEvents.cs" />
-    <Compile Include="SendItems.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CommandService.cs" />
-    <Compile Include="Services\ConfigurationService.cs" />
-    <Compile Include="Services\FarmerService.cs" />
-    <Compile Include="Services\ICommandService.cs" />
-    <Compile Include="Services\IConfigurationService.cs" />
-    <Compile Include="Services\IFarmerService.cs" />
-    <Compile Include="Services\ILetterboxInteractionDetector.cs" />
-    <Compile Include="Services\ILetterboxService.cs" />
-    <Compile Include="Services\IMailCleanupService.cs" />
-    <Compile Include="Services\IMailDeliveryService.cs" />
-    <Compile Include="Services\IMailScheduleService.cs" />
-    <Compile Include="Services\IPostboxInteractionDetector.cs" />
-    <Compile Include="Services\IPostboxService.cs" />
-    <Compile Include="Services\MailScheduleService.cs" />
-    <Compile Include="Services\PostboxInteractionDetector.cs" />
-    <Compile Include="Services\LetterboxInteractionDetector.cs" />
-    <Compile Include="Services\LetterboxService.cs" />
-    <Compile Include="Services\MailCleanupService.cs" />
-    <Compile Include="Services\MailDeliveryService.cs" />
-    <Compile Include="Services\PostboxService.cs" />
-    <Compile Include="Models\MailCreateModel.cs" />
-  </ItemGroup>
+
   <ItemGroup>
     <None Include="config.dev.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -92,13 +25,9 @@
     <None Include="config.localonly.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="manifest.json" />
     <None Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="nexusmods.md" />
-    <None Include="readme.md" />
-    <None Include="release-notes.md" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

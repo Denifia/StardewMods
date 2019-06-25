@@ -1,64 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7DACA8E6-D69F-43BB-8442-CDB25F7C863B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Denifia.Stardew.BuyRecipes</RootNamespace>
     <AssemblyName>Denifia.Stardew.BuyRecipes</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <RootNamespace>Denifia.Stardew.BuyRecipes</RootNamespace>
+    <Version>2.0.0</Version>
+    <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="3.0.0-beta.4" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BuyRecipes.cs" />
-    <Compile Include="Domain\BaseRecipeAquisition.cs" />
-    <Compile Include="Domain\CookingRecipe.cs" />
-    <Compile Include="Domain\DefaultRecipeAquisition.cs" />
-    <Compile Include="Domain\FriendBasedRecipeAquisition.cs" />
-    <Compile Include="Domain\GameDateTime.cs" />
-    <Compile Include="Domain\GameItem.cs" />
-    <Compile Include="Domain\GameItemWithQuantity.cs" />
-    <Compile Include="Domain\IRecipeAquisitionConditions.cs" />
-    <Compile Include="Domain\LevelBasedRecipeAquisition.cs" />
-    <Compile Include="Domain\SkillBasedRecipeAquisition.cs" />
-    <Compile Include="Framework\ModHelper.cs" />
-    <Compile Include="ModConfig.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="manifest.json" />
-    <None Include="nexusmods.md" />
-    <None Include="readme.md" />
-    <None Include="release-notes.md" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
