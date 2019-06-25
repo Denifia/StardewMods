@@ -24,13 +24,16 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        public FarmerService(IConfigurationService configService)
+        public FarmerService(IConfigurationService configService, IModEvents events)
         {
             _configService = configService;
-            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+            events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         }
 
-        private void AfterReturnToTitle(object sender, EventArgs e)
+        /// <summary>Raised after the game returns to the title screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             _currentFarmer = null;
         }

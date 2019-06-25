@@ -34,11 +34,15 @@ namespace Denifia.Stardew.SendItems.Services
 
             RegisterCommands();
 
-            SaveEvents.AfterLoad += AfterSavedGameLoad;
-            SaveEvents.AfterReturnToTitle += AfterReturnToTitle;
+            var events = mod.Helper.Events;
+            events.GameLoop.SaveLoaded += OnSaveLoaded;
+            events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
         }
 
-        private void AfterReturnToTitle(object sender, EventArgs e)
+        /// <summary>Raised after the game returns to the title screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             _savedGameLoaded = false;
         }
@@ -262,7 +266,10 @@ namespace Denifia.Stardew.SendItems.Services
             }
         }
 
-        private void AfterSavedGameLoad(object sender, EventArgs e)
+        /// <summary>Raised after the player loads a save slot and the world is initialised.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             _savedGameLoaded = true;
             _mod.Monitor.Log($"This is your \"friend command\". Get your friends to run this command in the SMAPI console to add you as a friend...", LogLevel.Info);

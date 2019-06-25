@@ -9,6 +9,7 @@ using StardewValley;
 
 namespace Denifia.Stardew.BuyRecipes
 {
+    /// <summary>The mod entry class.</summary>
     public class BuyRecipes : Mod
     {
         private bool _savedGameLoaded = false;
@@ -18,11 +19,13 @@ namespace Denifia.Stardew.BuyRecipes
 
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
+        /// <summary>The mod entry point, called after the mod is first loaded.</summary>
+        /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
-            SaveEvents.AfterLoad += SaveEvents_AfterLoad;
-            SaveEvents.AfterReturnToTitle += SaveEvents_AfterReturnToTitle;
-            TimeEvents.AfterDayStarted += TimeEvents_AfterDayStarted;
+            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+            helper.Events.GameLoop.DayStarted += OnDayStarted;
 
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
@@ -32,8 +35,8 @@ namespace Denifia.Stardew.BuyRecipes
             };
 
             helper.ConsoleCommands
-                .Add("buyrecipe", $"Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
-                .Add("showrecipes", $"Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
+                .Add("buyrecipe", "Buy a recipe. \n\nUsage: buyrecipe \"<name of recipe>\" \n\nNote: This is case sensitive!", HandleCommand)
+                .Add("showrecipes", "Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
                 //.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
         }
 
@@ -116,21 +119,30 @@ namespace Denifia.Stardew.BuyRecipes
             }
         }
 
-        private void SaveEvents_AfterReturnToTitle(object sender, EventArgs e)
+        /// <summary>Raised after the game returns to the title screen.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnReturnedToTitle(object sender, ReturnedToTitleEventArgs e)
         {
             _savedGameLoaded = false;
             _cookingRecipes = null;
             _thisWeeksRecipes = null;
         }
 
-        private void SaveEvents_AfterLoad(object sender, EventArgs e)
+        /// <summary>Raised after the player loads a save slot and the world is initialised.</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             _savedGameLoaded = true;
             DiscoverRecipes();
             GenerateWeeklyRecipes();
         }
 
-        private void TimeEvents_AfterDayStarted(object sender, EventArgs e)
+        /// <summary>Raised after the game begins a new day (including when the player loads a save).</summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             GenerateWeeklyRecipes();
         }
