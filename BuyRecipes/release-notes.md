@@ -1,10 +1,15 @@
 ﻿[← back to readme](readme.md)
 
 # Release notes
+## 2.0.1
+Released 25 June 2019.
+
+* Updated for Stardew Valley 1.3.36 and SMAPI 3.0.
+
 ## 2.0.0
 Released 05 October 2018.
 
-* Updated for StardewValley 1.3
+* Updated for StardewValley 1.3.
 
 ## 1.0.1
 Released 04 October 2017.
