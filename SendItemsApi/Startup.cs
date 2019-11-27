@@ -12,10 +12,10 @@ namespace Denifia.Stardew.SendItemsApi
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath);
-                // .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                // .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                //.AddEnvironmentVariables();
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
@@ -30,11 +30,8 @@ namespace Denifia.Stardew.SendItemsApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
-            // loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            // loggerFactory.AddDebug();
-
             app.UseRouting();
             app.UseStaticFiles();
             app.UseEndpoints(x => 
