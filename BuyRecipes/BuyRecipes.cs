@@ -16,16 +16,18 @@ namespace Denifia.Stardew.BuyRecipes
         private List<CookingRecipe> _cookingRecipes;
         private List<CookingRecipe> _thisWeeksRecipes;
         private int _seed;
-
+        private ModConfig Config = null; 
         public static List<IRecipeAquisitionConditions> RecipeAquisitionConditions;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
         public override void Entry(IModHelper helper)
         {
+            Config = Helper.ReadConfig<ModConfig>();
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
             helper.Events.GameLoop.DayStarted += OnDayStarted;
+            helper.Events.GameLoop.GameLaunched += OnGameLaunched;
 
             RecipeAquisitionConditions = new List<IRecipeAquisitionConditions>()
             {
@@ -39,6 +41,8 @@ namespace Denifia.Stardew.BuyRecipes
                 .Add("showrecipes", "Lists this weeks available recipes. \n\nUsage: showrecipes", HandleCommand);
                 //.Add("buyallrecipes", $"Temporary. \n\nUsage: buyallrecipes", HandleCommand);
         }
+
+
 
         private void HandleCommand(string command, string[] args)
         {
@@ -79,7 +83,8 @@ namespace Denifia.Stardew.BuyRecipes
             if (args.Length == 1)
             {
                 var recipeName = args[0].Trim('"');
-                var recipe = _cookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
+                //var recipe = _cookingRecipes.FirstOrDefault(x => x.Name.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
+                CookingRecipe recipe = _cookingRecipes.FirstOrDefault(x => x.DisplayName.Equals(recipeName, StringComparison.OrdinalIgnoreCase));
                 if (recipe == null)
                 {
                     Monitor.Log("Recipe not found", LogLevel.Info);
@@ -111,7 +116,8 @@ namespace Denifia.Stardew.BuyRecipes
                 Game1.player.cookingRecipes.Add(recipeName, 0);
                 Game1.player.Money -= recipe.AquisitionConditions.Cost;
                 recipe.IsKnown = true;
-                Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
+                //Monitor.Log($"{recipeName} bought for {ModHelper.GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
+                Monitor.Log($"{recipe.DisplayName} bought for {GetMoneyAsString(recipe.AquisitionConditions.Cost)}!", LogLevel.Alert);
             }
             else
             {
@@ -127,6 +133,7 @@ namespace Denifia.Stardew.BuyRecipes
             _savedGameLoaded = false;
             _cookingRecipes = null;
             _thisWeeksRecipes = null;
+            _seed = -1;
         }
 
         /// <summary>Raised after the player loads a save slot and the world is initialised.</summary>
@@ -145,8 +152,33 @@ namespace Denifia.Stardew.BuyRecipes
         private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             GenerateWeeklyRecipes();
+
         }
 
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        {
+            var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
+            if (configMenu is null)
+                return;
+
+            configMenu.Register(
+            mod: this.ModManifest,
+            reset: () => this.Config = new ModConfig(),
+            save: () => this.Helper.WriteConfig(this.Config)
+            );
+            configMenu.AddNumberOption(
+            mod: this.ModManifest,
+            name: () => Helper.Translation.Get("maxNumberOfRecipesPerWeek.name"),
+            tooltip: () => Helper.Translation.Get("maxNumberOfRecipesPerWeek.description"),
+            getValue: () => Config.maxNumberOfRecipesPerWeek,
+            setValue: value => Config.maxNumberOfRecipesPerWeek = value,
+            min: 0,
+            max: 10
+            );
+
+
+
+        }
         private void GenerateWeeklyRecipes()
         {
             var gameDateTime = new GameDateTime(Game1.timeOfDay, Game1.dayOfMonth, Game1.currentSeason, Game1.year);
@@ -158,7 +190,7 @@ namespace Denifia.Stardew.BuyRecipes
             _seed = seed;
 
             _thisWeeksRecipes = new List<CookingRecipe>();
-            var maxNumberOfRecipesPerWeek = 5;
+            //var maxNumberOfRecipesPerWeek = 5;
             var unknownRecipes = _cookingRecipes.Where(x => !x.IsKnown).ToList();
             var unknownRecipesCount = unknownRecipes.Count;
 
@@ -168,9 +200,10 @@ namespace Denifia.Stardew.BuyRecipes
                 return;
             }
 
-            for (int i = 0; i < maxNumberOfRecipesPerWeek; i++)
+            for (int i = 0; i < Config.maxNumberOfRecipesPerWeek; i++)
             {
                 var recipe = unknownRecipes[random.Next(unknownRecipesCount)];
+
                 if (!_thisWeeksRecipes.Any(x => x.Name.Equals(recipe.Name)))
                 {
                     _thisWeeksRecipes.Add(recipe);
@@ -196,7 +229,7 @@ namespace Denifia.Stardew.BuyRecipes
             Monitor.Log($"This weeks recipes are:", LogLevel.Alert);
             foreach (var item in _thisWeeksRecipes)
             {
-                Monitor.Log($"{ModHelper.GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.Name}", LogLevel.Info);
+                Monitor.Log($"{GetMoneyAsString(item.AquisitionConditions.Cost)} - {item.DisplayName}", LogLevel.Info);
             }
         }
 
@@ -205,7 +238,7 @@ namespace Denifia.Stardew.BuyRecipes
             _cookingRecipes = new List<CookingRecipe>();
             foreach (var recipe in CraftingRecipe.cookingRecipes)
             {
-                var cookingRecipe = new CookingRecipe(recipe.Key, recipe.Value);
+                CookingRecipe cookingRecipe = new CookingRecipe(recipe.Key, recipe.Value);
                 if (Game1.player.cookingRecipes.ContainsKey(cookingRecipe.Name))
                 {
                     cookingRecipe.IsKnown = true;
@@ -222,6 +255,10 @@ namespace Denifia.Stardew.BuyRecipes
         private void LogArgumentsInvalid(string command)
         {
             LogUsageError("The arguments are invalid.", command);
+        }
+        private static string GetMoneyAsString(int money)
+        {
+            return $"G{money.ToString("#,##0")}";
         }
     }
 }

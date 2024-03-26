@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Denifia.Stardew.BuyRecipes.Framework;
+using StardewValley;
+using StardewValley.ItemTypeDefinitions;
 
 namespace Denifia.Stardew.BuyRecipes.Domain
 {
     public class CookingRecipe
     {
         public string Name { get; set; }
+
+        public string DisplayName { get; set; }
         public List<GameItemWithQuantity> Ingredients { get; set; }
         public GameItemWithQuantity ResultingItem { get; set; }
         public IRecipeAquisitionConditions AquisitionConditions { get; set; }
@@ -24,9 +28,17 @@ namespace Denifia.Stardew.BuyRecipes.Domain
 
             var unknownData = dataParts[1];
 
-            var resultingItemData = dataParts[2];
+            //string resultingItemData = dataParts[2];
+            string resultingItemData = ItemRegistry.QualifyItemId(dataParts[2]); ;
             ResultingItem = DeserializeResultingItem(resultingItemData);
-
+            if ( ResultingItem.DisplayName != null ) 
+            {
+                DisplayName = ResultingItem.DisplayName;
+            }
+            else
+            {
+                DisplayName = name;
+            }
             var aquisitionData = dataParts[3];
             var aquisitionConditions = BuyRecipes.RecipeAquisitionConditions.FirstOrDefault(x => x.AcceptsConditions(aquisitionData));
             if (aquisitionConditions == null)
@@ -74,14 +86,17 @@ namespace Denifia.Stardew.BuyRecipes.Domain
         {
             var itemWithQuantity = new GameItemWithQuantity
             {
-                Id = int.Parse(itemId),
+                Id = itemId,
                 Quantity = int.Parse(quantity),
             };
 
-            var gameItem = ModHelper.GameObjects.FirstOrDefault(x => x.Id == itemWithQuantity.Id);
+            // var gameItem = ModHelper.GameObjects.FirstOrDefault(x => x.Id == itemWithQuantity.Id);
+            ParsedItemData gameItem = ItemRegistry.GetData(itemId);
             if (gameItem != null)
             {
-                itemWithQuantity.Name = gameItem.Name;
+                //itemWithQuantity.Name = gameItem.Name;
+                itemWithQuantity.Name = gameItem.InternalName;
+                itemWithQuantity.DisplayName = gameItem.DisplayName;
             }
 
             return itemWithQuantity;
